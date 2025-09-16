@@ -8,6 +8,7 @@ import java.util.Map;
 @Service
 public class CriptoService {
 
+    /*
     private final RestTemplate restTemplate = new RestTemplate();
 
     public Map<String, Object> getBitcoinPrice() {
@@ -19,4 +20,6 @@ public class CriptoService {
         String url = "https://api.coingecko.com/api/v3/simple/price?ids=" + coin + "&vs_currencies=usd,brl";
         return restTemplate.getForObject(url, Map.class);
     }
+
+     */
 }
