@@ -4,10 +4,7 @@ import br.com.agicrypto.agicrypto.model.Usuarios;
 import br.com.agicrypto.agicrypto.repository.UsuarioRepository;
 import br.com.agicrypto.agicrypto.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +24,30 @@ public class UsuarioController {
         return usuarioService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/salvar")
+    public Usuarios salvar(@RequestBody Usuarios usuario) {
+        return usuarioService.salvar(usuario);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuarios> atualizar(@PathVariable Integer id, @RequestBody Usuarios usuario) {
+        return usuarioService.buscarPorId(id)
+                .map(u -> {
+                    usuario.setId(id);
+                    return ResponseEntity.ok(usuarioService.salvar(usuario));
+                }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Usuarios> remover(@PathVariable Integer id) {
+
+        if (usuarioService.buscarPorId(id).isPresent()) {
+            usuarioService.remover(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

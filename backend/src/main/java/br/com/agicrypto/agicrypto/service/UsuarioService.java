@@ -22,4 +22,11 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
+    public Usuarios salvar(Usuarios usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public void remover(Integer id) {
+        usuarioRepository.deleteById(id);
+    }
 }
