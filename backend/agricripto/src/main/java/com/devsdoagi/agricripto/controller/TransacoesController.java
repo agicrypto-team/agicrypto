@@ -1,6 +1,7 @@
 package com.devsdoagi.agricripto.controller;
 
-import com.devsdoagi.agricripto.model.Transacoes;
+import com.devsdoagi.agricripto.DTO.TransacoesRequestDTO;
+import com.devsdoagi.agricripto.DTO.TransacoesResponseDTO;
 import com.devsdoagi.agricripto.service.TransacoesService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,27 +18,23 @@ public class TransacoesController {
         this.transacoesService = transacoesService;
     }
 
-    // Listar todas
     @GetMapping("/listar")
-    public List<Transacoes> listar() {
+    public List<TransacoesResponseDTO> listar() {
         return transacoesService.listarTodas();
     }
 
-    // Listar transações de um usuário
     @GetMapping("/usuario/{idUsuario}")
-    public List<Transacoes> listarPorUsuario(@PathVariable Integer idUsuario) {
+    public List<TransacoesResponseDTO> listarPorUsuario(@PathVariable Integer idUsuario) {
         return transacoesService.listarPorUsuario(idUsuario);
     }
 
-    // Detalhar transação por ID
     @GetMapping("/{id}")
-    public Optional<Transacoes> detalhar(@PathVariable Integer id) {
+    public Optional<TransacoesResponseDTO> detalhar(@PathVariable Integer id) {
         return transacoesService.buscarPorId(id);
     }
 
-    // Cadastrar nova transação
     @PostMapping("/cadastrar")
-    public Transacoes cadastrar(@RequestBody Transacoes transacao) {
-        return transacoesService.salvar(transacao);
+    public TransacoesResponseDTO cadastrar(@RequestBody TransacoesRequestDTO dto) {
+        return transacoesService.salvar(dto);
     }
 }
