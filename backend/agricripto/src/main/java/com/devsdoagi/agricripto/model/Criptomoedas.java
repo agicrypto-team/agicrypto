@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -40,4 +42,7 @@ public class Criptomoedas {
 
     @Column(name = "momento_cadastro")
     private LocalDateTime momentoCadastro;
+
+    @OneToMany(mappedBy = "criptomoedas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<HistoricoCriptomoedas> HistoricoCriptomoedas = new ArrayList<>();
 }

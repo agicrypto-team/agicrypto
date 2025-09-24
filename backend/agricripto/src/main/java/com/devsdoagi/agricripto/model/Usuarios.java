@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -35,4 +38,14 @@ public class Usuarios {
 
     @Column(nullable = false)
     private String tipo; // "Cliente" ou "Admin"
+
+    @OneToOne(mappedBy = "usuarios", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Carteira carteira;
+
+    @OneToMany(mappedBy = "usuarios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transacoes> transacoes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuarios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Criptomoedas> criptomoedasResponsaveis = new ArrayList<>();
+
 }

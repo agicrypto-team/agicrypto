@@ -33,6 +33,9 @@ public class Transacoes {
     @Column(nullable = false)
     private BigDecimal valor;
 
+    @Column(precision = 36, scale = 18, nullable = false)
+    private BigDecimal quantidade_cripto = BigDecimal.ZERO;
+
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime momento;
