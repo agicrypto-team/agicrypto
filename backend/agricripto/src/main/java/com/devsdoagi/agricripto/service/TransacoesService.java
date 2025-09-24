@@ -2,7 +2,7 @@ package com.devsdoagi.agricripto.service;
 
 import com.devsdoagi.agricripto.DTO.TransacoesRequestDTO;
 import com.devsdoagi.agricripto.DTO.TransacoesResponseDTO;
-import com.devsdoagi.agricripto.model.Transacoes.Transacoes;
+import com.devsdoagi.agricripto.model.Transacoes;
 import com.devsdoagi.agricripto.model.Usuarios;
 import com.devsdoagi.agricripto.model.Criptomoedas;
 import com.devsdoagi.agricripto.repository.TransacoesRepository;

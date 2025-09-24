@@ -1,7 +1,5 @@
-package com.devsdoagi.agricripto.model.Transacoes;
+package com.devsdoagi.agricripto.model;
 
-import com.devsdoagi.agricripto.model.Criptomoedas;
-import com.devsdoagi.agricripto.model.Usuarios;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
