@@ -3,10 +3,9 @@ import com.devsdoagi.agricripto.model.Criptomoedas;
 import com.devsdoagi.agricripto.service.CriptomoedasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +31,12 @@ public class CriptomoedasController {
     public ResponseEntity<Criptomoedas> getById(@PathVariable Integer id) {
         Optional<Criptomoedas> cripto = criptomoedasService.findById(id);
         return cripto.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+    @PostMapping
+    public ResponseEntity<Criptomoedas> createCripto(@RequestBody Criptomoedas cripto) {
+        // O service vai salvar a nova criptomoeda no banco de dados
+        Criptomoedas newCripto = criptomoedasService.save(cripto);
+        // Retorna a nova criptomoeda com o status 201 Created
+        return ResponseEntity.status(HttpStatus.CREATED).body(newCripto);
     }
 }
