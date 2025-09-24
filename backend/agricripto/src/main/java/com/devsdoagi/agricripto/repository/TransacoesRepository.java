@@ -1,6 +1,6 @@
 package com.devsdoagi.agricripto.repository;
 
-import com.devsdoagi.agricripto.model.Transacoes;
+import com.devsdoagi.agricripto.model.Transacoes.Transacoes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

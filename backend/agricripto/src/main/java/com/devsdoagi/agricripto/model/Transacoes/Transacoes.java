@@ -1,9 +1,12 @@
-package com.devsdoagi.agricripto.model;
+package com.devsdoagi.agricripto.model.Transacoes;
 
+import com.devsdoagi.agricripto.model.Criptomoedas;
+import com.devsdoagi.agricripto.model.Usuarios;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,12 +32,10 @@ public class Transacoes {
     @ManyToOne(fetch = FetchType.LAZY)
     private Criptomoedas criptomoeda;
 
-
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime momento;
-
-
 }

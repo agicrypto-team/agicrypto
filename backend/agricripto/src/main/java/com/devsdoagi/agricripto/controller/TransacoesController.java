@@ -1,6 +1,7 @@
 package com.devsdoagi.agricripto.controller;
 
-import com.devsdoagi.agricripto.model.Transacoes;
+import com.devsdoagi.agricripto.model.Transacoes.Transacoes;
+import com.devsdoagi.agricripto.model.Transacoes.TransacoesDTO;
 import com.devsdoagi.agricripto.service.TransacoesService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,25 +20,44 @@ public class TransacoesController {
 
     // Listar todas
     @GetMapping("/listar")
-    public List<Transacoes> listar() {
-        return transacoesService.listarTodas();
+    public List<TransacoesDTO> listar() {
+        return transacoesService.listarTodas().stream().map(this::converterParaDTO).toList();
     }
 
     // Listar transações de um usuário
     @GetMapping("/usuario/{idUsuario}")
-    public List<Transacoes> listarPorUsuario(@PathVariable Integer idUsuario) {
-        return transacoesService.listarPorUsuario(idUsuario);
+    public List<TransacoesDTO> listarPorUsuario(@PathVariable Integer idUsuario) {
+        return transacoesService.listarPorUsuario(idUsuario).stream().map(this::converterParaDTO).toList();
     }
 
     // Detalhar transação por ID
     @GetMapping("/{id}")
-    public Optional<Transacoes> detalhar(@PathVariable Integer id) {
-        return transacoesService.buscarPorId(id);
+    public TransacoesDTO detalhar(@PathVariable Integer id) {
+        Optional<Transacoes> transacao = transacoesService.buscarPorId(id);
+        return transacao.map(this::converterParaDTO).orElse(null);
     }
 
     // Cadastrar nova transação
     @PostMapping("/cadastrar")
-    public Transacoes cadastrar(@RequestBody Transacoes transacao) {
-        return transacoesService.salvar(transacao);
+    public TransacoesDTO cadastrar(@RequestBody Transacoes transacao) {
+        Transacoes tSalva = transacoesService.salvar(transacao);
+        return converterParaDTO(tSalva);
+    }
+
+    // Método privado para converter Transacoes → TransacoesDTO
+    private TransacoesDTO converterParaDTO(Transacoes transacao) {
+        TransacoesDTO dto = new TransacoesDTO();
+        dto.setId(transacao.getId());
+        dto.setTipo(transacao.getTipo());
+        dto.setValor(transacao.getValor());
+        dto.setMomento(transacao.getMomento());
+
+        dto.setUsuarioId(transacao.getUsuarios().getId());
+        dto.setUsuarioNome(transacao.getUsuarios().getNome());
+
+        dto.setCriptomoedaId(transacao.getCriptomoeda().getId());
+        dto.setCriptomoedaNome(transacao.getCriptomoeda().getNome());
+
+        return dto;
     }
 }
