@@ -1,0 +1,9 @@
+br\com\agicrypto\agicrypto\model\Usuarios.class
+br\com\agicrypto\agicrypto\AgicryptoApplication.class
+br\com\agicrypto\agicrypto\controller\TransacoesController.class
+br\com\agicrypto\agicrypto\model\Transacoes.class
+br\com\agicrypto\agicrypto\controller\UsuarioController.class
+br\com\agicrypto\agicrypto\model\Criptomoedas.class
+br\com\agicrypto\agicrypto\controller\CriptomoedasController.class
+br\com\agicrypto\agicrypto\controller\HelloWorldController.class
+br\com\agicrypto\agicrypto\model\HistoricoCriptomoedas.class
