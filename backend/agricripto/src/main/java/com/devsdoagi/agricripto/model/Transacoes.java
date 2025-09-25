@@ -33,8 +33,8 @@ public class Transacoes {
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(precision = 36, scale = 18, nullable = false, columnDefinition = "DECIMAL(36,18) DEFAULT 0")
-    private BigDecimal quantidadeCripto = BigDecimal.ZERO;
+    @Column(precision = 36, scale = 18, nullable = false)
+    private BigDecimal quantidade_cripto = BigDecimal.ZERO;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
