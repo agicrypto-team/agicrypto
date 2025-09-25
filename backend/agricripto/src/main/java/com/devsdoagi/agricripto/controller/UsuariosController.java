@@ -1,13 +1,14 @@
 package com.devsdoagi.agricripto.controller;
 
 import com.devsdoagi.agricripto.repository.UsuariosRepository;
-import com.devsdoagi.agricripto.model.Usuarios;riosRepository;
+import com.devsdoagi.agricripto.model.Usuarios;
 import com.devsdoagi.agricripto.DTO.UsuariosResponseDTO;
 
+import com.devsdoagi.agricripto.service.UsuariosService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -16,15 +17,18 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuariosController {
 
-    @Autowired
     private final UsuariosService usuarioService;
+
+    public UsuariosController(UsuariosService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
     // Cadastra novo usuário
     @PostMapping
     public ResponseEntity<UsuariosResponseDTO> cadastrarUsuario(@Valid @RequestBody Usuarios usuario) {
 
         usuarioService.cadastrar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponseDTO(usuario));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuario));
 
     }
 

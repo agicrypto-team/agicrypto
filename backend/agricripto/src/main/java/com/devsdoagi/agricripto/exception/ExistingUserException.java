@@ -1,6 +1,6 @@
-package com.devsdoagi.agricripto.expection;
+package com.devsdoagi.agricripto.exception;
 
-public class ExistingUserException extends RuntimeExpection {
+public class ExistingUserException extends RuntimeException {
     public ExistingUserException(String message) {
         super(message);
     }

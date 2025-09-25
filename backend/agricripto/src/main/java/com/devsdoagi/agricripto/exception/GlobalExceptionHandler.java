@@ -1,5 +1,6 @@
 package com.devsdoagi.agricripto.repository;
 
+import com.devsdoagi.agricripto.exception.ExistingUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,10 +14,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    /*
     @ExceptionHandler(AutenticacaoException.class)
     public ResponseEntity<String> handleAutenticacaoException(AutenticacaoException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
+
+    */
 
     // Este é um handler genérico para capturar qualquer outra exceção não mapeada
     @ExceptionHandler(Exception.class)

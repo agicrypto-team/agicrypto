@@ -1,11 +1,13 @@
 package com.devsdoagi.agricripto.DTO;
 
+import com.devsdoagi.agricripto.model.Usuarios;
+
 public record UsuariosResponseDTO(
 
-    String cpf;
-    String nome;
-    String email;
-    String celular;
+    String cpf,
+    String nome,
+    String email,
+    String celular
 
 ) {
 
