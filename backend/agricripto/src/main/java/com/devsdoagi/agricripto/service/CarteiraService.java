@@ -19,6 +19,7 @@ public class CarteiraService {
     private UsuariosRepository usuariosRepository;
 
     public Carteira CriarCarteira(Usuarios usuarios){
+
         Usuarios checkUsuario = usuariosRepository.findById(usuarios.getId())
                 .orElseThrow(() -> new RuntimeException("Erro, id Inexistente"));
         Carteira carteiraUser = new Carteira();
