@@ -49,3 +49,7 @@ public class Usuarios {
     private List<Criptomoedas> criptomoedasResponsaveis = new ArrayList<>();
 
 }
+
+
+
+

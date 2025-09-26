@@ -1,22 +1,31 @@
 package com.devsdoagi.agricripto.service;
 
 import com.devsdoagi.agricripto.exception.*;
+import com.devsdoagi.agricripto.model.Carteira;
 import com.devsdoagi.agricripto.model.Usuarios;
+import com.devsdoagi.agricripto.repository.CarteiraRepository;
 import com.devsdoagi.agricripto.repository.UsuariosRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class UsuariosService {
 
-    @Autowired
     private UsuariosRepository usuarioRepository;
+    private CarteiraRepository carteiraRepository;
 
+
+    public UsuariosService(UsuariosRepository usuarioRepository, CarteiraRepository carteiraRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.carteiraRepository = carteiraRepository;
+    }
+
+    @Transactional
     public Usuarios cadastrar(Usuarios usuario) {
 
         if(usuarioRepository.existsByEmail(usuario.getEmail())) {
@@ -27,10 +36,17 @@ public class UsuariosService {
             throw new ExistingUserException("Já existe um cadastro com esse cpf");
         }
 
-        usuario.setSenha(usuario.getSenha());
+        Usuarios novoUsuario = usuarioRepository.save(usuario);
 
-        return usuarioRepository.save(usuario);
+        if("Cliente".equalsIgnoreCase(novoUsuario.getTipo())){
+            Carteira novaCarteira = new Carteira();
 
+            novaCarteira.setUsuarios(novoUsuario);
+            novaCarteira.setMomento_atualizacao(LocalDateTime.now());
+            carteiraRepository.save(novaCarteira);
+        }
+
+        return novoUsuario;
     }
 
     public List<Usuarios> listarClientes() {

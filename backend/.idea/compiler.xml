@@ -13,10 +13,18 @@
         <module name="agicrypto" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="agricripto" target="21" />
+      <module name="agricripto.main" target="21" />
+      <module name="agricripto.test" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="agicrypto" options="-parameters" />
+      <module name="agricripto" options="-parameters" />
+      <module name="agricripto.main" options="-parameters" />
+      <module name="agricripto.test" options="-parameters" />
     </option>
   </component>
 </project>

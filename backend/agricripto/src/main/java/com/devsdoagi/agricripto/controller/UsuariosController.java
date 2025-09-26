@@ -1,12 +1,10 @@
 package com.devsdoagi.agricripto.controller;
 
-import com.devsdoagi.agricripto.repository.UsuariosRepository;
 import com.devsdoagi.agricripto.model.Usuarios;
 import com.devsdoagi.agricripto.DTO.UsuariosResponseDTO;
 
 import com.devsdoagi.agricripto.service.UsuariosService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
