@@ -22,10 +22,12 @@ public class Transacoes {
     @Column(nullable = false)
     private String tipo;
 
+    // Muitas transações pertencem a um usuário
     @JoinColumn(name = "id_cliente", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Usuarios usuarios;
 
+    // Muitas transações envolvem uma criptomoeda
     @JoinColumn(name = "id_criptomoeda", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Criptomoedas criptomoeda;
