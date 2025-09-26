@@ -9,6 +9,7 @@ import com.devsdoagi.agricripto.repository.UsuariosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,8 +20,9 @@ public class UsuariosService {
     private CarteiraRepository carteiraRepository;
 
 
-    public UsuariosService(UsuariosRepository usuarioRepository) {
+    public UsuariosService(UsuariosRepository usuarioRepository, CarteiraRepository carteiraRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.carteiraRepository = carteiraRepository;
     }
 
     @Transactional
@@ -40,6 +42,7 @@ public class UsuariosService {
             Carteira novaCarteira = new Carteira();
 
             novaCarteira.setUsuarios(novoUsuario);
+            novaCarteira.setMomento_atualizacao(LocalDateTime.now());
             carteiraRepository.save(novaCarteira);
         }
 
