@@ -1,10 +1,10 @@
 package com.devsdoagi.agricripto.service;
 
 import com.devsdoagi.agricripto.exception.*;
+import com.devsdoagi.agricripto.model.Carteira;
 import com.devsdoagi.agricripto.model.Usuarios;
 import com.devsdoagi.agricripto.repository.UsuariosRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class UsuariosService {
 
-    @Autowired
     private UsuariosRepository usuarioRepository;
+
+
+    public UsuariosService(UsuariosRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     public Usuarios cadastrar(Usuarios usuario) {
 
@@ -27,9 +31,6 @@ public class UsuariosService {
             throw new ExistingUserException("Já existe um cadastro com esse cpf");
         }
 
-        usuario.setSenha(usuario.getSenha());
-
-        return usuarioRepository.save(usuario);
 
     }
 
