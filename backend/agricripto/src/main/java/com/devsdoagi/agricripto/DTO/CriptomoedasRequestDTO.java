@@ -1,4 +1,12 @@
 package com.devsdoagi.agricripto.DTO;
 
-public class CriptomoedasRequestDTO {
+ import jakarta.validation.constraints.NotBlank;
+ import jakarta.validation.constraints.NotNull;
+
+public record CriptomoedasRequestDTO(
+        String nome,
+        String sigla,
+        String icone,
+        Integer id_responsavel
+) {
 }

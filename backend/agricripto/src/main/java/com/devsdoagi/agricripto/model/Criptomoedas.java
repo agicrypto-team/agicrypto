@@ -45,4 +45,6 @@ public class Criptomoedas {
 
     @OneToMany(mappedBy = "criptomoedas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HistoricoCriptomoedas> HistoricoCriptomoedas = new ArrayList<>();
+
+
 }

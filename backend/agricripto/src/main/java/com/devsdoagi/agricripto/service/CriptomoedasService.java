@@ -1,6 +1,10 @@
 package com.devsdoagi.agricripto.service;
+import com.devsdoagi.agricripto.DTO.CriptomoedasRequestDTO;
+import com.devsdoagi.agricripto.DTO.CriptomoedasResponseDTO;
 import com.devsdoagi.agricripto.model.Criptomoedas;
+import com.devsdoagi.agricripto.model.Usuarios;
 import com.devsdoagi.agricripto.repository.CriptomoedasRepository;
+import com.devsdoagi.agricripto.repository.UsuariosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,15 +14,32 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CriptomoedasService {
     @Autowired
     private CriptomoedasRepository criptomoedasRepository;
 
+    @Autowired
+    private UsuariosRepository usuariosRepository;
+
+    // Construtor: O Spring faz a injeção automaticamente aqui.
+    public CriptomoedasService(CriptomoedasRepository criptomoedasRepository, UsuariosRepository usuariosRepository) {
+        this.criptomoedasRepository = criptomoedasRepository;
+        this.usuariosRepository = usuariosRepository;
+    }
+
     // Busca todas as criptomoedas.
-    public List<Criptomoedas> findAll() {
-        return criptomoedasRepository.findAll();
+    public List<CriptomoedasResponseDTO> findAllDto() {
+        // 1. Busca todas as entidades Criptomoedas no banco
+        List<Criptomoedas> criptos = criptomoedasRepository.findAll();
+
+        // 2. Converte a lista de entidades para a lista de DTOs
+        // O 'return' e o 'Collectors' foram adicionados/corrigidos aqui.
+        return criptos.stream()
+                .map(CriptomoedasResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     // Busca uma criptomoeda pelo ID.
@@ -41,12 +62,28 @@ public class CriptomoedasService {
         return restTemplate.getForObject(url, String.class);
     }
 
-    // Metodo para salvar ou atualizar uma criptomoeda.
-    public Criptomoedas save(Criptomoedas criptomoedas) {
-        // Antes de salvar, definimos a data e hora atuais.
-        // Isso resolve o problema de a coluna ser nula.
-        criptomoedas.setMomentoCadastro(LocalDateTime.now());
+    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {
+        if (request.id_responsavel() == null) {
+            throw new IllegalArgumentException("id_responsavel não pode ser nulo");
+        }
 
-        return criptomoedasRepository.save(criptomoedas);
+        // Log para depuração
+        System.out.println("DEBUG - id_responsavel vindo do request: " + request.id_responsavel());
+
+        Usuarios responsavel = usuariosRepository.findById(request.id_responsavel())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        Criptomoedas criptomoeda = new Criptomoedas();
+        criptomoeda.setNome(request.nome());
+        criptomoeda.setSigla(request.sigla());
+        criptomoeda.setIcone(request.icone());
+        criptomoeda.setUsuarios(responsavel);
+        criptomoeda.setMomentoCadastro(LocalDateTime.now());
+
+        criptomoeda = criptomoedasRepository.save(criptomoeda);
+
+        return new CriptomoedasResponseDTO(criptomoeda);
     }
+
 }
+

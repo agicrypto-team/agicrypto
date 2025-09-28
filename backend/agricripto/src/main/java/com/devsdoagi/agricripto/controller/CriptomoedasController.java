@@ -1,4 +1,6 @@
 package com.devsdoagi.agricripto.controller;
+import com.devsdoagi.agricripto.DTO.CriptomoedasRequestDTO;
+import com.devsdoagi.agricripto.DTO.CriptomoedasResponseDTO;
 import com.devsdoagi.agricripto.model.Criptomoedas;
 import com.devsdoagi.agricripto.service.CriptomoedasService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.devsdoagi.agricripto.DTO.CriptomoedasResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,22 +24,26 @@ public class CriptomoedasController {
     // Endpoint para buscar todas as criptomoedas.
     // URL: GET /api/criptomoedas
     @GetMapping
-    public List<Criptomoedas> getAll() {
-        return criptomoedasService.findAll();
+    public List<CriptomoedasResponseDTO> getAll() {
+        // Chama o novo metodo do Service que já converte para DTO
+        return criptomoedasService.findAllDto();
     }
 
     // Endpoint para buscar uma criptomoeda por ID.
     // URL: GET /api/criptomoedas/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Criptomoedas> getById(@PathVariable Integer id) {
+    public ResponseEntity<CriptomoedasResponseDTO> getById(@PathVariable Integer id) {
         Optional<Criptomoedas> cripto = criptomoedasService.findById(id);
-        return cripto.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+
+        return cripto.map(CriptomoedasResponseDTO::new).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
     @PostMapping
-    public ResponseEntity<Criptomoedas> createCripto(@RequestBody Criptomoedas cripto) {
-        // O service vai salvar a nova criptomoeda no banco de dados
-        Criptomoedas newCripto = criptomoedasService.save(cripto);
-        // Retorna a nova criptomoeda com o status 201 Created
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCripto);
+    public ResponseEntity<CriptomoedasResponseDTO> create(@RequestBody CriptomoedasRequestDTO request) {
+        // Chama o Service que agora recebe o DTO de Request
+        CriptomoedasResponseDTO response = criptomoedasService.create(request);
+
+        return ResponseEntity.ok(response);
+
     }
+
 }
