@@ -37,7 +37,7 @@ public class CriptomoedasController {
     @PostMapping
     public ResponseEntity<CriptomoedasResponseDTO> create(@RequestBody CriptomoedasRequestDTO request) {
         // Chama o Service que agora recebe o DTO de Request
-        CriptomoedasResponseDTO response = criptomoedasService.create(request);
+        CriptomoedasResponseDTO response = criptomoedasService.cadastrar(request);
 
         return ResponseEntity.ok(response);
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,8 +23,8 @@ public class HistoricoCriptomoedas {
     @ManyToOne(fetch = FetchType.LAZY)
     private Criptomoedas criptomoedas;
 
-    @Column(nullable = false)
-    private Double cotacao_momento;
+    @Column(nullable = false, precision = 18, scale = 8)
+    private BigDecimal cotacao_momento;
 
     @Column(nullable = false)
     private LocalDateTime momento;

@@ -1,14 +1,24 @@
 package com.devsdoagi.agicripto.service;
+
 import com.devsdoagi.agicripto.DTO.CriptomoedasRequestDTO;
 import com.devsdoagi.agicripto.DTO.CriptomoedasResponseDTO;
 import com.devsdoagi.agicripto.model.Criptomoedas;
+import com.devsdoagi.agicripto.model.HistoricoCriptomoedas;
 import com.devsdoagi.agicripto.model.Usuarios;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
+import com.devsdoagi.agicripto.repository.HistoricoCriptomoedasRepository;
 import com.devsdoagi.agicripto.repository.UsuariosRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import java.util.List;
@@ -22,6 +32,11 @@ public class CriptomoedasService {
 
     @Autowired
     private UsuariosRepository usuariosRepository;
+
+    @Autowired
+    private HistoricoCriptomoedasRepository historicoCriptomoedasRepository;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Construtor: O Spring faz a injeção automaticamente aqui.
     public CriptomoedasService(CriptomoedasRepository criptomoedasRepository, UsuariosRepository usuariosRepository) {
@@ -58,31 +73,101 @@ public class CriptomoedasService {
         String url = baseUrl + "coins/" + cryptoId;
 
         // Fazemos a requisição HTTP.
+        // Se a API retornar um status de erro (ex: 404), o RestTemplate lança uma RestClientException
         return restTemplate.getForObject(url, String.class);
     }
 
-    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {
+    @Transactional // Garante que a criação da Criptomoeda e do Historico sejam atômicas.
+    public CriptomoedasResponseDTO cadastrar(CriptomoedasRequestDTO request) {
         if (request.id_responsavel() == null) {
             throw new IllegalArgumentException("id_responsavel não pode ser nulo");
         }
-
-        // Log para depuração
-        System.out.println("DEBUG - id_responsavel vindo do request: " + request.id_responsavel());
 
         Usuarios responsavel = usuariosRepository.findById(request.id_responsavel())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Criptomoedas criptomoeda = new Criptomoedas();
-        criptomoeda.setNome(request.nome());
-        criptomoeda.setSigla(request.sigla());
-        criptomoeda.setIcone(request.icone());
-        criptomoeda.setUsuarios(responsavel);
-        criptomoeda.setMomentoCadastro(LocalDateTime.now());
 
-        criptomoeda = criptomoedasRepository.save(criptomoeda);
+        if (responsavel.getTipo().equalsIgnoreCase("Admin")){
+
+            criptomoeda.setNome(request.nome());
+            criptomoeda.setSigla(request.sigla());
+            criptomoeda.setIcone(request.icone());
+            criptomoeda.setUsuarios(responsavel);
+            criptomoeda.setMomentoCadastro(LocalDateTime.now());
+
+            criptomoeda = criptomoedasRepository.save(criptomoeda);
+
+            salvarCotacaoInicial(criptomoeda);
+
+
+        }
 
         return new CriptomoedasResponseDTO(criptomoeda);
     }
+
+    private void salvarCotacaoInicial(Criptomoedas criptomoeda) {
+        String nomeParaBusca = criptomoeda.getNome().toLowerCase().replace("\\s+", "-");
+
+        try {
+            String jsonResponse = getCryptoDetails(nomeParaBusca);
+
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            JsonNode usdPriceNode = rootNode
+                    .path("market_data")
+                    .path("current_price")
+                    .path("usd");
+
+            BigDecimal cotacao = null;
+            if(usdPriceNode.isNumber()) {
+                cotacao = usdPriceNode.decimalValue();
+            }
+
+            if (cotacao == null) {
+                System.err.println("AVISO: Cotação USD não encontrada na resposta da API para: " + criptomoeda.getNome());
+
+                return;
+            }
+
+            HistoricoCriptomoedas historico = new HistoricoCriptomoedas();
+            historico.setCriptomoedas(criptomoeda);
+            historico.setCotacao_momento(cotacao);
+            historico.setMomento(LocalDateTime.now());
+
+            historicoCriptomoedasRepository.save(historico);
+        } catch (RestClientException e) {
+            // Erros de chamada HTTP (ex: 404 Not Found, 500 Internal Server Error)
+            System.err.println("ERRO: Falha ao chamar a API CoinGecko para " + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
+        } catch (IOException e) {
+            // Erros de parse do JSON
+            System.err.println("ERRO: Falha ao processar a resposta da API para " + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
+        }
+    }
+
+
+//    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {
+//        if (request.id_responsavel() == null) {
+//            throw new IllegalArgumentException("id_responsavel não pode ser nulo");
+//        }
+//
+//        // Log para depuração
+//        System.out.println("DEBUG - id_responsavel vindo do request: " + request.id_responsavel());
+//
+//        Usuarios responsavel = usuariosRepository.findById(request.id_responsavel())
+//                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+//
+//        Criptomoedas criptomoeda = new Criptomoedas();
+//        criptomoeda.setNome(request.nome());
+//        criptomoeda.setSigla(request.sigla());
+//        criptomoeda.setIcone(request.icone());
+//        criptomoeda.setUsuarios(responsavel);
+//        criptomoeda.setMomentoCadastro(LocalDateTime.now());
+//
+//        criptomoeda = criptomoedasRepository.save(criptomoeda);
+//
+//        return new CriptomoedasResponseDTO(criptomoeda);
+//    }
 
 }
 
