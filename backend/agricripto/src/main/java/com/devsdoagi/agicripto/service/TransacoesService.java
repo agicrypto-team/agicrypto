@@ -8,12 +8,10 @@ import com.devsdoagi.agicripto.model.Criptomoedas;
 import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import com.devsdoagi.agicripto.repository.UsuariosRepository;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
-import com.devsdoagi.agicripto.exception.transacoes.TransacaoNaoEncontradaException;
-import com.devsdoagi.agicripto.exception.transacoes.UsuarioNaoEncontradoException;
-import com.devsdoagi.agicripto.exception.transacoes.CriptomoedaNaoEncontradaException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,13 +37,13 @@ public class TransacoesService {
         dto.setValor(t.getValor());
         dto.setMomento(t.getMomento());
         dto.setUsuarioId(t.getUsuarios().getId());
-        dto.setUsuarioNome(t.getUsuarios().getNome());
+        dto.setUsuarioNome(t.getUsuarios().getNome()); // se disponível
         dto.setCriptomoedaId(t.getCriptomoeda().getId());
-        dto.setCriptomoedaNome(t.getCriptomoeda().getNome());
+        dto.setCriptomoedaNome(t.getCriptomoeda().getNome()); // se disponível
         return dto;
     }
 
-    // Listar todas as transações
+    // Listar todas
     public List<TransacoesResponseDTO> listarTodas() {
         return transacoesRepository.findAll()
                 .stream()
@@ -53,31 +51,26 @@ public class TransacoesService {
                 .collect(Collectors.toList());
     }
 
-    // Listar transações por usuário
+    // Listar por usuário
     public List<TransacoesResponseDTO> listarPorUsuario(Integer idUsuario) {
-        // Garante que o usuário exista
-        usuariosRepository.findById(idUsuario)
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
-
         return transacoesRepository.findByUsuariosId(idUsuario)
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    // Buscar transação por ID
-    public TransacoesResponseDTO buscarPorId(Integer id) {
-        Transacoes t = transacoesRepository.findById(id)
-                .orElseThrow(() -> new TransacaoNaoEncontradaException(id));
-        return toResponseDTO(t);
+    // Buscar por ID
+    public Optional<TransacoesResponseDTO> buscarPorId(Integer id) {
+        return transacoesRepository.findById(id)
+                .map(this::toResponseDTO);
     }
 
-    // Salvar nova transação
+    // Salvar nova transação a partir de DTO
     public TransacoesResponseDTO salvar(TransacoesRequestDTO dto) {
         Usuarios usuario = usuariosRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(dto.getUsuarioId()));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         Criptomoedas cripto = criptomoedasRepository.findById(dto.getCriptomoedaId())
-                .orElseThrow(() -> new CriptomoedaNaoEncontradaException(dto.getCriptomoedaId()));
+                .orElseThrow(() -> new RuntimeException("Criptomoeda não encontrada"));
 
         Transacoes t = new Transacoes();
         t.setTipo(dto.getTipo());
