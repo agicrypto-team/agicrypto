@@ -6,6 +6,7 @@ import com.devsdoagi.agicripto.service.TransacoesService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/transacoes")
@@ -28,7 +29,7 @@ public class TransacoesController {
     }
 
     @GetMapping("/{id}")
-    public TransacoesResponseDTO detalhar(@PathVariable Integer id) {
+    public Optional<TransacoesResponseDTO> detalhar(@PathVariable Integer id) {
         return transacoesService.buscarPorId(id);
     }
 
