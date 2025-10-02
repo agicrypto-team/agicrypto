@@ -37,6 +37,7 @@ public class TransacoesService {
         dto.setId(t.getId());
         dto.setTipo(t.getTipo());
         dto.setValor(t.getValor());
+        dto.setQuantidadeCripto(t.getQuantidade_cripto());
         dto.setMomento(t.getMomento());
         dto.setUsuarioId(t.getUsuarios().getId());
         dto.setUsuarioNome(t.getUsuarios().getNome());
@@ -55,7 +56,6 @@ public class TransacoesService {
 
     // Listar transações por usuário
     public List<TransacoesResponseDTO> listarPorUsuario(Integer idUsuario) {
-        // Garante que o usuário exista
         usuariosRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
 
@@ -82,6 +82,7 @@ public class TransacoesService {
         Transacoes t = new Transacoes();
         t.setTipo(dto.getTipo());
         t.setValor(dto.getValor());
+        t.setQuantidade_cripto(dto.getQuantidadeCripto());
         t.setUsuarios(usuario);
         t.setCriptomoeda(cripto);
 

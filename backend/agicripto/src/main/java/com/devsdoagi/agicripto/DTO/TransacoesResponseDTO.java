@@ -8,6 +8,7 @@ public class TransacoesResponseDTO {
     private Integer id;
     private String tipo;
     private BigDecimal valor;
+    private BigDecimal quantidadeCripto;
     private LocalDateTime momento;
     private Integer usuarioId;
     private String usuarioNome;
@@ -37,6 +38,14 @@ public class TransacoesResponseDTO {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public BigDecimal getQuantidadeCripto() {
+        return quantidadeCripto;
+    }
+
+    public void setQuantidadeCripto(BigDecimal quantidadeCripto) {
+        this.quantidadeCripto = quantidadeCripto;
     }
 
     public LocalDateTime getMomento() {
