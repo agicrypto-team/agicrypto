@@ -1,45 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
+
 body {
+  width: 100vw;
+  height: 100vh;
+
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  color: #333;
+  font-family: "ABeeZee", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+  background: #1A00B1;
+  background: linear-gradient(144deg,rgba(26, 0, 177, 1) 0%, rgba(0, 166, 255, 1) 50%);
 }
 
-header {
-  background: #0a3d62;
-  padding: 10px 20px;
+body * {
+  box-sizing: border-box;
 }
 
-header h1 {
-  color: white;
-}
 
-header h1 span {
-  color: #1dd1a1;
-}
-
-nav ul {
-  list-style: none;
+.navbar {
+  margin: 0px 20px 0px 20px;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 20px;
 }
 
-nav ul li a {
-  color: white;
-  text-decoration: none;
+.logo {
+  width: 200px;
+  height: 40px;
 }
 
+.indice {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 0.5%;
+}
+
+.indice ul {
+  color: #fff;
+}
+
+.btn-redirect-login {
+  width: 10%;
+  padding: 8px;
+  border: solid;
+  border-radius: 20px;
+  
+  color: #fff;
+  background: none;
+}
+
+.btn-redirect-login:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Defina o tamanho da fonte para o título principal */
+.titulo-principal {
+    font-size: 3.5rem; /* Ajuste este valor conforme o desejado */
+    font-weight: bold; /* Geralmente títulos grandes têm peso maior */
+    line-height: 1.2; /* Ajuda a espaçar as linhas do texto */
+    color: white; /* Cor padrão do título */
+    margin-bottom: 20px; /* Espaço abaixo do título */
+}
+
+/* Cor de destaque para "sem risco." */
+.destaque-risco {
+    /* Cor que parece um verde/amarelo vibrante na imagem */
+    color: #55FF00; /* Um verde chamativo. Você pode refinar a cor. */
+}
+
+/* Estilo para o subtítulo */
+.subtitulo {
+    font-size: 1.5rem; /* Um tamanho menor que o título */
+    font-weight: 300; /* Mais fino, para contrastar com o título */
+    color: white;
+    margin-top: 0; /* Remove margem superior padrão */
+    margin-bottom: 40px; /* Espaço antes do botão */
+}
+
+/* Ajustes gerais na seção #hero */
 #hero {
-  padding: 60px;
-  text-align: center;
-  background: linear-gradient(to right, #1dd1a1, #48dbfb);
-  color: white;
+    margin: 60px 0px 60px 60px;
+    color: white;
+    /* Para centralizar os itens se necessário no futuro, use flex-direction: column */
+    display: flex;
+    flex-direction: column;
 }
 
-.btn {
-  padding: 10px 20px;
-  background: #0a3d62;
-  color: white;
-  border-radius: 5px;
-  text-decoration: none;
+/* Remova a margem extra que você adicionou, a margem do <h3> já deve dar o espaço necessário */
+#hero > br {
+    display: none;
+}
+
+.titulo-principal {
+    /* Mantenha o estilo de fonte, mas garanta que ele ocupe 100% da largura do #hero */
+  width: 100%;
+}
+
+.subtitulo {
+    /* O texto do subtítulo é quem mais se beneficia do text-align: center */
+  width: 100%; 
+}
+
+.btn-saiba-mais {
+    /* Aparência de botão/link */
+    display: inline-flex; /* Permite alinhar o texto e o ícone */
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px; /* Espaço entre o texto e a seta */
+    text-decoration: none; /* Remove o sublinhado padrão do link */
+
+    /* Estilo da caixa */
+    width: fit-content; /* Ocupa apenas a largura do conteúdo */
+    padding: 20px 40px;
+    border: 2px solid white; /* Borda branca de 2px */
+    border-radius: 25px; /* Bordas arredondadas */
+
+    /* Estilo do texto */
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer; /* Indica que é clicável */
+
+    /* Transição suave para um efeito de hover legal */
+    transition: all 0.3s ease;
+}
+
+.btn-saiba-mais:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Um leve brilho ao passar o mouse */
+}
+
+/* Estilo para a seta */
+.seta {
+    font-size: 0.8rem; /* A seta é um pouco menor */
+    /* Você pode girar a seta se usar uma imagem ou ícone, mas para o caractere Unicode, isso já deve bastar */
 }
