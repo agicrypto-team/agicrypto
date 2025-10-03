@@ -1,16 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
 
 body {
-  width: 100vw;
-  height: 100vh;
+    width: 100vw;
+    min-height: 100vh; 
 
-  margin: 0;
-  font-family: "ABeeZee", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+    margin: 0;
+    font-family: "ABeeZee", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 
-  background: #1A00B1;
-  background: linear-gradient(144deg,rgba(26, 0, 177, 1) 0%, rgba(0, 166, 255, 1) 50%);
+    /* A cor de fundo principal da página agora é BRANCA */
+    background-color: #fff; 
+
 }
 
 body * {
@@ -55,6 +56,22 @@ body * {
 .btn-redirect-login:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+.top-background {
+    width: 100%;
+    min-height: 100vh;
+
+    background: linear-gradient(
+      /*135deg,*/
+      to bottom right,
+      rgba(26, 0, 177, 1) 0%,    /* Azul escuro no canto */
+      rgba(0, 90, 200, 1) 5%,   /* Azul intermediário */
+      rgba(0, 166, 255, 1) 60%,  /* Azul claro ocupa boa parte */
+      rgba(200, 230, 255, 0.6) 85%, /* Azul bem clarinho antes do branco */
+      rgba(255, 255, 255, 1) 100%   /* Transição suave para branco */
+    );
+}
+
 
 /* Defina o tamanho da fonte para o título principal */
 .titulo-principal {
@@ -137,3 +154,190 @@ body * {
     font-size: 0.8rem; /* A seta é um pouco menor */
     /* Você pode girar a seta se usar uma imagem ou ícone, mas para o caractere Unicode, isso já deve bastar */
 }
+
+/* Container que define a largura e o espaçamento da nova seção */
+#quem-somos {
+    width: 100%;
+    /* Adicione um padding substancial para que ele comece a aparecer */
+    padding: 100px 0; 
+    /* Garante que o texto fique centralizado horizontalmente */
+    display: flex;
+    justify-content: center;
+}
+
+/* Container de conteúdo para limitar a largura e usar Flexbox */
+.container-quem-somos {
+    width: 90%;
+    max-width: 1200px; /* Limite a largura para melhor leitura */
+    display: flex;
+    justify-content: space-between; /* Espaça o texto e a área da logo */
+    gap: 50px; /* Espaçamento entre as duas colunas */
+    align-items: center;
+}
+
+.textos-quem-somos {
+    flex: 1; /* Ocupa o espaço restante */
+    max-width: 500px; /* Limita a largura do bloco de texto */
+    color: #fff; /* Use uma cor escura, pois o fundo agora é branco */
+}
+
+/* Estilo para o título "Quem somos nós" */
+.textos-quem-somos h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff; /* Use o azul do seu tema para o título principal */
+    margin-bottom: 20px;
+}
+
+/* O destaque verde para a palavra "somos nós" */
+.destaque-verde {
+    color: #4CAF50; /* A mesma cor verde/amarela usada no destaque "sem risco." */
+}
+
+/* Estilo para os parágrafos */
+.textos-quem-somos p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+#campo-treino {
+    /* Padding para afastar do conteúdo anterior e posterior */
+    padding: 80px 20px; 
+    display: flex;
+    justify-content: center;
+}
+
+.treino-container {
+    width: 100%;
+    max-width: 1200px;
+    text-align: center; /* Centraliza o texto do header */
+}
+
+/* Estilo do Título Principal da Seção */
+.header-treino h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #00A6FF; /* Azul do tema */
+    margin-bottom: 10px;
+}
+
+/* Estilo do Subtítulo */
+.header-treino p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Container dos Cartões (Usando Flexbox para o layout) */
+.card-deck {
+    display: flex;
+    justify-content: space-between; /* Distribui os cartões */
+    align-items: flex-start; /* Alinha no topo */
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* Estilo Base dos Cartões */
+.treino-card {
+    flex: 1; /* Faz com que os 3 cartões tenham a mesma largura */
+    background-color: #007bff; /* Um tom de azul para os cartões */
+    border-radius: 20px;
+    padding: 20px;
+    position: relative; /* Para posicionar o "+" e o conteúdo */
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra para o efeito 3D */
+    transition: transform 0.3s;
+    min-height: 400px; /* Altura mínima para visualização */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para empurrar a descrição para baixo */
+}
+
+.treino-card:hover {
+    transform: translateY(-5px); /* Efeito sutil ao passar o mouse */
+}
+
+/* Ícone de Mais (+) */
+.icone-mais {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white; /* Cor padrão */
+}
+
+.icone-verde {
+    color: #4CAF50; /* Verde para o Cartão 3 */
+}
+
+/* Estilo para os Títulos dentro do Card */
+.card-titulo {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ddd; /* Um cinza claro */
+}
+
+.card-descricao {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* Título em destaque para o cartão 2 */
+.destaque-amarelo {
+    color: #FFC107; /* Amarelo/Dourado para o "lorem ipsum" */
+}
+
+/* --- Mockups dos Elementos Internos --- */
+
+/* Cartão 1: Gráfico */
+.grafico-mock {
+    height: 100px;
+    background: linear-gradient(to bottom, rgba(0, 166, 255, 0.5), #00A6FF);
+    border-radius: 10px;
+    margin-bottom: 30px;
+    /* Linha verde mock - use um pseudo-elemento ou imagem real no futuro */
+}
+
+/* Cartão 2: Moedas */
+.moedas-mock {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: #007bff; /* Fundo mais escuro/sólido, como no exemplo */
+    border-radius: 10px;
+    margin-bottom: 20px;
+    /* Você pode adicionar o padrão de fundo com um background-image no futuro */
+}
+
+.moedas-info {
+    position: absolute;
+    bottom: 5px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+/* Cartão 3: Preço */
+.preco-mock {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.1); /* Um fundo sutil */
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+
