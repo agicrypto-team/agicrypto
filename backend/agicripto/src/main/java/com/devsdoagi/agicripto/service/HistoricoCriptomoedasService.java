@@ -1,6 +1,7 @@
 package com.devsdoagi.agicripto.service;
 
 
+import com.devsdoagi.agicripto.exception.historicoCriptomoedas.HistoricoCriptomoedaNaoEncontradoException;
 import com.devsdoagi.agicripto.model.HistoricoCriptomoedas;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
 import com.devsdoagi.agicripto.repository.HistoricoCriptomoedasRepository;
@@ -18,9 +19,10 @@ public class HistoricoCriptomoedasService {
     private final HistoricoCriptomoedasRepository historicoCriptomoedasRepository;
     private final CriptomoedasService criptomoedasService;
 
-//    public List<HistoricoCriptomoedas> listarPorCripto(Integer idCripto) {
-//        return historicoCriptomoedasRepository.encontrarPorCriptomoedasID(idCripto);
-//    }
+    public HistoricoCriptomoedas buscarPorId(Integer id) {
+        return historicoCriptomoedasRepository.findById(id)
+                .orElseThrow(() -> new HistoricoCriptomoedaNaoEncontradoException(id));
+    }
 
 
 }
