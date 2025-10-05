@@ -1,15 +1,14 @@
 package com.devsdoagi.agicripto.model;
 
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Data
 @NoArgsConstructor
