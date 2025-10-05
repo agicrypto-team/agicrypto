@@ -168,6 +168,54 @@ public class CriptomoedasService {
         }
     }
 
+    public BigDecimal buscarCotacaoEmBRL(String nomeCriptomoeda) {
+        String nomeParaBusca = nomeCriptomoeda.toLowerCase().replace("\\s+", "-");
+
+        try {
+            String jsonResponse = getCryptoDetails(nomeParaBusca);
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            JsonNode usdPriceNode = rootNode
+                    .path("market_data")
+                    .path("current_price")
+                    .path("usd");
+
+            BigDecimal cotacaoUsd = null;
+            if (usdPriceNode.isNumber()) {
+                cotacaoUsd = usdPriceNode.decimalValue();
+            }
+
+            if (cotacaoUsd == null) {
+                throw new RuntimeException("Cotação USD não encontrada para: " + nomeCriptomoeda);
+            }
+
+            String urlExchange = baseUrl + "exchange_rates";
+            String exchangeResponse = restTemplate.getForObject(urlExchange, String.class);
+            JsonNode exchangeRoot = objectMapper.readTree(exchangeResponse);
+
+            JsonNode brlRateNode = exchangeRoot
+                    .path("rates")
+                    .path("brl")
+                    .path("value");
+
+            BigDecimal taxaCambio = null;
+            if (brlRateNode.isNumber()) {
+                taxaCambio = brlRateNode.decimalValue();
+            }
+
+            if (taxaCambio == null) {
+                System.err.println("Taxa BRL não encontrada, retornando em USD.");
+                taxaCambio = BigDecimal.ONE;
+            }
+
+            return cotacaoUsd.multiply(taxaCambio);
+
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar cotação BRL para " + nomeCriptomoeda + ": " + e.getMessage());
+            return BigDecimal.ZERO;
+        }
+    }
+
 
 //    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {
 //        if (request.id_responsavel() == null) {
