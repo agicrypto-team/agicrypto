@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import com.devsdoagi.agicripto.exception.criptomoedas.DadosInvalidosException;
+import com.devsdoagi.agicripto.exception.criptomoedas.ResponsavelNaoEncontradoException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.devsdoagi.agicripto.exception.criptomoedas.CriptomoedaJaCadastradaException;
 
 @Service
 public class CriptomoedasService {
@@ -79,12 +82,19 @@ public class CriptomoedasService {
 
     @Transactional // Garante que a criação da Criptomoeda e do Historico sejam atômicas.
     public CriptomoedasResponseDTO cadastrar(CriptomoedasRequestDTO request) {
+
+        Optional<Criptomoedas> existing = criptomoedasRepository.findBySigla(request.sigla());
+
+        if (existing.isPresent()) {
+            throw new CriptomoedaJaCadastradaException(request.sigla());
+        }
+
         if (request.id_responsavel() == null) {
-            throw new IllegalArgumentException("id_responsavel não pode ser nulo");
+            throw new DadosInvalidosException("id_responsavel não pode ser nulo");
         }
 
         Usuarios responsavel = usuariosRepository.findById(request.id_responsavel())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResponsavelNaoEncontradoException(request.id_responsavel()));
 
         Criptomoedas criptomoeda = new Criptomoedas();
 
@@ -99,10 +109,7 @@ public class CriptomoedasService {
             criptomoeda = criptomoedasRepository.save(criptomoeda);
 
             salvarCotacaoInicial(criptomoeda);
-
-
         }
-
         return new CriptomoedasResponseDTO(criptomoeda);
     }
 
