@@ -3,6 +3,7 @@ package com.devsdoagi.agicripto.DTO;
 
 public class CarteiraRequestDTO {
 
+
     private Integer idCliente;
 
     public CarteiraRequestDTO() {
