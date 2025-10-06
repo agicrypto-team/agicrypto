@@ -25,7 +25,6 @@ public class CriptomoedasController {
         // Chama o novo metodo do Service que já converte para DTO
         return criptomoedasService.findAllDto();
     }
-
     // Endpoint para buscar uma criptomoeda por ID.
     // URL: GET /api/criptomoedas/{id}
     @GetMapping("/{id}")
@@ -38,9 +37,7 @@ public class CriptomoedasController {
     public ResponseEntity<CriptomoedasResponseDTO> create(@RequestBody CriptomoedasRequestDTO request) {
         // Chama o Service que agora recebe o DTO de Request
         CriptomoedasResponseDTO response = criptomoedasService.cadastrar(request);
-
         return ResponseEntity.ok(response);
-
     }
 
 }

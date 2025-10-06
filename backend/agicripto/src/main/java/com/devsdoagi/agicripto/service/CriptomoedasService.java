@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import com.devsdoagi.agicripto.exception.criptomoedas.DadosInvalidosException;
+import com.devsdoagi.agicripto.exception.criptomoedas.ResponsavelNaoEncontradoException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.devsdoagi.agicripto.exception.criptomoedas.CriptomoedaJaCadastradaException;
 
 @Service
 public class CriptomoedasService {
@@ -79,12 +82,19 @@ public class CriptomoedasService {
 
     @Transactional // Garante que a criação da Criptomoeda e do Historico sejam atômicas.
     public CriptomoedasResponseDTO cadastrar(CriptomoedasRequestDTO request) {
+
+        Optional<Criptomoedas> existing = criptomoedasRepository.findBySigla(request.sigla());
+
+        if (existing.isPresent()) {
+            throw new CriptomoedaJaCadastradaException(request.sigla());
+        }
+
         if (request.id_responsavel() == null) {
-            throw new IllegalArgumentException("id_responsavel não pode ser nulo");
+            throw new DadosInvalidosException("id_responsavel não pode ser nulo");
         }
 
         Usuarios responsavel = usuariosRepository.findById(request.id_responsavel())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResponsavelNaoEncontradoException(request.id_responsavel()));
 
         Criptomoedas criptomoeda = new Criptomoedas();
 
@@ -99,10 +109,7 @@ public class CriptomoedasService {
             criptomoeda = criptomoedasRepository.save(criptomoeda);
 
             salvarCotacaoInicial(criptomoeda);
-
-
         }
-
         return new CriptomoedasResponseDTO(criptomoeda);
     }
 
@@ -111,7 +118,6 @@ public class CriptomoedasService {
 
         try {
             String jsonResponse = getCryptoDetails(nomeParaBusca);
-
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
 
             JsonNode usdPriceNode = rootNode
@@ -119,29 +125,101 @@ public class CriptomoedasService {
                     .path("current_price")
                     .path("usd");
 
-            BigDecimal cotacao = null;
-            if(usdPriceNode.isNumber()) {
-                cotacao = usdPriceNode.decimalValue();
+            BigDecimal cotacaoUsd = null;
+            if (usdPriceNode.isNumber()) {
+                cotacaoUsd = usdPriceNode.decimalValue();
             }
 
-            if (cotacao == null) {
+            if (cotacaoUsd == null) {
                 System.err.println("AVISO: Cotação USD não encontrada na resposta da API para: " + criptomoeda.getNome());
-
                 return;
             }
 
+            String urlExchange = baseUrl + "exchange_rates";
+            String exchangeResponse = restTemplate.getForObject(urlExchange, String.class);
+            JsonNode exchangeRoot = objectMapper.readTree(exchangeResponse);
+
+            JsonNode brlRateNode = exchangeRoot
+                    .path("rates")
+                    .path("brl")
+                    .path("value");
+
+            BigDecimal taxaCambio = null;
+            if (brlRateNode.isNumber()) {
+                taxaCambio = brlRateNode.decimalValue();
+            }
+
+            if (taxaCambio == null) {
+                System.err.println("AVISO: Taxa de câmbio BRL não encontrada. Salvando em USD como fallback.");
+                taxaCambio = BigDecimal.ONE;
+            }
+
+            BigDecimal cotacaoBrl = cotacaoUsd.multiply(taxaCambio);
+
             HistoricoCriptomoedas historico = new HistoricoCriptomoedas();
             historico.setCriptomoedas(criptomoeda);
-            historico.setCotacao_momento(cotacao);
+            historico.setCotacao_momento(cotacaoBrl);
             historico.setMomento(LocalDateTime.now());
 
             historicoCriptomoedasRepository.save(historico);
+
+            System.out.println("✅ Cotação inicial salva com sucesso em BRL para: "
+                    + criptomoeda.getNome() + " | Valor: R$" + cotacaoBrl);
+
         } catch (RestClientException e) {
-            // Erros de chamada HTTP (ex: 404 Not Found, 500 Internal Server Error)
-            System.err.println("ERRO: Falha ao chamar a API CoinGecko para " + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
+            System.err.println("ERRO: Falha ao chamar a API CoinGecko para "
+                    + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
         } catch (IOException e) {
-            // Erros de parse do JSON
-            System.err.println("ERRO: Falha ao processar a resposta da API para " + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
+            System.err.println("ERRO: Falha ao processar a resposta da API para "
+                    + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
+        }
+    }
+
+    public BigDecimal buscarCotacaoEmBRL(String nomeCriptomoeda) {
+        String nomeParaBusca = nomeCriptomoeda.toLowerCase().replace("\\s+", "-");
+
+        try {
+            String jsonResponse = getCryptoDetails(nomeParaBusca);
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            JsonNode usdPriceNode = rootNode
+                    .path("market_data")
+                    .path("current_price")
+                    .path("usd");
+
+            BigDecimal cotacaoUsd = null;
+            if (usdPriceNode.isNumber()) {
+                cotacaoUsd = usdPriceNode.decimalValue();
+            }
+
+            if (cotacaoUsd == null) {
+                throw new RuntimeException("Cotação USD não encontrada para: " + nomeCriptomoeda);
+            }
+
+            String urlExchange = baseUrl + "exchange_rates";
+            String exchangeResponse = restTemplate.getForObject(urlExchange, String.class);
+            JsonNode exchangeRoot = objectMapper.readTree(exchangeResponse);
+
+            JsonNode brlRateNode = exchangeRoot
+                    .path("rates")
+                    .path("brl")
+                    .path("value");
+
+            BigDecimal taxaCambio = null;
+            if (brlRateNode.isNumber()) {
+                taxaCambio = brlRateNode.decimalValue();
+            }
+
+            if (taxaCambio == null) {
+                System.err.println("Taxa BRL não encontrada, retornando em USD.");
+                taxaCambio = BigDecimal.ONE;
+            }
+
+            return cotacaoUsd.multiply(taxaCambio);
+
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar cotação BRL para " + nomeCriptomoeda + ": " + e.getMessage());
+            return BigDecimal.ZERO;
         }
     }
 
