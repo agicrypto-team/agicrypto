@@ -1,5 +1,6 @@
 package com.devsdoagi.agicripto.DTO;
 
+import com.devsdoagi.agicripto.DTO.usuarios.UsuariosResponseDTO;
 import com.devsdoagi.agicripto.model.Criptomoedas;
 
 // Record para o objeto de resposta da Criptomoeda.
