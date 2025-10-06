@@ -96,7 +96,11 @@ public class UsuariosService {
 
         Usuarios usuario = usuarioRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new AutenticacaoException("E-mail ou senha inválidos."));
 
-        if (!passwordEncoder.matches(loginRequest.senha(), usuario.getSenha())) {
+        /*if (!passwordEncoder.matches(loginRequest.senha(), usuario.getSenha())) {
+            throw new AutenticacaoException("E-mail ou senha inválidos.");
+        }*/
+
+        if (!loginRequest.senha().equals(usuario.getSenha())) {
             throw new AutenticacaoException("E-mail ou senha inválidos.");
         }
 
