@@ -104,7 +104,7 @@ public class UsuariosService {
 
     }
 
-    public Usuarios buscarPorId(Integer userId) {
+    public Usuarios buscarUsuarioPorId(Integer userId) {
 
         return usuarioRepository.findById(userId).orElseThrow(() -> new AutenticacaoException("Usuário não cadastrado com o ID: " + userId));
 

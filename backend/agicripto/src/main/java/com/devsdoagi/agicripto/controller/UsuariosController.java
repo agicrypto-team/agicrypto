@@ -2,7 +2,6 @@ package com.devsdoagi.agicripto.controller;
 
 import com.devsdoagi.agicripto.DTO.usuarios.CadastroUsuariosRequestDTO;
 import com.devsdoagi.agicripto.DTO.usuarios.LoginRequestDTO;
-import com.devsdoagi.agicripto.DTO.usuarios.LoginStatusResponseDTO;
 import com.devsdoagi.agicripto.exception.usuarios.AutenticacaoException;
 import com.devsdoagi.agicripto.model.Usuarios;
 import com.devsdoagi.agicripto.DTO.usuarios.UsuariosResponseDTO;
@@ -27,8 +26,8 @@ public class UsuariosController {
         this.usuarioService = usuarioService;
 
     }
-    // Método privado (para uso somente na própria classe UsuariosController) utilitário para checar a validade da sessão do usuário, e obter o seu ID
-    // Este método que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
+    // Metodo privado (para uso somente na própria classe UsuariosController) utilitário para checar a validade da sessão do usuário, e obter o seu ID
+    // Este metodo que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
     private Integer checarSessaoEObterIdUsuario(HttpSession session) {
 
         if (session == null || session.getAttribute("LOGADO") == null || !(Boolean) session.getAttribute("LOGADO")) {
@@ -119,15 +118,22 @@ public class UsuariosController {
     }
 
     /*
-
     // Admin deleta o perfil do cliente
     @DeleteMapping("/cliente")
     public ResponseEntity<Void> adminDeletarCliente(HttpSession session) {}
+    */
 
     @GetMapping("/me")
-    public ResponseEntity<UsuariosResponseDTO> obterDadosUsuario(HttpSession session) {}
+    public ResponseEntity<UsuariosResponseDTO> obterDadosUsuario(HttpSession session) {
 
-     */
+        Integer userId = checarSessaoEObterIdUsuario(session);
+        Usuarios usuario = usuarioService.buscarUsuarioPorId(userId);
+
+        return ResponseEntity.ok(new UsuariosResponseDTO(usuario));
+
+    }
+
+
 
 
 }

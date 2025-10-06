@@ -1,0 +1,108 @@
+/* Configurações Globais e Fontes */
+body {
+    font-family: 'Poppins', sans-serif;
+    overflow-y: hidden; /* Previne scroll vertical na página inteira */
+}
+
+/* Coluna da Esquerda */
+.left-column {
+    background: linear-gradient(180deg, #002D9C 0%, #0056D9 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-img {
+    max-width: 200px; /* Ajuste este valor conforme desejar o tamanho máximo da logo */
+    height: auto; /* Mantém a proporção */
+}
+
+.header-text {
+    z-index: 2; /* Garante que o texto fique na frente das barras */
+}
+
+.highlight-green {
+    color: #4CAF50; /* Um tom de verde similar ao da imagem */
+    font-weight: 600;
+}
+
+/* Gráfico de Barras */
+.bar-chart {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.bar {
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.bar-1 { height: 15%; width: 14.28%; left: 0; }
+.bar-2 { height: 30%; width: 14.28%; left: 14.28%; }
+.bar-3 { height: 45%; width: 14.28%; left: 28.56%; }
+.bar-4 { height: 60%; width: 14.28%; left: 42.84%; }
+.bar-5 { height: 75%; width: 14.28%; left: 57.12%; }
+.bar-6 { height: 90%; width: 14.28%; left: 71.4%; }
+.bar-7 { height: 100%; width: 14.28%; left: 85.68%; }
+
+
+/* Coluna da Direita */
+.login-container {
+    max-width: 450px;
+    width: 100%;
+}
+
+.welcome-text,
+.login-title,
+.form-label,
+.form-check-label {
+    color: #002D9C;
+    font-weight: 600;
+}
+
+.card {
+    border-radius: 1.5rem !important;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #0056D9;
+    box-shadow: 0 0 0 0.25rem rgba(0, 86, 217, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: #002D9C;
+    border-color: #002D9C;
+}
+
+/* Botão de Login Personalizado */
+.btn-login {
+    background: #002D9C;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background: #003aae;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 45, 156, 0.3);
+}
+
+/* === A MUDANÇA ESTÁ AQUI === */
+.btn-login .arrow {
+    /* Todas as propriedades que criavam o círculo foram removidas. */
+    font-size: 1.2rem;
+}
