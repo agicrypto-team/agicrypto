@@ -1,0 +1,255 @@
+:root {
+  --primary: #0064F5;
+  --secondary: #55FF00;
+  --text-dark: #0b3c40;
+  --bg-light: #f6f8f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* --- NOVA REGRA CRUCIAL: ESTICA A BARRA AZUL --- */
+.top-bar-wrapper {
+    width: 100%;
+    background-color: #007bff; /* Ou a variável do seu azul */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Adiciona a sombra da barra superior */
+    /* Remove a borda inferior do header interno, se existir */
+}
+
+/* Ajuste o HEADER para usar o espaço disponível na barra */
+.header {
+    /* Remove as margens ou paddings que possam estar centralizando */
+    padding: 15px 0;
+    margin: 0;
+    border-bottom: none; /* Remove a linha cinza de baixo */
+}
+
+/* O container interno mantém a largura máxima e centraliza o conteúdo */
+.container {
+    /* (Mantenha as regras existentes de max-width e margin: 0 auto;) */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px; /* Adiciona um padding nas laterais para que o conteúdo não encoste na borda do navegador */
+}
+
+/* Garante que o logo e o botão Sair fiquem brancos */
+.logo, .btn-logout {
+    color: white !important; /* Força a cor branca */
+}
+
+/* Adicione estas regras ao seu homeAdmin.css */
+.form-grid {
+    display: flex; /* Mudamos para flex para melhor alinhamento horizontal */
+    gap: 20px;
+    align-items: flex-end; /* Alinha todos os itens pela base */
+    flex-wrap: wrap;
+}
+
+.form-grid .input-group {
+    flex: 1 1 25%; /* Faz com que cada input ocupe cerca de 25% */
+}
+
+.form-grid .form-action-button {
+    /* Garante que o botão use apenas o espaço necessário e alinhe */
+    flex-basis: 200px; /* Largura fixa para o botão */
+}
+
+/* O botão precisa de largura total dentro do seu contêiner */
+.form-action-button .btn-primary {
+    width: 100%;
+}
+
+/* Corrigindo a exibição vertical do label e input */
+.form-grid .input-group {
+    /* Essencial: transforma o grupo em um container vertical */
+    display: flex;
+    flex-direction: column;
+    /* Define uma largura base para que a linha funcione */
+    flex-basis: 250px;
+}
+
+/* Corrigindo o layout horizontal da linha principal */
+.form-grid {
+    display: flex;
+    gap: 20px;
+    /* Alinha o botão pela base dos inputs */
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+/* Estilo do Input */
+.input-group input[type="text"] {
+    height: 40px; /* Altura padrão */
+}
+
+/* Garante que o botão tenha a mesma altura dos inputs */
+.form-action-button {
+    flex-basis: 200px; /* Largura para o botão */
+    height: 40px; /* Altura para alinhamento */
+}
+
+.form-action-button .btn-primary {
+    width: 100%;
+    height: 100%;
+    /* Remove a margem superior que pode ter sido herdada */
+    margin-top: 0;
+}
+.container {
+  width: 92%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 0;
+}
+/* Top nav */
+.top-nav {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+.nav-inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 14px 0;
+}
+.logo {
+  font-weight:700;
+  font-size:26px;
+  color:#fff;
+  text-decoration:none;
+  letter-spacing:0.4px;
+}
+.logo span { color: var(--secondary); font-weight:700; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Greeting */
+.greeting h1 {
+  font-size:34px;
+  margin: 22px 0;
+  color: var(--primary);
+}
+.username { color: var(--primary); }
+
+.logo {
+ font-weight:700;
+  font-size:26px;
+  color:#fff;
+  text-decoration:none;
+  letter-spacing:0.4px;
+}
+.logo span {
+  color: var(--secondary); font-weight:700;
+}
+
+.btn-logout:hover {
+  background: #fff;
+  color: var(--primary);
+}
+
+.btn-logout {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.card {
+  background: #fff;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.form-box input {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-delete {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Estilo dos Inputs - Alteração principal */
+.input-group input[type="text"],
+.input-group input[type="url"] {
+    /* Aumenta o padding vertical para dar mais altura ao campo */
+    padding: 12px 15px;
+    /* Arredondamento das bordas */
+    border-radius: 8px;
+    /* Borda e Fundo */
+    border: 1px solid #ccc;
+    background-color: #fcfcfc;
+    width: 100%;
+    font-size: 16px;
+    /* Aumenta a altura mínima para o input-group */
+    min-height: 40px;
+}
+
+
+/* Ajuste no botão primário para ele ter a mesma altura dos novos inputs */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    /* Define a altura do botão igual à altura do input */
+    height: 40px;
+    border: none;
+    border-radius: 8px; /* Mesmo arredondamento do input */
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    /* Removido padding para deixar a altura ser controlada pelo height */
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agi Cripto - Admin</title>
+    <link rel="stylesheet" href="../css/homeAdmin.css">
+</head>
+<body>
+<header class="top-nav">
+    <div class="container nav-inner">
+        <a class="logo" href="#">agi<span>cripto</span></a>
+        <nav class="nav-right">
+            <button class="btn-logout">Sair</button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="greeting">
+        <h1>Olá, <span class="username">Username</span>!</h1>
+    </section>
+
+    <h2 class="page-title">Gerenciamento de Criptomoedas</h2>
+
+    <section class="card form-section">
+        <h3 class="section-subtitle">Cadastrar Nova Criptomoeda</h3>
+
+        <form id="cadastro-form" class="form-grid">
+
+            <div class="input-group">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" placeholder="Nome" required>
+            </div>
+
+            <div class="input-group">
+                <label for="sigla">Sigla</label>
+                <input type="text" id="sigla" name="sigla" placeholder="Sigla" required>
+            </div>
+
+            <div class="input-group">
+                <label for="linkImagem">Link da Imagem</label>
+                <input type="text" id="linkImagem" name="linkImagem" placeholder="Link da Imagem" required>
+            </div>
+
+            <div class="form-action-button">
+                <input type="hidden" id="idResponsavel" name="idResponsavel" value="1">
+                <button type="submit" class="btn btn-primary">Adicionar Criptomoeda</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card table-section">
+        <h3 class="section-subtitle">Criptomoedas Cadastradas</h3>
+        <table id="cripto-table">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Sigla</th>
+                <th>Link da Imagem</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Bitcoin</td>
+                <td>BTC</td>
+                <td>https://bitcoin.org</td>
+                <td><button class="btn-delete acao-delete">Excluir</button></td>
+            </tr>
+            <tr>
+                <td>Ethereum</td>
+                <td>ETH</td>
+                <td>https://ethereum.org</td>
+                <td><button class="btn-delete acao-delete">Excluir</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
