@@ -1,11 +1,13 @@
-package com.devsdoagi.agicripto.DTO;
+package com.devsdoagi.agicripto.DTO.usuarios;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
-public record UsuariosRequestDTO (
+@Builder
+public record CadastroUsuariosRequestDTO (
 
         @NotBlank(message = "Obrigatório fornecer o cpf")
         @Size(min = 11, max = 11, message = "O cpf deve ser composto por 11 dígitos")

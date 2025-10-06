@@ -1,9 +1,14 @@
 package com.devsdoagi.agicripto.controller;
 
+import com.devsdoagi.agicripto.DTO.usuarios.CadastroUsuariosRequestDTO;
+import com.devsdoagi.agicripto.DTO.usuarios.LoginRequestDTO;
+import com.devsdoagi.agicripto.DTO.usuarios.LoginStatusResponseDTO;
+import com.devsdoagi.agicripto.exception.usuarios.AutenticacaoException;
 import com.devsdoagi.agicripto.model.Usuarios;
-import com.devsdoagi.agicripto.DTO.UsuariosResponseDTO;
-
+import com.devsdoagi.agicripto.DTO.usuarios.UsuariosResponseDTO;
 import com.devsdoagi.agicripto.service.UsuariosService;
+
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +23,73 @@ public class UsuariosController {
     private final UsuariosService usuarioService;
 
     public UsuariosController(UsuariosService usuarioService) {
+
         this.usuarioService = usuarioService;
+
+    }
+    // Método privado (para uso somente na própria classe UsuariosController) utilitário para checar a validade da sessão do usuário, e obter o seu ID
+    // Este método que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
+    private Integer checarSessaoEObterIdUsuario(HttpSession session) {
+
+        if (session == null || session.getAttribute("LOGADO") == null || !(Boolean) session.getAttribute("LOGADO")) {
+
+            throw new AutenticacaoException("Acesso negado. Usuário não autenticado ou sessão expirada.");
+
+        }
+
+        return (Integer) session.getAttribute("USUARIO_ID");
+
     }
 
-    // Cadastra novo usuário
-    @PostMapping
-    public ResponseEntity<UsuariosResponseDTO> cadastrarUsuario(@Valid @RequestBody Usuarios usuario) {
+    // Cadastra novo cliente
+    @PostMapping("/cliente")
+    public ResponseEntity<UsuariosResponseDTO> cadastrarCliente(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
 
-        usuarioService.cadastrar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuario));
+        Usuarios usuarioCadastrado = usuarioService.cadastrarCliente(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuarioCadastrado));
+
+    }
+
+    // Cadastra novo admin
+    @PostMapping("/admin")
+    public ResponseEntity<UsuariosResponseDTO> cadastrarAdmin(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
+
+        Usuarios usuarioCadastrado = usuarioService.cadastrarAdmin(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuarioCadastrado));
+
+    }
+
+    // Autentica um usuário
+    @PostMapping("/login")
+    public ResponseEntity<UsuariosResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpSession session) {
+
+        Usuarios usuarioAutenticado = usuarioService.autenticar(loginRequest);
+
+        session.setAttribute("USUARIO_ID", usuarioAutenticado.getId());
+        session.setAttribute("LOGADO", true);
+
+        return ResponseEntity.ok(new UsuariosResponseDTO(usuarioAutenticado));
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
 
     // Lista todos os clientes (rota para uso interno/admin)
     @GetMapping("/clientes")
-    public ResponseEntity<List<UsuariosResponseDTO>> listarClientes() {
+    public ResponseEntity<List<UsuariosResponseDTO>> listarClientes(HttpSession session) {
 
+
+        Integer userId = checarSessaoEObterIdUsuario(session);
+        usuarioService.validarUsuarioAdmin(userId);
         List<UsuariosResponseDTO> listaClientesDTO = usuarioService.listarClientes().stream().map(UsuariosResponseDTO::new).toList();
         return ResponseEntity.ok(listaClientesDTO);
 
@@ -41,32 +97,37 @@ public class UsuariosController {
 
     // Lista todos os administradores (rota para uso interno/admin)
     @GetMapping("/admins")
-    public ResponseEntity<List<UsuariosResponseDTO>> listarAdmins() {
+    public ResponseEntity<List<UsuariosResponseDTO>> listarAdmins(HttpSession session) {
 
+        Integer userId = checarSessaoEObterIdUsuario(session);
+        usuarioService.validarUsuarioAdmin(userId);
         List<UsuariosResponseDTO> listaAdminsDTO = usuarioService.listarAdmins().stream().map(UsuariosResponseDTO::new).toList();
         return ResponseEntity.ok(listaAdminsDTO);
 
     }
+
+
+    // Cliente deleta o seu próprio perfil
+    @DeleteMapping("/cliente/me")
+    public ResponseEntity<Void> autoDeletarPerfilCliente(HttpSession session) {
+
+        Integer userId = checarSessaoEObterIdUsuario(session);
+        usuarioService.autoDeletarPerfilCliente(userId);
+        session.invalidate();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+    }
+
     /*
-    // Atualiza um usuário existente
-    // A melhor forma é atualizar pelo id?
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuarios> atualizarUsuario(@PathVariable Integer id, @Valid @RequestBody Usuarios usuario) {}
 
-    // Busca um usuário por ID
-    // A melhor forma é buscar pelo id?
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuarios> buscarUsuarioPorId(@PathVariable Integer id) {}
+    // Admin deleta o perfil do cliente
+    @DeleteMapping("/cliente")
+    public ResponseEntity<Void> adminDeletarCliente(HttpSession session) {}
 
-    // Deleta um usuário
-    // A melhor forma é deletar pelo id?
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarUsuario(@PathVariable Integer id) {}
+    @GetMapping("/me")
+    public ResponseEntity<UsuariosResponseDTO> obterDadosUsuario(HttpSession session) {}
 
-    // Autentica um usuário
-    @PostMapping("/login")
-    public ResponseEntity<?> autenticarUsuario(@RequestBody LoginRequest loginRequest) {}
+     */
 
 
-    */
 }

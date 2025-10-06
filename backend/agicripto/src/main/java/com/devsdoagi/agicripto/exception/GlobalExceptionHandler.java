@@ -1,31 +1,39 @@
 package com.devsdoagi.agicripto.exception;
 
-import com.devsdoagi.agicripto.DTO.ApiError;
-import com.devsdoagi.agicripto.exception.ExistingUserException;
+import com.devsdoagi.agicripto.exception.usuarios.ExistingUserException;
+import com.devsdoagi.agicripto.exception.usuarios.AutenticacaoException;
+import com.devsdoagi.agicripto.exception.usuarios.PermissaoDeUsuarioException;
+import com.devsdoagi.agicripto.exception.usuarios.NotExistingUserException;
 import com.devsdoagi.agicripto.exception.historicoCriptomoedas.HistoricoCriptomoedaNaoEncontradoException;
-import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.LocalDateTime;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ExistingUserException.class)
-    public ResponseEntity<String> handleExistingUserException(ExistingUserException ex) {
+    public ResponseEntity<String> handleExistingUserException(com.devsdoagi.agicripto.exception.usuarios.ExistingUserException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    /*
+
     @ExceptionHandler(AutenticacaoException.class)
     public ResponseEntity<String> handleAutenticacaoException(AutenticacaoException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
-    */
+    @ExceptionHandler(PermissaoDeUsuarioException.class)
+    public ResponseEntity<String> handlePermissaoDeUsuarioException(PermissaoDeUsuarioException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotExistingUserException.class)
+    public ResponseEntity<String> handleNotExistingUserException(NotExistingUserException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
 
     /* Handlers referentes a HistoricoCriptomoedas */
 
