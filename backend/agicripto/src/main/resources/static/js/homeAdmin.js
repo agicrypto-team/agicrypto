@@ -5,11 +5,6 @@ async function carregarUsuarioAdmin() {
   const usernameEl = document.querySelector(".username");
   if (!usernameEl) return;
 
-  // 🔸 Exibe nome armazenado, se existir
-  const nomeSalvo = sessionStorage.getItem("usuarioNome");
-  if (nomeSalvo) {
-    usernameEl.textContent = nomeSalvo;
-  }
 
   try {
     const response = await fetch(`${API_BASE_URL}/eu`, {
@@ -17,12 +12,21 @@ async function carregarUsuarioAdmin() {
       credentials: "same-origin",
     });
 
+    console.log("Status ao buscar /eu:", response.status);
+
     if (response.ok) {
       const usuario = await response.json();
+      console.log("Usuário logado:", usuario);
+
       usernameEl.textContent = usuario.nome;
       usernameEl.classList.remove("loading");
+
+      // 🔹 Atualiza sessionStorage
+      sessionStorage.setItem("usuarioNome", usuario.nome);
+      sessionStorage.setItem("usuarioTipo", usuario.tipo);
     } else {
-      usernameEl.textContent = "Administrador";
+        console.error("Erro ao carregar dados do usuário:", response.status);
+        usernameEl.textContent = "Administrador";
     }
 
   } catch (error) {
@@ -33,5 +37,26 @@ async function carregarUsuarioAdmin() {
   }
 }
 
+// 🔹 Função para logout
+async function realizarLogout() {
+  try {
+    await fetch(`${API_BASE_URL}/logout`, {
+      method: "POST",
+      credentials: "same-origin",
+    });
+  } catch (error) {
+    console.error("Erro ao realizar logout:", error);
+  } finally {
+    sessionStorage.clear();
+    window.location.replace("/pages/auth/login.html");
+  }
+}
+
 // 🔹 Função de inicialização
-window.addEventListener("DOMContentLoaded", carregarUsuarioAdmin);
+window.addEventListener("DOMContentLoaded", () => {
+    carregarUsuarioAdmin();
+
+    const logoutBtn = document.querySelector(".btn-logout");
+    if (logoutBtn) logoutBtn.addEventListener("click", realizarLogout);
+});
+
