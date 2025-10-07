@@ -39,25 +39,7 @@ public class UsuariosController {
 
     }
 
-    // Cadastra novo cliente
-    @PostMapping("/cliente")
-    public ResponseEntity<UsuariosResponseDTO> cadastrarCliente(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
-
-        Usuarios usuarioCadastrado = usuarioService.cadastrarCliente(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuarioCadastrado));
-
-    }
-
-    // Cadastra novo admin
-    @PostMapping("/admin")
-    public ResponseEntity<UsuariosResponseDTO> cadastrarAdmin(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
-
-        Usuarios usuarioCadastrado = usuarioService.cadastrarAdmin(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuarioCadastrado));
-
-    }
-
-    // login já existente (você já tem algo similar)
+    /* ROTAS REFERENTES AO LOGIN */
     @PostMapping("/login")
     public ResponseEntity<UsuariosResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpSession session) {
         Usuarios usuario = usuarioService.autenticar(loginRequest);
@@ -97,6 +79,28 @@ public class UsuariosController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
+
+    /* ROTAS REFERENTE A CADASTRO */
+
+    // Cadastra novo cliente
+    @PostMapping("/cliente")
+    public ResponseEntity<UsuariosResponseDTO> cadastrarCliente(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
+
+        Usuarios usuarioCadastrado = usuarioService.cadastrarCliente(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuarioCadastrado));
+
+    }
+
+    // Cadastra novo admin
+    @PostMapping("/admin")
+    public ResponseEntity<UsuariosResponseDTO> cadastrarAdmin(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
+
+        Usuarios usuarioCadastrado = usuarioService.cadastrarAdmin(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuariosResponseDTO(usuarioCadastrado));
+
+    }
+
+    /* ROTAS INTERNAS PARA NÍVEL ADMIN */
 
     // Lista todos os clientes (rota para uso interno/admin)
     @GetMapping("/clientes")
@@ -139,7 +143,7 @@ public class UsuariosController {
     public ResponseEntity<Void> adminDeletarCliente(HttpSession session) {}
     */
 
-    @GetMapping("/me")
+    @GetMapping("/eu")
     public ResponseEntity<UsuariosResponseDTO> obterDadosUsuario(HttpSession session) {
 
         Integer userId = checarSessaoEObterIdUsuario(session);
