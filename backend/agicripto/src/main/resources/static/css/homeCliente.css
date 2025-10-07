@@ -303,3 +303,19 @@ body {
   }
   .equivalencia-group .btn-send { width:100%; justify-content:center; }
 }
+
+/* loading */
+.loading {
+  display: inline-block;
+  color: transparent;
+  background: linear-gradient(100deg, #ddd 40%, #eee 50%, #ddd 60%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 200px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
