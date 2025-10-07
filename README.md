@@ -1,4 +1,4 @@
-# AgiCrypto
+# AgiCripto2.0
 
 Projeto de plataforma **web responsiva de carteira de criptomoedas**, desenvolvido como exemplo para estudo e apresentação de arquitetura monorepo.
 
