@@ -22,10 +22,9 @@ public class UsuariosController {
     private final UsuariosService usuarioService;
 
     public UsuariosController(UsuariosService usuarioService) {
-
         this.usuarioService = usuarioService;
-
     }
+
     // Metodo privado (para uso somente na própria classe UsuariosController) utilitário para checar a validade da sessão do usuário, e obter o seu ID
     // Este metodo que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
     private Integer checarSessaoEObterIdUsuario(HttpSession session) {
@@ -58,18 +57,35 @@ public class UsuariosController {
 
     }
 
-    // Autentica um usuário
+    // login já existente (você já tem algo similar)
     @PostMapping("/login")
     public ResponseEntity<UsuariosResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpSession session) {
+        Usuarios usuario = usuarioService.autenticar(loginRequest);
 
-        Usuarios usuarioAutenticado = usuarioService.autenticar(loginRequest);
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        session.setAttribute("USUARIO_ID", usuarioAutenticado.getId());
+        session.setAttribute("USUARIO_ID", usuario.getId());
+        session.setAttribute("TIPO_USUARIO", usuario.getTipo());
         session.setAttribute("LOGADO", true);
 
-        return ResponseEntity.ok(new UsuariosResponseDTO(usuarioAutenticado));
-
+        return ResponseEntity.ok(new UsuariosResponseDTO(usuario));
     }
+
+    @GetMapping("/sessao")
+    public ResponseEntity<UsuariosResponseDTO> sessao(HttpSession session) {
+        Integer id = (Integer) session.getAttribute("USUARIO_ID");
+        String tipo = (String) session.getAttribute("TIPO_USUARIO");
+
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Usuarios usuario = usuarioService.buscarUsuarioPorId(id);
+        return ResponseEntity.ok(new UsuariosResponseDTO(usuario));
+    }
+
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpSession session) {

@@ -4,20 +4,24 @@ import com.devsdoagi.agicripto.model.Usuarios;
 
 public record UsuariosResponseDTO(
 
+    Integer id,
     String cpf,
     String nome,
     String email,
-    String celular
+    String celular,
+    String tipo
 
 ) {
 
     public UsuariosResponseDTO(Usuarios usuario) {
-
-        this(usuario.getCpf(),
-             usuario.getNome(),
-             usuario.getEmail(),
-             usuario.getCelular());
-
+        this(
+            usuario.getId(),
+            usuario.getCpf(),
+            usuario.getNome(),
+            usuario.getEmail(),
+            usuario.getCelular(),
+            usuario.getTipo()
+        );
     }
 
 }

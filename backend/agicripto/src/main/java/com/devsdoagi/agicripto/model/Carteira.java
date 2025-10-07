@@ -23,10 +23,13 @@ public class Carteira {
     @OneToOne(fetch = FetchType.LAZY)
     private Usuarios usuarios;
 
+    /*
     @Column(precision = 18, scale = 8, nullable = false)
     private BigDecimal patrimonio_total = BigDecimal.ZERO;
 
+    */
+
     @Column(nullable = false)
-    private LocalDateTime momento_atualizacao;
+    private LocalDateTime data_criacao;
 
 }

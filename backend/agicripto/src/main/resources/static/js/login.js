@@ -2,15 +2,16 @@
 const loginForm = document.querySelector('form');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
+const recordar = document.getElementById('recordar');
 
-// Vamos criar um elemento para exibir mensagens de erro logo abaixo do card
+/* Inserir errorDisplay */
 const cardBody = document.querySelector('.card-body');
 const errorDisplay = document.createElement('div');
 errorDisplay.className = 'alert alert-danger d-none'; // Escondido por padrão
 cardBody.prepend(errorDisplay); // Insere o display de erro no topo do corpo do card
 
 // --- URL da API (Ajuste a porta se necessário) ---
-const API_BASE_URL = 'http://localhost:8080/usuarios';
+const API_BASE_URL = 'http://localhost:8080/api/usuarios';
 
 
 // Função assíncrona para lidar com o envio do formulário
@@ -23,57 +24,52 @@ loginForm.addEventListener('submit', async (event) => {
     errorDisplay.classList.add('d-none');
     errorDisplay.textContent = '';
 
-    const email = emailInput.value;
-    const senha = passwordInput.value;
+  const loginPayload = {
+    email: emailInput.value,
+    senha: passwordInput.value
+  };
 
-    // 1. Constrói o DTO de Requisição de Login (LoginRequestDTO)
-    const loginPayload = {
+  try {
 
-        email: email,
-        senha: senha
+    const response = await fetch(`${API_BASE_URL}/login`, {
 
-    };
-
-    try {
-
-        const response = await fetch(`${API_BASE_URL}/login`, {
-
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // O browser adiciona automaticamente o cookie de sessão (JSESSIONID) aqui
-            },
-            body: JSON.stringify(loginPayload)
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, // O browser adiciona automaticamente o cookie de sessão (JSESSIONID) aqui
+        credentials: 'same-origin',
+        body: JSON.stringify(loginPayload)
         });
 
         // 2. Lida com a Resposta do Servidor
-        if (response.ok) { // Status 200 OK
+    if (response.ok) {
+        // O backend criou a sessão e enviou cookie JSESSIONID; o navegador o armazenou.
+        const usuario = await response.json(); // opcional: objeto do usuário retornado
 
-            // Login bem-sucedido: O cookie de sessão foi criado pelo backend.
-            console.log('Login bem-sucedido! Redirecionando...');
-            window.location.replace('/homeUsuario'); // Exemplo de página inicial
-
-        } else if (response.status === 401) { // 401 UNAUTHORIZED (AutenticacaoException)
-
-            const errorText = await response.text();
-            errorDisplay.textContent = errorText || 'Email ou senha inválidos. Tente novamente.';
-            errorDisplay.classList.remove('d-none');
-
+        // ✅ Aqui entra a lógica de redirecionamento
+        if (usuario.tipo === 'Admin') {
+            window.location.replace("/pages/admin/homeAdmin.html");
+        } else if (usuario.tipo === 'Cliente') {
+            window.location.replace("/pages/cliente/homeCliente.html");
         } else {
-
-            // Lida com outros erros (500 Internal Server Error, etc.)
-            errorDisplay.textContent = 'Ocorreu um erro no servidor. Tente novamente mais tarde.';
-            errorDisplay.classList.remove('d-none');
-            console.error('Erro HTTP:', response.status);
-
+            alert('Tipo de usuário desconhecido!');
         }
 
-    } catch (error) {
+    } else if (response.status === 401) { // 401 UNAUTHORIZED (AutenticacaoException)
 
-        // Lida com erros de rede (servidor offline, etc.)
-        errorDisplay.textContent = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+        const errorText = await response.text();
+        errorDisplay.textContent = errorText || 'Email ou senha inválidos. Tente novamente.';
         errorDisplay.classList.remove('d-none');
-        console.error('Erro de rede:', error);
 
+    } else {
+        errorDisplay.textContent = 'Erro no servidor. Tente novamente.';
+        errorDisplay.classList.remove('d-none');
     }
+
+    const data = await response.json();
+    console.log("Data recebida:", data);
+
+  } catch (err) {
+    errorDisplay.textContent = 'Não foi possível conectar ao servidor.';
+    errorDisplay.classList.remove('d-none');
+    console.error(err);
+  }
 });

@@ -56,7 +56,7 @@ public class UsuariosService {
 
         Carteira novaCarteira = new Carteira();
         novaCarteira.setUsuarios(novoCliente);
-        novaCarteira.setMomento_atualizacao(LocalDateTime.now());
+        novaCarteira.setData_criacao(LocalDateTime.now());
         carteiraRepository.save(novaCarteira);
 
         return novoCliente;
@@ -83,11 +83,14 @@ public class UsuariosService {
 
         Usuarios novoAdmin = usuarioRepository.save(usuario);
 
+        /*
         // É possível com que ao criar novo Admin não seja criada uma carteira para ele?
         Carteira novaCarteira = new Carteira();
         novaCarteira.setUsuarios(novoAdmin);
         novaCarteira.setMomento_atualizacao(LocalDateTime.now());
         carteiraRepository.save(novaCarteira);
+
+        */
 
         return novoAdmin;
     }

@@ -6,17 +6,17 @@ import java.time.LocalDateTime;
 public class CarteiraResponseDTO {
     private Integer id;
     private Integer idCliente;
-    private BigDecimal patrimonioTotal;
-    private LocalDateTime momentoAtualizacao;
+    // private BigDecimal patrimonioTotal;
+    private LocalDateTime dataCriacao;
 
     public CarteiraResponseDTO(
             Integer id,
             Integer idCliente,
             BigDecimal patrimonioTotal,
-            LocalDateTime momentoAtualizacao) {
+            LocalDateTime dataCriacao) {
         this.id = id;
         this.idCliente = idCliente;
-        this.patrimonioTotal = patrimonioTotal;
-        this.momentoAtualizacao = momentoAtualizacao;
+        // this.patrimonioTotal = patrimonioTotal;
+        this.dataCriacao = dataCriacao;
     }
 }

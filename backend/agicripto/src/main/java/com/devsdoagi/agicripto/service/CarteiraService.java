@@ -26,8 +26,7 @@ public class CarteiraService {
                 .orElseThrow(() -> new RuntimeException("Erro, id Inexistente"));
         Carteira carteiraUser = new Carteira();
         carteiraUser.setUsuarios(checkUsuario);
-        carteiraUser.setPatrimonio_total(BigDecimal.ZERO);
-        carteiraUser.setMomento_atualizacao(LocalDateTime.now());
+        carteiraUser.setData_criacao(LocalDateTime.now());
 
         return carteiraRepository.save(carteiraUser);
     }
