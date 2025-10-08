@@ -1,4 +1,5 @@
 const API_BASE_URL = "http://localhost:8080/api/usuarios";
+const API_HISTORICO_URL = "http://localhost:8080/api/historico";
 
 // 🔹 Função para carregar dados do administrador
 async function carregarUsuarioAdmin() {
@@ -51,6 +52,16 @@ async function realizarLogout() {
     window.location.replace("/pages/auth/login.html");
   }
 }
+
+/*
+async function carregarGrafico(idCripto) {
+    const response = await fetch(`${API_HISTORICO_URL}/${idCripto}`);
+    const dados = await response.json();
+
+    const labels = dados.map(d => new Date(d.data).toLocalDateString());
+    const cotacoes = dados.map(d => d.cotacaoMomento);
+}
+*/
 
 // 🔹 Função de inicialização
 window.addEventListener("DOMContentLoaded", () => {
