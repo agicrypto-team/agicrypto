@@ -2,7 +2,6 @@ package com.devsdoagi.agicripto.DTO;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,15 +20,14 @@ public class AtivosCarteiraResponseDTO {
     private Integer idCarteira;
 
     private BigDecimal quantidade;
-    private BigDecimal precoMedio;
-    private LocalDateTime dataAtualizacao;
+    private BigDecimal valorTotalComprado;
+
 
     // Construtor que mapeia a Entity para o DTO
     public AtivosCarteiraResponseDTO(AtivosCarteira entity) {
         this.id = entity.getId();
         this.quantidade = entity.getQuantidade();
-        this.precoMedio = entity.getPrecoMedio();
-        this.dataAtualizacao = entity.getDataAtualizacao();
+        this.valorTotalComprado = entity.getValorTotalComprado();
 
         if (entity.getCriptomoedas() != null) {
             this.idCriptomoeda = entity.getCriptomoedas().getId();

@@ -9,9 +9,7 @@ import com.devsdoagi.agicripto.DTO.AtivosCarteiraRequestDTO;
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraResponseDTO;
 import com.devsdoagi.agicripto.model.Criptomoedas;
 import com.devsdoagi.agicripto.model.Carteira;
-import com.devsdoagi.agicripto.model.AtivosCarteira;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -54,7 +52,7 @@ public class AtivosCarteiraService {
         // Mapeamento DTO para Entity
         AtivosCarteira ativo = new AtivosCarteira();
         ativo.setQuantidade(dto.getQuantidade());
-        ativo.setPrecoMedio(dto.getPrecoMedio());
+        ativo.setValorTotalComprado(dto.getValorTotalComprado());
 
         // Carrega e Seta as Entidades relacionadas
         Carteira carteira = carteiraRepository.findById(dto.getIdCarteira()) // 'I' minúsculo
@@ -65,7 +63,6 @@ public class AtivosCarteiraService {
 
         ativo.setCarteira(carteira);
         ativo.setCriptomoedas(cripto);
-        ativo.setDataAtualizacao(LocalDateTime.now());
 
         // Salva e retorna o DTO de Resposta
         AtivosCarteira ativoSalvo = ativoRepository.save(ativo);
@@ -81,12 +78,9 @@ public class AtivosCarteiraService {
         if (dto.getQuantidade() != null) {
             ativoExistente.setQuantidade(dto.getQuantidade());
         }
-        if (dto.getPrecoMedio() != null) {
-            ativoExistente.setPrecoMedio(dto.getPrecoMedio());
+        if (dto.getValorTotalComprado() != null) {
+            ativoExistente.setValorTotalComprado(dto.getValorTotalComprado());
         }
-
-        // Atualiza data
-        ativoExistente.setDataAtualizacao(LocalDateTime.now());
 
         // Salva e retorna
         AtivosCarteira ativoAtualizado = ativoRepository.save(ativoExistente);
