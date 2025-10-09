@@ -20,7 +20,7 @@ public class Carteira {
 
     @JoinColumn(name = "id_cliente", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
-    private Usuarios usuario;
+    private Usuarios usuarios;
 
     @Column(nullable = false)
     private LocalDateTime data_criacao;

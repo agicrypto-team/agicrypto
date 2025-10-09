@@ -30,7 +30,7 @@ public class HistoricoCriptomoedasService {
     }
 
     public List<HistoricoCriptomoedas> listarPorCriptomoeda(Integer idCriptomoeda) {
-        return historicoCriptomoedasRepository.findByIdCriptomoeda(idCriptomoeda);
+        return historicoCriptomoedasRepository.findByCriptomoedas_Id(idCriptomoeda);
     }
 
     @Scheduled(cron = "0 0 * * * *")

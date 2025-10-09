@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HistoricoCriptomoedasRepository extends JpaRepository<HistoricoCriptomoedas, Integer> {
-    List<HistoricoCriptomoedas> findByIdCriptomoeda(Integer idCriptomoeda);
+    List<HistoricoCriptomoedas> findByCriptomoedas_Id(Integer idCriptomoeda);
 }
