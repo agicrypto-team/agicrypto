@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,15 +20,12 @@ public class Carteira {
 
     @JoinColumn(name = "id_cliente", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
-    private Usuarios usuarios;
-
-    /*
-    @Column(precision = 18, scale = 8, nullable = false)
-    private BigDecimal patrimonio_total = BigDecimal.ZERO;
-
-    */
+    private Usuarios usuario;
 
     @Column(nullable = false)
     private LocalDateTime data_criacao;
+
+    @OneToMany(mappedBy = "carteira", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AtivosCarteira> ativos;
 
 }
