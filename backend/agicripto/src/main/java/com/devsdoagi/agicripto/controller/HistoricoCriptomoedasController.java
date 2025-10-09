@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/historico")
+@RequestMapping("/api/historico")
 @RequiredArgsConstructor
 public class HistoricoCriptomoedasController {
 
@@ -21,5 +23,11 @@ public class HistoricoCriptomoedasController {
     public HistoricoCriptomoedas encontrarPorId(@PathVariable Integer id) {
         return historicoCriptomoedasService.buscarPorId(id);
     }
+
+    @GetMapping("/{idCriptomoeda}")
+    public List<HistoricoCriptomoedas> listarPorCriptomoeda(@PathVariable Integer idCriptomoeda) {
+        return historicoCriptomoedasService.listarPorCriptomoeda(idCriptomoeda);
+    }
+
 
 }

@@ -9,7 +9,9 @@
 <body>
     <header class="top-nav">
         <div class="container nav-inner">
-            <a class="logo" href="#">agi<span>cripto</span></a>
+            <aside class="sidebar">
+                <img src="../../assets/AgiCripto.svg" alt="Logo AgiCripto" class="sidebar-logo">
+            </aside>
             <nav class="nav-right">
                 <button class="btn-logout">Sair</button>
             </nav>
@@ -22,31 +24,33 @@
             <h1>Olá, <span class="username loading">carregando...</span>!</h1>
         </section>
 
-        <h2 class="page-title">Gerenciamento de Criptomoedas</h2>
 
-        <section class="card form-section">
-            <h3 class="section-subtitle">Cadastrar Nova Criptomoeda</h3>
+        <section class="add-transaction" aria-labelledby="add-transacao-title">
+            <h2 class="section-subtitle">Cadastrar Nova Criptomoeda</h2>
 
             <form id="cadastro-form" class="form-grid">
 
-                <div class="input-group">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" name="nome" placeholder="Nome" required>
-                </div>
+                <div class="form-row">
 
-                <div class="input-group">
-                    <label for="sigla">Sigla</label>
-                    <input type="text" id="sigla" name="sigla" placeholder="Sigla" required>
-                </div>
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" required placeholder="Nome">
+                    </div>
 
-                <div class="input-group">
-                    <label for="linkImagem">Link da Imagem</label>
-                    <input type="text" id="linkImagem" name="linkImagem" placeholder="Link da Imagem" required>
+                    <div class="form-group">
+                        <label for="sigla">Sigla</label>
+                        <input type="text" id="sigla" required maxlength="5" placeholder="Sigla">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="link_imagem">Link da Imagem</label>
+                        <input type="url" id="link_imagem" placeholder="Link da Imagem">
+                    </div>
                 </div>
 
                 <div class="form-action-button">
                     <input type="hidden" id="idResponsavel" name="idResponsavel" value="1">
-                    <button type="submit" class="btn btn-primary">Adicionar Criptomoeda</button>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
                 </div>
             </form>
         </section>
@@ -56,24 +60,36 @@
             <table id="cripto-table">
                 <thead>
                 <tr>
-                    <th>Nome</th>
+                    <th></th> <th>Nome</th>
                     <th>Sigla</th>
                     <th>Link da Imagem</th>
-                    <th>Ações</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
+                    <td>
+                        <img src="https://bitcoin.org/img/icons/logo_shadow.png" alt="Bitcoin Icon" class="crypto-icon">
+                    </td>
                     <td>Bitcoin</td>
                     <td>BTC</td>
                     <td>https://bitcoin.org</td>
-                    <td><button class="btn-delete acao-delete">Excluir</button></td>
+                    <td class="action-buttons">
+                        <button class="btn-action btn-edit acao-editar">Editar</button>
+                        <button class="btn-delete acao-delete">Excluir</button>
+                    </td>
                 </tr>
                 <tr>
+                    <td>
+                        <img src="https://ethereum.org/static/298e3b392a884fe06d9536c4b2c14283/222d4/eth-logo.png" alt="Ethereum Icon" class="crypto-icon">
+                    </td>
                     <td>Ethereum</td>
                     <td>ETH</td>
                     <td>https://ethereum.org</td>
-                    <td><button class="btn-delete acao-delete">Excluir</button></td>
+                    <td class="action-buttons">
+                        <button class="btn-action btn-edit acao-editar">Editar</button>
+                        <button class="btn-delete acao-delete">Excluir</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -89,3 +105,4 @@
     <script src="../../js/homeAdmin.js"></script>
 </body>
 </html>
+

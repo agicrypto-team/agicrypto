@@ -29,6 +29,10 @@ public class HistoricoCriptomoedasService {
                 .orElseThrow(() -> new HistoricoCriptomoedaNaoEncontradoException(id));
     }
 
+    public List<HistoricoCriptomoedas> listarPorCriptomoeda(Integer idCriptomoeda) {
+        return historicoCriptomoedasRepository.findByIdCriptomoeda(idCriptomoeda);
+    }
+
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void atualizarCotaçõesPeriodicamente() {
