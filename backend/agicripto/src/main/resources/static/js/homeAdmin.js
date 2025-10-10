@@ -1,6 +1,6 @@
 // ===================== CONFIGURAÇÕES GERAIS =====================
 const API_BASE_URL = "http://localhost:8080/api/usuarios";
-const API_HISTORICO_URL = "http://localhost:8080/api/historico";
+const API_HISTORICOS_URL = "http://localhost:8080/api/historicos";
 const API_URL = "http://localhost:8080/api/criptomoedas";
 
 // ===================== FUNÇÃO: PEGAR TOKEN JWT =====================
@@ -132,11 +132,12 @@ async function cadastrarCriptomoeda(event) {
     }
 }
 
+/*
 async function carregarGrafico(idCripto) {
   try {
     console.log(`🔎 Buscando dados do gráfico para ID: ${idCripto}`);
 
-    const response = await fetch(`${API_HISTORICO_URL}/grafico/${idCripto}`);
+    const response = await fetch(`${API_HISTORICOS_URL}/grafico/${idCripto}`);
 
     if (!response.ok) {
       throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
@@ -221,12 +222,16 @@ async function carregarGrafico(idCripto) {
     alert(`Erro ao carregar gráfico: ${error.message}`);
   }
 }
+*/
 
 // ===================== INICIALIZAÇÃO DA PÁGINA =====================
 window.addEventListener("DOMContentLoaded", () => {
     carregarUsuarioAdmin();
+
+    /*
     carregarGrafico(17);
     carregarGrafico(19);
+    */
 
     const logoutBtn = document.querySelector(".btn-logout");
     if (logoutBtn) logoutBtn.addEventListener("click", realizarLogout);
