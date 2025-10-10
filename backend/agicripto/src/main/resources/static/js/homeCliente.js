@@ -3,46 +3,37 @@ const API_TRANSACOES = "http://localhost:8080/api/transacoes";
 const API_CRYPTOS = "http://localhost:8080/api/criptomoedas";
 const API_ATIVOS = "http://localhost:8080/api/ativos-carteira";
 
-// 🔹 Variáveis globais para armazenar listas
+// 🔹 Variáveis globais
 let todasCriptos = [];
 let ativosUsuario = [];
 
-// 🔹 Função para carregar dados do usuário cliente
+// 🔹 Carregar dados do usuário
 async function carregarUsuarioCliente() {
   const usernameEl = document.querySelector(".username");
   if (!usernameEl) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/eu`, {
-      method: "GET",
-      credentials: "same-origin",
-    });
+    const response = await fetch(`${API_BASE_URL}/eu`, { method: "GET", credentials: "same-origin" });
 
     if (response.ok) {
       const usuario = await response.json();
       usernameEl.textContent = usuario.nome;
       usernameEl.classList.remove("loading");
 
-      // 🔹 Atualiza sessionStorage
       sessionStorage.setItem("usuarioId", usuario.id);
       sessionStorage.setItem("usuarioNome", usuario.nome);
       sessionStorage.setItem("usuarioTipo", usuario.tipo);
 
-      // 🔹 Pré-carrega as listas de criptos
       await carregarListasCriptomoedas(usuario.id);
-
-      // 🔹 Inicializa o datalist
-      inicializarDatalist();
-
+      inicializarDropdown();
     } else if (response.status === 401) {
       alert("Sessão expirada. Faça login novamente.");
       window.location.replace("/pages/login/login.html");
     } else {
-      console.error("Erro ao carregar dados do usuário:", response.status);
+      console.error("Erro ao carregar usuário:", response.status);
       usernameEl.textContent = "Cliente";
       usernameEl.classList.remove("loading");
     }
-
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
     usernameEl.textContent = "Cliente";
@@ -50,13 +41,10 @@ async function carregarUsuarioCliente() {
   }
 }
 
-// 🔹 Função para logout
+// 🔹 Logout
 async function realizarLogout() {
   try {
-    await fetch(`${API_BASE_URL}/logout`, {
-      method: "POST",
-      credentials: "same-origin",
-    });
+    await fetch(`${API_BASE_URL}/logout`, { method: "POST", credentials: "same-origin" });
   } catch (error) {
     console.error("Erro ao realizar logout:", error);
   } finally {
@@ -65,66 +53,60 @@ async function realizarLogout() {
   }
 }
 
-// 🔹 Carrega todas as listas necessárias (compra e venda)
+// 🔹 Carrega listas de criptomoedas
 async function carregarListasCriptomoedas(usuarioId) {
   try {
-    // 🔹 Todas as criptos (compra)
     const resCriptos = await fetch(API_CRYPTOS);
     if (resCriptos.ok) {
       const criptos = await resCriptos.json();
-      todasCriptos = criptos.map(c => ({ nome: c.nome, sigla: c.sigla }));
+      todasCriptos = criptos.map(c => ({ id: c.id, nome: c.nome, sigla: c.sigla, icone: c.icone || "💰" }));
     }
 
-    // 🔹 Ativos do usuário (venda)
-    const resAtivos = await fetch(`${API_ATIVOS}/do-usuario`, {
-      method: "GET",
-      credentials: "same-origin",
-    });
+    const resAtivos = await fetch(`${API_ATIVOS}/do-usuario`, { method: "GET", credentials: "same-origin" });
     if (resAtivos.ok) {
       const ativos = await resAtivos.json();
-      ativosUsuario = ativos.map(a => ({ nome: a.nome, sigla: a.sigla }));
+      ativosUsuario = ativos.map(a => ({ id: a.id, nome: a.nome, sigla: a.sigla, icone: a.icone || "💰" }));
     }
-
   } catch (err) {
     console.error("Erro ao carregar listas de criptomoedas:", err);
   }
 }
 
-// 🔹 Inicializa o datalist e eventos
-function inicializarDatalist() {
+// 🔹 Inicializa dropdown customizado
+function inicializarDropdown() {
   const cryptoInput = document.querySelector("#crypto");
+  const dropdown = document.querySelector(".crypto-dropdown");
+  if (!cryptoInput || !dropdown) return;
+
   const tipoRadios = document.querySelectorAll("input[name='tipo']");
-  if (!cryptoInput || tipoRadios.length === 0) return;
 
-  // 🔹 Cria datalist apenas uma vez
-  let datalist = document.querySelector("#cryptos-list");
-  if (!datalist) {
-    datalist = document.createElement("datalist");
-    datalist.id = "cryptos-list";
-    cryptoInput.setAttribute("list", datalist.id);
-    document.body.appendChild(datalist);
-  }
-
-  // 🔹 Atualiza datalist de acordo com o radio selecionado
-  function atualizarLista() {
+  function atualizarDropdown() {
     const tipoSelecionado = document.querySelector("input[name='tipo']:checked").value;
-    let lista = tipoSelecionado === "compra" ? todasCriptos : ativosUsuario;
+    const lista = tipoSelecionado === "compra" ? todasCriptos : ativosUsuario;
 
-    datalist.innerHTML = "";
+    dropdown.innerHTML = "";
     lista.forEach(c => {
-      const option = document.createElement("option");
-      option.value = `${c.nome} (${c.sigla})`;
-      datalist.appendChild(option);
+      const item = document.createElement("div");
+      item.className = "crypto-item";
+      item.innerHTML = `<span class="crypto-name">${c.nome}</span>
+                        <span class="crypto-sigla">(${c.sigla})</span>`;
+      item.addEventListener("click", () => {
+        cryptoInput.value = `${c.nome} (${c.sigla})`;
+        dropdown.style.display = "none";
+      });
+      dropdown.appendChild(item);
     });
   }
 
-  // Atualiza ao mudar o radio
-  tipoRadios.forEach(radio => radio.addEventListener("change", atualizarLista));
+  // Atualiza ao mudar o tipo
+  tipoRadios.forEach(r => r.addEventListener("change", atualizarDropdown));
+  atualizarDropdown();
 
-  // Atualiza inicialmente
-  atualizarLista();
+  // Toggle dropdown ao focar
+  cryptoInput.addEventListener("focus", () => { dropdown.style.display = "block"; });
+  cryptoInput.addEventListener("blur", () => { setTimeout(() => dropdown.style.display = "none", 200); });
 
-  // 🔹 Evento de envio de nova transação
+  // 🔹 Evento submit da transação
   const form = document.querySelector(".transaction-form");
   const valorInput = document.querySelector("#valor");
   const equivalenciaEl = document.querySelector("#equivalencia");
@@ -143,28 +125,27 @@ function inicializarDatalist() {
     }
 
     const match = cryptoValue.match(/\(([^)]+)\)/);
-    let siglaCripto = match ? match[1] : cryptoValue;
+    const siglaCripto = match ? match[1] : cryptoValue;
+
+    let cripto = todasCriptos.find(c => c.sigla === siglaCripto || c.nome === cryptoValue);
+    if (!cripto && tipo === "venda") {
+      cripto = ativosUsuario.find(c => c.sigla === siglaCripto || c.nome === cryptoValue);
+    }
+
+    if (!cripto) {
+      alert("Criptomoeda não encontrada.");
+      return;
+    }
+
+    const payload = {
+      usuarioId: parseInt(usuarioId),
+      criptomoedaId: cripto.id,
+      tipo: tipo,
+      valor: valor,
+      quantidadeCripto: 0
+    };
 
     try {
-      // Busca ID da cripto no array carregado (não precisa de fetch)
-      let cripto = todasCriptos.find(c => c.sigla === siglaCripto || c.nome === cryptoValue);
-      if (!cripto && tipo === "venda") {
-        cripto = ativosUsuario.find(c => c.sigla === siglaCripto || c.nome === cryptoValue);
-      }
-
-      if (!cripto) {
-        alert("Criptomoeda não encontrada.");
-        return;
-      }
-
-      const payload = {
-        usuarioId: parseInt(usuarioId),
-        criptomoedaId: cripto.id, // você precisa garantir que id está presente no array ou buscar via fetch se necessário
-        tipo: tipo,
-        valor: valor,
-        quantidadeCripto: 0
-      };
-
       const res = await fetch(API_TRANSACOES, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,17 +157,12 @@ function inicializarDatalist() {
         form.reset();
         equivalenciaEl.textContent = "0";
 
-        // 🔹 Atualiza listas de venda após nova transação
-        if (tipo === "venda") {
-          await carregarListasCriptomoedas(usuarioId);
-        }
-        atualizarLista();
-
+        if (tipo === "venda") await carregarListasCriptomoedas(usuarioId);
+        atualizarDropdown();
       } else {
         const err = await res.json();
         alert("Erro: " + (err.message || "Falha ao criar transação"));
       }
-
     } catch (err) {
       console.error(err);
       alert("Erro ao processar transação.");
@@ -194,7 +170,7 @@ function inicializarDatalist() {
   });
 }
 
-// 🔹 Inicialização ao carregar página
+// 🔹 Inicialização da página
 window.addEventListener("DOMContentLoaded", () => {
   carregarUsuarioCliente();
 

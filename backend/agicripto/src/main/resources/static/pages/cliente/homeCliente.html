@@ -7,58 +7,59 @@
   <link rel="stylesheet" href="../../css/homeCliente.css">
 </head>
 <body>
-  <!-- NAV -->
-  <header class="top-nav">
-    <div class="container nav-inner">
-      <a class="logo" href="#">agi<span>cripto</span></a>
-      <nav class="nav-right">
-        <button class="btn-logout">Sair</button>
-      </nav>
-    </div>
-  </header>
+<!-- NAV -->
+<header class="top-nav">
+  <div class="container nav-inner">
+    <a class="logo" href="#">agi<span>cripto</span></a>
+    <nav class="nav-right">
+      <button class="btn-logout">Sair</button>
+    </nav>
+  </div>
+</header>
 
-  <main class="container">
-    <!-- Saudaçao -->
-    <section class="greeting">
-      <h1>Olá, <span class="username loading">carregando...</span>!</h1>
-    </section>
+<main class="container">
+  <!-- Saudaçao -->
+  <section class="greeting">
+    <h1>Olá, <span class="username loading">carregando...</span>!</h1>
+  </section>
 
-    <!-- Cards resumo -->
-    <section class="cards-grid" aria-label="Resumo">
-      <article class="card">
-        <div class="card-header">
-          <span class="card-icon">💼</span>
-          <span class="card-title">Patrimônio Total</span>
-          <span class="card-info">i</span>
-        </div>
-        <div class="card-value">R$ 0,00</div>
-      </article>
+  <!-- Cards resumo -->
+  <section class="cards-grid" aria-label="Resumo">
+    <article class="card">
+      <div class="card-header">
+        <span class="card-icon">💼</span>
+        <span class="card-title">Patrimônio Total</span>
+        <span class="card-info">i</span>
+      </div>
+      <div class="card-value">R$ 0,00</div>
+    </article>
 
-      <article class="card">
-        <div class="card-header">
-          <span class="card-icon">📈</span>
-          <span class="card-title">Lucro Total</span>
-          <span class="card-info">i</span>
-        </div>
-        <div class="card-value">R$ 0,00</div>
-      </article>
+    <article class="card">
+      <div class="card-header">
+        <span class="card-icon">📈</span>
+        <span class="card-title">Lucro Total</span>
+        <span class="card-info">i</span>
+      </div>
+      <div class="card-value">R$ 0,00</div>
+    </article>
 
-      <article class="card">
-        <div class="card-header">
-          <span class="card-icon">⚖️</span>
-          <span class="card-title">Variação</span>
-          <span class="card-info">i</span>
-        </div>
-        <div class="card-value">0%</div>
-      </article>
-    </section>
+    <article class="card">
+      <div class="card-header">
+        <span class="card-icon">⚖️</span>
+        <span class="card-title">Variação</span>
+        <span class="card-info">i</span>
+      </div>
+      <div class="card-value">0%</div>
+    </article>
+  </section>
 
-    <!-- Adicionar Nova Transação -->
-    <section class="add-transaction" aria-labelledby="add-transacao-title">
-      <h2 id="add-transacao-title">Adicionar Nova Transação</h2>
+  <!-- Adicionar Nova Transação -->
+  <section class="add-transaction" aria-labelledby="add-transacao-title">
+    <h2 id="add-transacao-title">Adicionar Nova Transação</h2>
 
-      <!-- Tipo da Transação -->
-      <div class="tipo-transacao-top">
+    <form class="transaction-form" onsubmit="return false;">
+      <!-- Tipo da Transação (topo) -->
+      <div class="form-group tipo-group">
         <label class="group-label">Tipo da Transação</label>
         <div class="radios">
           <label class="radio-item">
@@ -72,69 +73,73 @@
         </div>
       </div>
 
-      <!-- Campo de criptomoeda -->
-      <label class="label-crypto" for="crypto">Criptomoeda</label>
-      <input id="crypto" class="crypto-input" type="text" placeholder="Selecione ou digite a criptomoeda" />
-
-      <!-- Formulário -->
-      <form class="transaction-form" onsubmit="return false;">
-        <div class="form-row-horizontal">
-          <!-- Valor -->
-          <div class="form-group valor-group">
-            <label for="valor" class="group-label">Valor</label>
-            <input id="valor" name="valor" class="input-valor" type="text" placeholder="R$" />
-          </div>
-
-          <!-- Equivalência -->
-          <div class="form-group equivalencia-group">
-            <label class="group-label">Equivalência</label>
-            <div class="equivalencia-value" id="equivalencia">0</div>
-          </div>
-
-          <!-- Botão -->
-          <div class="form-group enviar-group">
-            <button type="submit" class="btn-send">Enviar Transação <span class="arrow">→</span></button>
-          </div>
-        </div>
-      </form>
-    </section>
-
-    <!-- Histórico de Transações -->
-    <section class="historico" aria-labelledby="historico-title">
-      <h2 id="historico-title">Histórico de Transações</h2>
-
-      <div class="transacoes-lista">
-        <div class="transacao">
-          <div class="tx-left">
-            <div class="tx-name">Bitcoin (BTC)</div>
-            <div class="tx-date">01/10/2025</div>
-          </div>
-          <div class="tx-right">
-            <div class="tx-type compra">Compra</div>
-            <div class="tx-value">R$ 2.500,00</div>
+      <!-- Linha horizontal com todos os outros campos -->
+      <div class="form-row horizontal-row">
+        <!-- Criptomoeda -->
+        <div class="form-group crypto-group">
+          <label class="group-label" for="crypto">Criptomoeda</label>
+          <div class="crypto-wrapper">
+            <input id="crypto" class="crypto-input" type="text" placeholder="Selecione ou digite a criptomoeda" autocomplete="off" />
+            <div class="crypto-dropdown" id="crypto-dropdown"></div>
           </div>
         </div>
 
-        <div class="transacao">
-          <div class="tx-left">
-            <div class="tx-name">Ethereum (ETH)</div>
-            <div class="tx-date">28/09/2025</div>
-          </div>
-          <div class="tx-right">
-            <div class="tx-type venda">Venda</div>
-            <div class="tx-value">R$ 1.200,00</div>
-          </div>
+        <!-- Valor -->
+        <div class="form-group valor-group">
+          <label for="valor" class="group-label">Valor</label>
+          <input id="valor" name="valor" class="input-valor" type="text" placeholder="R$" />
         </div>
 
-        <div class="show-more">Ver mais</div>
+        <!-- Equivalência -->
+        <div class="form-group equivalencia-group">
+          <label class="group-label">Equivalência</label>
+          <div class="equivalencia-value" id="equivalencia">0</div>
+        </div>
+
+        <!-- Botão Enviar -->
+        <div class="form-group send-group">
+          <button type="submit" class="btn-send">Enviar Transação <span class="arrow">→</span></button>
+        </div>
       </div>
-    </section>
+    </form>
+  </section>
 
-    <!-- Gráfico -->
-    <section class="grafico" aria-label="Gráfico de carteira">
-      <canvas id="portfolioChart" width="1200" height="420"></canvas>
-    </section>
-  </main>
-  <script src="../../js/homeCliente.js"></script>
+  <!-- Histórico de Transações -->
+  <section class="historico" aria-labelledby="historico-title">
+    <h2 id="historico-title">Histórico de Transações</h2>
+
+    <div class="transacoes-lista">
+      <div class="transacao">
+        <div class="tx-left">
+          <div class="tx-name">Bitcoin (BTC)</div>
+          <div class="tx-date">01/10/2025</div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-type compra">Compra</div>
+          <div class="tx-value">R$ 2.500,00</div>
+        </div>
+      </div>
+
+      <div class="transacao">
+        <div class="tx-left">
+          <div class="tx-name">Ethereum (ETH)</div>
+          <div class="tx-date">28/09/2025</div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-type venda">Venda</div>
+          <div class="tx-value">R$ 1.200,00</div>
+        </div>
+      </div>
+
+      <div class="show-more">Ver mais</div>
+    </div>
+  </section>
+
+  <!-- Gráfico -->
+  <section class="grafico" aria-label="Gráfico de carteira">
+    <canvas id="portfolioChart" width="1200" height="420"></canvas>
+  </section>
+</main>
+<script src="../../js/homeCliente.js"></script>
 </body>
 </html>
