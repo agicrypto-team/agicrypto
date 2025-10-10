@@ -25,20 +25,6 @@ public class UsuariosController {
         this.usuarioService = usuarioService;
     }
 
-    // Metodo privado (para uso somente na própria classe UsuariosController) utilitário para checar a validade da sessão do usuário, e obter o seu ID
-    // Este metodo que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
-    private Integer checarSessaoEObterIdUsuario(HttpSession session) {
-
-        if (session == null || session.getAttribute("LOGADO") == null || !(Boolean) session.getAttribute("LOGADO")) {
-
-            throw new AutenticacaoException("Acesso negado. Usuário não autenticado ou sessão expirada.");
-
-        }
-
-        return (Integer) session.getAttribute("USUARIO_ID");
-
-    }
-
     /* ROTAS REFERENTES AO LOGIN */
     @PostMapping("/login")
     public ResponseEntity<UsuariosResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpSession session) {
@@ -107,7 +93,7 @@ public class UsuariosController {
     public ResponseEntity<List<UsuariosResponseDTO>> listarClientes(HttpSession session) {
 
 
-        Integer userId = checarSessaoEObterIdUsuario(session);
+        Integer userId = usuarioService.checarSessaoEObterIdUsuario(session);
         usuarioService.validarUsuarioAdmin(userId);
         List<UsuariosResponseDTO> listaClientesDTO = usuarioService.listarClientes().stream().map(UsuariosResponseDTO::new).toList();
         return ResponseEntity.ok(listaClientesDTO);
@@ -118,7 +104,7 @@ public class UsuariosController {
     @GetMapping("/admins")
     public ResponseEntity<List<UsuariosResponseDTO>> listarAdmins(HttpSession session) {
 
-        Integer userId = checarSessaoEObterIdUsuario(session);
+        Integer userId = usuarioService.checarSessaoEObterIdUsuario(session);
         usuarioService.validarUsuarioAdmin(userId);
         List<UsuariosResponseDTO> listaAdminsDTO = usuarioService.listarAdmins().stream().map(UsuariosResponseDTO::new).toList();
         return ResponseEntity.ok(listaAdminsDTO);
@@ -130,7 +116,7 @@ public class UsuariosController {
     @DeleteMapping("/cliente/me")
     public ResponseEntity<Void> autoDeletarPerfilCliente(HttpSession session) {
 
-        Integer userId = checarSessaoEObterIdUsuario(session);
+        Integer userId = usuarioService.checarSessaoEObterIdUsuario(session);
         usuarioService.autoDeletarPerfilCliente(userId);
         session.invalidate();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -146,7 +132,7 @@ public class UsuariosController {
     @GetMapping("/eu")
     public ResponseEntity<UsuariosResponseDTO> obterDadosUsuario(HttpSession session) {
 
-        Integer userId = checarSessaoEObterIdUsuario(session);
+        Integer userId = usuarioService.checarSessaoEObterIdUsuario(session);
         Usuarios usuario = usuarioService.buscarUsuarioPorId(userId);
 
         return ResponseEntity.ok(new UsuariosResponseDTO(usuario));

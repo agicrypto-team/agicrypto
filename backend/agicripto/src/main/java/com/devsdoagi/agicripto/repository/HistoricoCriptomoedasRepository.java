@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HistoricoCriptomoedasRepository extends JpaRepository<HistoricoCriptomoedas, Integer> {
+
     List<HistoricoCriptomoedas> findByCriptomoedas_Id(Integer idCriptomoeda);
+    HistoricoCriptomoedas findTopByCriptomoedas_IdOrderByMomentoDesc(Integer idCriptomoeda);
+
 }
