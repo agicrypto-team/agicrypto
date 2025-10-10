@@ -3,14 +3,22 @@ package com.devsdoagi.agicripto.controller;
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraRequestDTO;
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraResponseDTO;
 import com.devsdoagi.agicripto.DTO.AtivoVenderResponseDTO;
+import com.devsdoagi.agicripto.model.AtivosCarteira;
+import com.devsdoagi.agicripto.model.Carteira;
+import com.devsdoagi.agicripto.model.Criptomoedas;
+import com.devsdoagi.agicripto.repository.CarteiraRepository;
+import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
 import com.devsdoagi.agicripto.service.AtivosCarteiraService;
 import com.devsdoagi.agicripto.service.CarteiraService;
 import com.devsdoagi.agicripto.service.UsuariosService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -20,11 +28,17 @@ public class AtivosCarteiraController {
     private final AtivosCarteiraService service;
     private final CarteiraService carteiraService;
     private final UsuariosService usuariosService;
+    @Autowired
+    private final CarteiraRepository carteiraRepository;
+    @Autowired
+    private final CriptomoedasRepository criptomoedasRepository;
 
-    public AtivosCarteiraController(AtivosCarteiraService service, CarteiraService carteiraService, UsuariosService usuariosService) {
+    public AtivosCarteiraController(AtivosCarteiraService service, CarteiraService carteiraService, UsuariosService usuariosService, CarteiraRepository carteiraRepository, CriptomoedasRepository criptomoedasRepository) {
         this.service = service;
         this.carteiraService = carteiraService;
         this.usuariosService = usuariosService;
+        this.carteiraRepository = carteiraRepository;
+        this.criptomoedasRepository = criptomoedasRepository;
     }
 
     @GetMapping
@@ -45,13 +59,30 @@ public class AtivosCarteiraController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoAtivo);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{idCarteira}/{idCriptomoeda}")
     public ResponseEntity<AtivosCarteiraResponseDTO> atualizar(
-            @PathVariable Integer id,
-            @RequestBody AtivosCarteiraRequestDTO requestDTO) {
-        AtivosCarteiraResponseDTO ativoAtualizado = service.atualizar(id, requestDTO);
-        return ResponseEntity.ok(ativoAtualizado);
+            @PathVariable Integer idCarteira,
+            @PathVariable Integer idCriptomoeda,
+            @RequestParam BigDecimal quantidade,
+            @RequestParam BigDecimal valorTotal,
+            @RequestParam boolean isCompra) {
+
+        // Busca a carteira
+        Carteira carteira = carteiraRepository.findById(idCarteira)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carteira não encontrada"));
+
+        // Busca a criptomoeda
+        Criptomoedas criptomoeda = criptomoedasRepository.findById(idCriptomoeda)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Criptomoeda não encontrada"));
+
+        // Atualiza ou cria o ativo
+        AtivosCarteira ativo = service.atualizar(
+                carteira, criptomoeda, quantidade, valorTotal, isCompra);
+
+        // Retorna o DTO de resposta
+        return ResponseEntity.ok(new AtivosCarteiraResponseDTO(ativo));
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
