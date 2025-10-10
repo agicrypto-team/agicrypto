@@ -132,9 +132,101 @@ async function cadastrarCriptomoeda(event) {
     }
 }
 
+async function carregarGrafico(idCripto) {
+  try {
+    console.log(`🔎 Buscando dados do gráfico para ID: ${idCripto}`);
+
+    const response = await fetch(`${API_HISTORICO_URL}/grafico/${idCripto}`);
+
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+    }
+
+    // Lê o corpo apenas uma vez
+    const rawText = await response.text();
+    let dados;
+    try {
+      dados = JSON.parse(rawText);
+    } catch (parseError) {
+      console.error("❌ Erro ao converter JSON:", rawText.slice(0, 500), "...");
+      throw new Error(`Falha ao parsear JSON: ${parseError.message}`);
+    }
+
+    console.log("📊 Dados recebidos (brutos):", dados);
+
+    // 🔹 Converte datas e valores antes de passar ao gráfico
+    const labels = dados.map(d => {
+      // Garante formato de data legível (ajuste fuso se quiser)
+      const data = new Date(d.momento);
+      if (isNaN(data)) {
+        console.warn("⚠️ Data inválida detectada:", d.momento);
+        return "Data Inválida";
+      }
+      return data.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    });
+
+    const cotacoes = dados.map(d => Number(d.cotacao_momento));
+
+    console.log("✅ Labels:", labels);
+    console.log("✅ Cotações:", cotacoes);
+
+    // 🔹 Criação (ou atualização) do gráfico
+    const ctx = document.getElementById("graficoCotacoes").getContext("2d");
+
+    // Se já existir um gráfico, destrói antes de recriar (evita duplicar)
+    if (window.graficoCotacoes instanceof Chart) {
+      window.graficoCotacoes.destroy();
+    }
+
+    window.graficoCotacoes = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Cotação ao longo do tempo",
+          data: cotacoes,
+          borderWidth: 2,
+          borderColor: "rgba(75, 192, 192, 1)",
+          fill: false,
+          tension: 0.3,
+          pointRadius: 3,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: { display: true, text: "Cotação (R$)" }
+          },
+          x: {
+            title: { display: true, text: "Data/Hora da Cotação" },
+            ticks: { maxRotation: 45, minRotation: 45 }
+          }
+        },
+        plugins: {
+          legend: { display: true, position: "top" },
+          tooltip: { mode: "index", intersect: false }
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("🚨 Erro ao carregar gráfico:", error);
+    alert(`Erro ao carregar gráfico: ${error.message}`);
+  }
+}
+
 // ===================== INICIALIZAÇÃO DA PÁGINA =====================
 window.addEventListener("DOMContentLoaded", () => {
     carregarUsuarioAdmin();
+    carregarGrafico(17);
+    carregarGrafico(19);
 
     const logoutBtn = document.querySelector(".btn-logout");
     if (logoutBtn) logoutBtn.addEventListener("click", realizarLogout);
@@ -142,15 +234,4 @@ window.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById('cadastro-form');
     if (form) form.addEventListener('submit', cadastrarCriptomoeda);
 });
-
-
-/*
-async function carregarGrafico(idCripto) {
-    const response = await fetch(`${API_HISTORICO_URL}/${idCripto}`);
-    const dados = await response.json();
-
-    const labels = dados.map(d => new Date(d.data).toLocalDateString());
-    const cotacoes = dados.map(d => d.cotacaoMomento);
-}
-*/
 

@@ -24,7 +24,7 @@ public class HistoricoCriptomoedasController {
         return historicoCriptomoedasService.buscarPorId(id);
     }
 
-    @GetMapping("/{idCriptomoeda}")
+    @GetMapping("/grafico/{idCriptomoeda}")
     public List<HistoricoCriptomoedas> listarPorCriptomoeda(@PathVariable Integer idCriptomoeda) {
         return historicoCriptomoedasService.listarPorCriptomoeda(idCriptomoeda);
     }
