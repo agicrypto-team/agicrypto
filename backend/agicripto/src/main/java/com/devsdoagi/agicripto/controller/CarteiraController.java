@@ -1,10 +1,10 @@
 package com.devsdoagi.agicripto.controller;
 
-import com.devsdoagi.agicripto.model.Carteira;
-import com.devsdoagi.agicripto.model.Usuarios;
+import com.devsdoagi.agicripto.DTO.PortfolioResponseDTO;
 import com.devsdoagi.agicripto.service.CarteiraService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.devsdoagi.agicripto.service.UsuariosService;
+
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,12 +12,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/carteira")
 public class CarteiraController {
 
-    @Autowired
-    private CarteiraService carteiraService;
+    private final CarteiraService carteiraService;
+    private final UsuariosService usuariosService;
 
-    @PostMapping("/add")
-    public ResponseEntity<Carteira> criarCarteira(@RequestBody Usuarios usuarios) {
-        Carteira carteira = carteiraService.CriarCarteira(usuarios);
-        return ResponseEntity.status(HttpStatus.CREATED).body(carteira);
+    public CarteiraController(CarteiraService carteiraService, UsuariosService usuariosService) {
+
+        this.carteiraService = carteiraService;
+        this.usuariosService = usuariosService;
+
     }
+
+    @GetMapping("/portfolio")
+    public ResponseEntity<PortfolioResponseDTO> obterPortfolioCliente(HttpSession session) {
+
+        Integer userId = usuariosService.checarSessaoEObterIdUsuario(session);
+        return ResponseEntity.ok(carteiraService.obterPortfolioCliente(userId));
+
+    }
+
 }

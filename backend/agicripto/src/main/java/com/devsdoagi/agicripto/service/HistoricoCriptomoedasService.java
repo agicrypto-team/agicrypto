@@ -61,4 +61,11 @@ public class HistoricoCriptomoedasService {
         }
     }
 
+    public BigDecimal obterCotacaoAtual(Integer idCriptomoeda) {
+
+        BigDecimal cotacaoAtual = historicoCriptomoedasRepository.findTopByCriptomoedas_IdOrderByMomentoDesc(idCriptomoeda).getCotacao_momento();
+        return cotacaoAtual;
+
+    }
+
 }

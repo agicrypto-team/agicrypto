@@ -19,7 +19,7 @@ public class AtivosCarteiraController {
     private final AtivosCarteiraService service;
 
     // Injeção de dependência via construtor
-    @Autowired
+    //@Autowired
     public AtivosCarteiraController(AtivosCarteiraService service) {
         this.service = service;
     }
