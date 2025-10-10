@@ -57,36 +57,42 @@
     <section class="add-transaction" aria-labelledby="add-transacao-title">
       <h2 id="add-transacao-title">Adicionar Nova Transação</h2>
 
+      <!-- Tipo da Transação -->
+      <div class="tipo-transacao-top">
+        <label class="group-label">Tipo da Transação</label>
+        <div class="radios">
+          <label class="radio-item">
+            <input type="radio" name="tipo" value="compra" checked>
+            <span>Compra</span>
+          </label>
+          <label class="radio-item">
+            <input type="radio" name="tipo" value="venda">
+            <span>Venda</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Campo de criptomoeda -->
       <label class="label-crypto" for="crypto">Criptomoeda</label>
       <input id="crypto" class="crypto-input" type="text" placeholder="Selecione ou digite a criptomoeda" />
 
+      <!-- Formulário -->
       <form class="transaction-form" onsubmit="return false;">
-        <div class="form-row">
-          <!-- Tipo da Transação -->
-          <div class="form-group tipo-group">
-            <label class="group-label">Tipo da Transação</label>
-            <div class="radios">
-              <label class="radio-item">
-                <input type="radio" name="tipo" value="compra" checked>
-                <span>Compra</span>
-              </label>
-              <label class="radio-item">
-                <input type="radio" name="tipo" value="venda">
-                <span>Venda</span>
-              </label>
-            </div>
-          </div>
-
+        <div class="form-row-horizontal">
           <!-- Valor -->
           <div class="form-group valor-group">
             <label for="valor" class="group-label">Valor</label>
             <input id="valor" name="valor" class="input-valor" type="text" placeholder="R$" />
           </div>
 
-          <!-- Equivalência + Botão -->
+          <!-- Equivalência -->
           <div class="form-group equivalencia-group">
             <label class="group-label">Equivalência</label>
             <div class="equivalencia-value" id="equivalencia">0</div>
+          </div>
+
+          <!-- Botão -->
+          <div class="form-group enviar-group">
             <button type="submit" class="btn-send">Enviar Transação <span class="arrow">→</span></button>
           </div>
         </div>

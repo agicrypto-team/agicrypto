@@ -118,75 +118,128 @@ body {
 
 /* Add transaction */
 .add-transaction h2 {
-  font-size:26px;
+  font-size: 26px;
   margin: 24px 0 8px 0;
   color: var(--primary);
 }
-.label-crypto {
-  display:block;
-  font-size:14px;
-  color: var(--text-dark);
-  margin-bottom:8px;
+
+/* Tipo da transação (agora vertical) */
+.tipo-transacao-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
-.crypto-input {
-  width:100%;
-  height:42px;
-  padding:10px 12px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  background:#f3f5f5;
-  margin-bottom:16px;
-  font-size:14px;
+.tipo-transacao-top .group-label {
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.tipo-transacao-top .radios {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+.radio-item input[type="radio"] {
+  width: 16px;
+  height: 16px;
 }
 
-/* Form row layout */
-.transaction-form .form-row {
-  display: grid;
-  grid-template-columns: 1fr 240px 220px;
+/* Campo de criptomoeda */
+.label-crypto {
+  display: block;
+  font-size: 14px;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+.crypto-input {
+  width: 100%;
+  height: 42px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f3f5f5;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+/* Linha horizontal (Valor + Equivalência + Botão) */
+.form-row-horizontal {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 18px;
-  align-items: start;
-  margin-bottom: 28px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 .form-group .group-label {
-  display:block;
-  font-size:13px;
-  margin-bottom:8px;
+  display: block;
+  font-size: 13px;
+  margin-bottom: 8px;
   color: var(--primary);
 }
 
-/* Equivalência agora em bloco */
+/* Valor input */
+.input-valor {
+  width: 100%;
+  height: 42px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 14px;
+}
+
+/* Equivalência */
 .equivalencia-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  max-width: 180px;
 }
-
 .equivalencia-value {
-  font-size:20px;
+  font-size: 20px;
   color: var(--secondary);
-  font-weight:700;
+  font-weight: 700;
 }
 
+/* Botão enviar */
+.enviar-group {
+  max-width: 240px;
+  display: flex;
+  justify-content: flex-end;
+}
 .btn-send {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:10px 16px;
-  border-radius:20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 20px;
   background: var(--primary);
-  color:#fff;
-  border:none;
-  cursor:pointer;
-  font-weight:600;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
   transition: 0.3s;
-  margin-top: 8px;
+  width: 100%;
+  height: 42px;
 }
 .btn-send:hover {
   background: var(--secondary);
-  color:#000;
+  color: #000;
 }
-.btn-send .arrow { font-weight:700; }
+.btn-send .arrow {
+  font-weight: 700;
+}
 
 /* Radios */
 .tipo-group .radios {
