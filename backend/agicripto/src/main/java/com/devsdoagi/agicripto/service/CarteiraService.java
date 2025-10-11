@@ -17,6 +17,11 @@ public class CarteiraService {
     private final HistoricoCriptomoedasService historicoCriptomoedasService;
     private final AtivosCarteiraRepository ativosCarteiraRepository;
 
+    private static final int CURRENCY_SCALE = 2;
+    private static final int PERCENTAGE_SCALE = 4;
+        private static final int QUANTIDADE_SCALE = 8;
+
+
     public CarteiraService(AtivosCarteiraRepository ativosCarteiraRepository, HistoricoCriptomoedasService historicoCriptomoedasService) {
         this.ativosCarteiraRepository = ativosCarteiraRepository;
         this.historicoCriptomoedasService = historicoCriptomoedasService;
@@ -27,26 +32,25 @@ public class CarteiraService {
 
         List<AtivoResponseDTO> listaAtivosDTO = listaAtivos.stream().map(ativo -> {
             BigDecimal cotacaoAtual = historicoCriptomoedasService.obterCotacaoAtual(ativo.getCriptomoedas().getId());
-            BigDecimal valorAtualMercado = ativo.getQuantidade().multiply(cotacaoAtual);
-            BigDecimal rendimento = valorAtualMercado.subtract(ativo.getValorTotalComprado());
-            int precisao = 4;
+            BigDecimal valorAtualMercado = ativo.getQuantidade().multiply(cotacaoAtual).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
+            BigDecimal rendimento = valorAtualMercado.subtract(ativo.getValorTotalComprado()).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
             BigDecimal rendimentoPercentual;
 
             if (ativo.getValorTotalComprado().compareTo(BigDecimal.ZERO) <= 0) {
-                rendimentoPercentual = BigDecimal.ZERO;
+                rendimentoPercentual = BigDecimal.ZERO.setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
             } else {
                 rendimentoPercentual = rendimento
-                        .divide(ativo.getValorTotalComprado(), precisao, RoundingMode.HALF_UP)
-                        .multiply(new BigDecimal("100.00"));
+                        .divide(ativo.getValorTotalComprado(), PERCENTAGE_SCALE, RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100.00")).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
             }
 
             return new AtivoResponseDTO(
                     ativo.getCriptomoedas().getNome(),
                     ativo.getCriptomoedas().getSigla(),
                     ativo.getCriptomoedas().getIcone(),
-                    ativo.getValorTotalComprado(),
-                    ativo.getQuantidade(),
-                    cotacaoAtual,
+                    ativo.getValorTotalComprado().setScale(CURRENCY_SCALE, RoundingMode.HALF_UP),
+                    ativo.getQuantidade().setScale(QUANTIDADE_SCALE, RoundingMode.HALF_UP),
+                    cotacaoAtual.setScale(CURRENCY_SCALE, RoundingMode.HALF_UP),
                     valorAtualMercado,
                     rendimento,
                     rendimentoPercentual
@@ -55,25 +59,24 @@ public class CarteiraService {
 
         BigDecimal patrimonioTotal = listaAtivosDTO.stream()
                 .map(AtivoResponseDTO::valorAtualMercado)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
 
         BigDecimal valorTotalComprado = listaAtivosDTO.stream()
                 .map(AtivoResponseDTO::valorComprado)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
 
         BigDecimal rendimentoTotal = listaAtivosDTO.stream()
                 .map(AtivoResponseDTO::rendimento)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
 
-        int precisao = 4;
         BigDecimal rendimentoPercentualTotal;
 
         if (valorTotalComprado.compareTo(BigDecimal.ZERO) <= 0) {
-            rendimentoPercentualTotal = BigDecimal.ZERO;
+            rendimentoPercentualTotal = BigDecimal.ZERO.setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
         } else {
             rendimentoPercentualTotal = rendimentoTotal
-                    .divide(valorTotalComprado, precisao, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100.00"));
+                    .divide(valorTotalComprado, PERCENTAGE_SCALE, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal("100.00")).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
         }
 
         return new PortfolioResponseDTO(
@@ -85,7 +88,7 @@ public class CarteiraService {
         );
     }
 
-    // ✅ NOVO MÉTODO: lista apenas as criptomoedas que o usuário possui
+    // ✅ NOVO METODO: lista apenas as criptomoedas que o usuário possui
     public List<AtivoVenderResponseDTO> listarCriptomoedasUsuario(Integer userId) {
         return ativosCarteiraRepository.findByCarteira_Usuarios_Id(userId)
                 .stream()
