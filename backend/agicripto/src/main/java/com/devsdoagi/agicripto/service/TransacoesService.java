@@ -2,9 +2,11 @@ package com.devsdoagi.agicripto.service;
 
 import com.devsdoagi.agicripto.DTO.TransacoesRequestDTO;
 import com.devsdoagi.agicripto.DTO.TransacoesResponseDTO;
+import com.devsdoagi.agicripto.model.Carteira;
 import com.devsdoagi.agicripto.model.Transacoes;
 import com.devsdoagi.agicripto.model.Usuarios;
 import com.devsdoagi.agicripto.model.Criptomoedas;
+import com.devsdoagi.agicripto.repository.CarteiraRepository;
 import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import com.devsdoagi.agicripto.repository.UsuariosRepository;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
@@ -22,13 +24,19 @@ public class TransacoesService {
     private final TransacoesRepository transacoesRepository;
     private final UsuariosRepository usuariosRepository;
     private final CriptomoedasRepository criptomoedasRepository;
+    private final AtivosCarteiraService ativosCarteiraService;
+    private final CarteiraRepository carteiraRepository;
 
     public TransacoesService(TransacoesRepository transacoesRepository,
                              UsuariosRepository usuariosRepository,
-                             CriptomoedasRepository criptomoedasRepository) {
+                             CriptomoedasRepository criptomoedasRepository,
+                             AtivosCarteiraService ativosCarteiraService,
+                             CarteiraRepository carteiraRepository) {
         this.transacoesRepository = transacoesRepository;
         this.usuariosRepository = usuariosRepository;
         this.criptomoedasRepository = criptomoedasRepository;
+        this.ativosCarteiraService = ativosCarteiraService;
+        this.carteiraRepository = carteiraRepository;
     }
 
     // Converter Transacoes -> TransacoesResponseDTO
@@ -74,6 +82,7 @@ public class TransacoesService {
 
     // Salvar nova transação
     public TransacoesResponseDTO salvar(TransacoesRequestDTO dto) {
+
         Usuarios usuario = usuariosRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(dto.getUsuarioId()));
         Criptomoedas cripto = criptomoedasRepository.findById(dto.getCriptomoedaId())
@@ -87,6 +96,10 @@ public class TransacoesService {
         t.setCriptomoeda(cripto);
 
         Transacoes salvo = transacoesRepository.save(t);
+
+        Carteira carteira = carteiraRepository.findByUsuarios_Id(dto.getUsuarioId());
+        ativosCarteiraService.atualizar(carteira, cripto, dto.getQuantidadeCripto(), dto.getValor(), dto.getTipo().equals("Compra"));
+
         return toResponseDTO(salvo);
     }
 }
