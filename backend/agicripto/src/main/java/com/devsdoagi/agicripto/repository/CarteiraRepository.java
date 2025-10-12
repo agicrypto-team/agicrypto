@@ -7,4 +7,8 @@ import org.springframework.stereotype.Repository;
 import com.devsdoagi.agicripto.model.Carteira;
 
 @Repository
-public interface CarteiraRepository extends JpaRepository<Carteira, Integer> {}
+public interface CarteiraRepository extends JpaRepository<Carteira, Integer> {
+
+    Carteira findByUsuarios_Id(Integer userId);
+
+}

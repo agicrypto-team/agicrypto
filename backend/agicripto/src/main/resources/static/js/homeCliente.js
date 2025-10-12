@@ -48,7 +48,7 @@ async function realizarLogout() {
   } catch (error) {
     console.error("Erro ao realizar logout:", error);
   } finally {
-    sessionStorage.clear();
+      sessionStorage.clear();
     window.location.replace("/pages/auth/login.html");
   }
 }
