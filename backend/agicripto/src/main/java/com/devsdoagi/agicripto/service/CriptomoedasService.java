@@ -222,6 +222,30 @@ public class CriptomoedasService {
             return BigDecimal.ZERO;
         }
     }
+    public boolean deletarPorId(Integer id) {
+        Optional<Criptomoedas> cripto = criptomoedasRepository.findById(id);
+        if (cripto.isPresent()) {
+            criptomoedasRepository.deleteById(id);
+            return true; // exclusão bem-sucedida
+        }
+        return false; // id não encontrado
+    }
+
+    public CriptomoedasResponseDTO atualizar(Integer id, CriptomoedasRequestDTO request) {
+        Optional<Criptomoedas> optionalCripto = criptomoedasRepository.findById(id);
+        if (optionalCripto.isEmpty()) {
+            throw new RuntimeException("Criptomoeda não encontrada");
+        }
+
+        Criptomoedas cripto = optionalCripto.get();
+        cripto.setNome(request.nome());
+        cripto.setSigla(request.sigla());
+        cripto.setIcone(request.icone());
+
+        Criptomoedas salva = criptomoedasRepository.save(cripto);
+        return new CriptomoedasResponseDTO(salva);
+    }
+
 
 
 //    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {
