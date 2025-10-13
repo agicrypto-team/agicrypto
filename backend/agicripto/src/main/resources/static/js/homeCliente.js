@@ -3,6 +3,7 @@ const API_TRANSACOES = "http://localhost:8080/transacoes";
 const API_CRYPTOS = "http://localhost:8080/api/criptomoedas";
 const API_ATIVOS = "http://localhost:8080/api/ativos-carteira";
 const API_HISTORICO = "http://localhost:8080/carteira/historico";
+const API_PORTFOLIO = "http://localhost:8080/carteira/portfolio";
 
 let todasCriptos = [];
 let ativosUsuario = [];
@@ -25,6 +26,7 @@ async function carregarUsuarioCliente() {
             sessionStorage.setItem("usuarioTipo", usuario.tipo);
 
             await carregarListasCriptomoedas(usuario.id);
+            await carregarPortfolio();
             inicializarDropdown();
             await carregarHistoricoTransacoes();
         } else if (response.status === 401) {
@@ -82,6 +84,104 @@ async function carregarListasCriptomoedas(usuarioId) {
     }
 }
 
+// 🔹 Carregar dados do Portfólio
+async function carregarPortfolio() {
+    try {
+        const res = await fetch(API_PORTFOLIO, { method: "GET", credentials: "same-origin" });
+        if (!res.ok) throw new Error("Falha ao buscar portfólio");
+
+        const portfolio = await res.json();
+
+        // Funções de formatação
+        const formatarReais = (valor, semSimbolo = false) => {
+            const numeroFormatado = Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return semSimbolo ? numeroFormatado : `R$ ${numeroFormatado}`;
+        };
+        const formatarRendimentoReais = (valor) => {
+            const numero = Number(valor);
+            const prefixo = numero > 0 ? '+' : '';
+            return `${prefixo} R$ ${numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        };
+        const formatarRendimentoPercentual = (valor) => {
+            const numero = Number(valor);
+            const prefixo = numero > 0 ? '+' : '';
+            return `${prefixo}${numero.toFixed(2).replace('.', ',')}%`;
+        };
+        const obterClasseRendimento = (valor) => {
+            const numero = Number(valor);
+            if (numero > 0) return 'positivo';
+            if (numero < 0) return 'negativo';
+            return 'neutro';
+        };
+
+        // 1. Popula o card de patrimônio resumido
+        const patrimonioNumericoEl = document.getElementById('patrimonio-valor-numerico');
+        patrimonioNumericoEl.dataset.valorReal = formatarReais(portfolio.patrimonioTotal, true); // Guarda o valor real sem "R$"
+        patrimonioNumericoEl.textContent = '••••••••'; // Exibe as bolinhas por padrão
+
+        // 2. Popula os detalhes gerais (sempre visíveis)
+        const detalhesContainer = document.getElementById('detalhes-gerais-container');
+        const classeRendimentoGeral = obterClasseRendimento(portfolio.rendimentoTotal);
+        detalhesContainer.innerHTML = `
+            <div class="detalhe-item">
+                <span class="detalhe-label">Patrimônio Total</span>
+                <span class="detalhe-valor">${formatarReais(portfolio.patrimonioTotal)}</span>
+            </div>
+            <div class="detalhe-item">
+                <span class="detalhe-label">Total Investido</span>
+                <span class="detalhe-valor">${formatarReais(portfolio.valorTotalComprado)}</span>
+            </div>
+            <div class="detalhe-item">
+                <span class="detalhe-label">Rendimento Total</span>
+                <span class="detalhe-valor ${classeRendimentoGeral}">${formatarRendimentoReais(portfolio.rendimentoTotal)}</span>
+            </div>
+            <div class="detalhe-item">
+                <span class="detalhe-label">Rendimento Percentual</span>
+                <span class="detalhe-valor ${classeRendimentoGeral}">${formatarRendimentoPercentual(portfolio.rendimentoPercentualTotal)}</span>
+            </div>
+        `;
+
+        // 3. Popula a lista de ativos (sempre visíveis)
+        const ativosContainer = document.getElementById('ativos-lista-container');
+        if (portfolio.listaAtivos && portfolio.listaAtivos.length > 0) {
+            ativosContainer.innerHTML = portfolio.listaAtivos.map(ativo => {
+                const classeRendimentoAtivo = obterClasseRendimento(ativo.rendimento);
+                return `
+                    <div class="ativo-item">
+                        <div class="ativo-info">
+                            ${ativo.icone
+                    ? `<img src="${escapeHtml(ativo.icone)}" alt="${escapeHtml(ativo.nome)}" class="ativo-icon-img">`
+                    : '<span class="ativo-icon-emoji">💰</span>'
+                }
+                            <div class="ativo-nome-sigla">
+                                <div class="nome">${escapeHtml(ativo.nome)}</div>
+                                <div class="sigla">${escapeHtml(ativo.sigla)}</div>
+                            </div>
+                        </div>
+                        <div class="ativo-comprado">
+                            <div class="valor-comprado">${formatarReais(ativo.valorComprado)}</div>
+                            <div class="quantidade">${Number(ativo.quantidade).toLocaleString('pt-BR', { maximumFractionDigits: 8 })} ${escapeHtml(ativo.sigla)}</div>
+                        </div>
+                        <div class="ativo-cotacao">${formatarReais(ativo.cotacaoAtual)}</div>
+                        <div class="ativo-mercado">${formatarReais(ativo.valorAtualMercado)}</div>
+                        <div class="ativo-rendimento col-direita">
+                            <div class="valor-reais ${classeRendimentoAtivo}">${formatarRendimentoReais(ativo.rendimento)}</div>
+                            <div class="valor-percent ${classeRendimentoAtivo}">${formatarRendimentoPercentual(ativo.rendimentoPercentual)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            ativosContainer.innerHTML = '<div class="sem-ativos">Você ainda não possui ativos na carteira.</div>';
+        }
+
+    } catch (err) {
+        console.error("Erro ao carregar portfólio:", err);
+        document.getElementById('patrimonio-valor-numerico').textContent = 'Erro';
+    }
+}
+
+
 // 🔹 Carregar histórico de transações
 async function carregarHistoricoTransacoes() {
     const container = document.querySelector("#transacoes-lista");
@@ -101,31 +201,26 @@ async function carregarHistoricoTransacoes() {
             return;
         }
 
-        // 🔽 Ordena do mais recente para o mais antigo
         historico.sort((a, b) => new Date(b.momentoTransacao) - new Date(a.momentoTransacao));
 
         historico.forEach((tx, index) => {
             const data = new Date(tx.momentoTransacao);
-            const dataFormatada = data.toLocaleDateString("pt-BR", {
-                day: "2-digit", month: "2-digit", year: "numeric"
-            }) + " " + data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-
+            const dataFormatada = data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }) + " " + data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
             const tipoClass = (tx.tipoTransacao || "").toLowerCase();
             const valorFormatado = `R$ ${Number(tx.valorComprado).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
             const item = document.createElement("div");
             item.className = "transacao";
-            item.style.animationDelay = `${index * 0.06}s`; // efeito gradual, mais sutil
+            item.style.animationDelay = `${index * 0.06}s`;
             item.innerHTML = `
-        <div class="tx-left">
-          <div class="tx-name">${escapeHtml(tx.nomeCripto)} (${escapeHtml(tx.siglaCripto)})</div>
-          <div class="tx-date">${dataFormatada}</div>
-        </div>
-        <div class="tx-right">
-          <div class="tx-type ${tipoClass}">${escapeHtml(tx.tipoTransacao)}</div>
-          <div class="tx-value">${valorFormatado}</div>
-        </div>
-      `;
+                <div class="tx-left">
+                  <div class="tx-name">${escapeHtml(tx.nomeCripto)} (${escapeHtml(tx.siglaCripto)})</div>
+                  <div class="tx-date">${dataFormatada}</div>
+                </div>
+                <div class="tx-right">
+                  <div class="tx-type ${tipoClass}">${escapeHtml(tx.tipoTransacao)}</div>
+                  <div class="tx-value">${valorFormatado}</div>
+                </div>`;
             container.appendChild(item);
         });
     } catch (err) {
@@ -152,9 +247,8 @@ function inicializarDropdown() {
             item.className = "crypto-item";
             item.dataset.id = c.id;
             item.innerHTML = `
-        <span class="crypto-name">${escapeHtml(c.nome)}</span>
-        <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>
-      `;
+                <span class="crypto-name">${escapeHtml(c.nome)}</span>
+                <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>`;
             item.addEventListener("mousedown", e => e.preventDefault());
             item.addEventListener("click", () => {
                 cryptoInput.value = `${c.nome} (${c.sigla})`;
@@ -208,18 +302,15 @@ function inicializarDropdown() {
             });
 
             if (res.ok) {
-                // sucesso
                 alert("Transação realizada com sucesso!");
                 form.reset();
                 equivalenciaEl.textContent = "0";
                 cryptoInput.dataset.id = "";
-
-                // Atualiza listas e histórico
                 await carregarListasCriptomoedas(usuarioId);
+                await carregarPortfolio();
                 await carregarHistoricoTransacoes();
                 atualizarDropdown();
             } else {
-                // tenta extrair mensagem de erro do backend
                 let errObj = {};
                 try { errObj = await res.json(); } catch (_) { /* ignore */ }
                 alert("Erro: " + (errObj.message || "Falha ao criar transação"));
@@ -231,7 +322,6 @@ function inicializarDropdown() {
     });
 }
 
-// Pequena função utilitária para escapar HTML injetado nos nomes (segurança básica)
 function escapeHtml(unsafe) {
     if (unsafe === null || unsafe === undefined) return "";
     return String(unsafe)
@@ -248,4 +338,35 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const logoutBtn = document.querySelector(".btn-logout");
     if (logoutBtn) logoutBtn.addEventListener("click", realizarLogout);
+
+    const secaoPatrimonio = document.getElementById('secao-patrimonio');
+    const btnVerDetalhes = document.querySelector('.ver-detalhes');
+    const btnFecharDetalhes = document.querySelector('.fechar-detalhes');
+    const btnVisibilidade = document.getElementById('btn-visibilidade');
+    const patrimonioNumericoEl = document.getElementById('patrimonio-valor-numerico');
+
+    // Evento para expandir para a visão detalhada
+    btnVerDetalhes.addEventListener('click', (e) => {
+        e.preventDefault();
+        secaoPatrimonio.classList.add('expandido');
+    });
+
+    // Evento para voltar para a visão resumida
+    btnFecharDetalhes.addEventListener('click', (e) => {
+        e.preventDefault();
+        secaoPatrimonio.classList.remove('expandido');
+        // Garante que o valor volte a ficar oculto
+        secaoPatrimonio.classList.remove('valor-visivel');
+        patrimonioNumericoEl.textContent = '••••••••';
+    });
+
+    // Evento para alternar a visibilidade apenas na visão resumida
+    btnVisibilidade.addEventListener('click', () => {
+        const estaVisivel = secaoPatrimonio.classList.toggle('valor-visivel');
+        if (estaVisivel) {
+            patrimonioNumericoEl.textContent = patrimonioNumericoEl.dataset.valorReal;
+        } else {
+            patrimonioNumericoEl.textContent = '••••••••';
+        }
+    });
 });

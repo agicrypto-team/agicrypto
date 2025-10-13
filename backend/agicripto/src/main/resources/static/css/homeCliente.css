@@ -3,6 +3,8 @@
     --secondary: #55FF00;
     --text-dark: #0b3c40;
     --bg-light: #f6f8f8;
+    --positive: #00BFA6;
+    --negative: #F44336;
 }
 
 /* Reset mínimo */
@@ -66,56 +68,6 @@ body {
 }
 .username { color: var(--primary); }
 
-/* Cards grid */
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin-bottom: 28px;
-}
-.card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 18px;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.05);
-    min-height: 98px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-}
-.card-header {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:14px;
-    color: var(--primary);
-}
-.card-icon {
-    display:inline-flex;
-    width:32px;
-    height:32px;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:#e8f0fe;
-    font-size:16px;
-}
-.card-title { font-weight:600; }
-.card-info {
-    margin-left:auto;
-    font-size:13px;
-    color:#7a8b8b;
-    background:#f5f7f7;
-    padding:4px 8px;
-    border-radius:12px;
-}
-.card-value {
-    margin-top:8px;
-    font-size:18px;
-    color: var(--primary);
-    font-weight:700;
-}
-
 /* Histórico */
 .historico { margin-top: 14px; }
 .historico h2 { margin-bottom: 14px; color: var(--primary); }
@@ -131,14 +83,11 @@ body {
     scrollbar-width: thin;
     scrollbar-color: var(--primary) #f0f3f3;
 }
-
-/* Scrollbar personalizada */
 .transacoes-lista::-webkit-scrollbar { width: 8px; }
 .transacoes-lista::-webkit-scrollbar-track { background: #f0f3f3; border-radius: 8px; }
 .transacoes-lista::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 8px; }
 .transacoes-lista::-webkit-scrollbar-thumb:hover { background: #0049c7; }
 
-/* Animação de entrada suave */
 .transacao {
     display:flex;
     justify-content:space-between;
@@ -156,7 +105,6 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Estado */
 .sem-transacoes,
 .erro-transacoes {
     text-align: center;
@@ -165,7 +113,7 @@ body {
     font-size: 14px;
 }
 
-/* 🔹 Layout do formulário de adicionar transação */
+/* Formulário de adicionar transação */
 .add-transaction {
     margin-top: 28px;
     background: #fff;
@@ -173,120 +121,132 @@ body {
     padding: 20px;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
 }
+.add-transaction h2 { margin-bottom: 16px; color: var(--text-dark); }
+.transaction-form { display: flex; flex-direction: column; gap: 14px; }
+.form-row.horizontal-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.group-label { font-weight: 600; color: #083d40; font-size: 14px; }
+.crypto-input, .input-valor { padding: 10px 12px; border: 1.8px solid #d8e2e2; border-radius: 8px; font-size: 15px; width: 240px; outline: none; }
+.crypto-input:focus, .input-valor:focus { border-color: var(--primary); }
+.crypto-dropdown { position: absolute; background: #fff; border: 1px solid #d8e2e2; border-radius: 8px; width: 100%; max-height: 200px; overflow-y: auto; box-shadow: 0 6px 14px rgba(0,0,0,0.08); z-index: 10; display: none; }
+.crypto-item { padding: 8px 10px; cursor: pointer; font-size: 14px; }
+.crypto-item:hover { background: #f0f5ff; }
+.btn-send { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer; transition: background 0.3s ease; }
+.btn-send:hover { background: #0049c7; }
+.equivalencia-value { background: #f9f9f9; border: 1.8px solid #d8e2e2; border-radius: 8px; padding: 10px 12px; font-weight: 500; color: #083d40; min-width: 100px; text-align: center; }
+.tipo-group .radios { display: flex; gap: 14px; }
+.radio-item { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.radio-item input { cursor: pointer; }
 
-.add-transaction h2 {
-    margin-bottom: 16px;
-    color: var(--text-dark);
-}
-
-.transaction-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-/* Agrupamento horizontal dos campos */
-.form-row.horizontal-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 18px;
-}
-
-/* Cada campo */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.group-label {
-    font-weight: 600;
-    color: #083d40;
-    font-size: 14px;
-}
-
-.crypto-input,
-.input-valor {
-    padding: 10px 12px;
-    border: 1.8px solid #d8e2e2;
-    border-radius: 8px;
-    font-size: 15px;
-    width: 240px;
-    outline: none;
-}
-
-.crypto-input:focus,
-.input-valor:focus {
-    border-color: var(--primary);
-}
-
-/* Dropdown */
-.crypto-dropdown {
-    position: absolute;
+/* 🔹 SEÇÃO DE PATRIMÔNIO 🔹 */
+.patrimonio-principal {
     background: #fff;
-    border: 1px solid #d8e2e2;
     border-radius: 8px;
-    width: 100%;
-    max-height: 200px;
-    overflow-y: auto;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-    z-index: 10;
-    display: none;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: min-height 0.4s ease-in-out;
 }
-
-.crypto-item {
-    padding: 8px 10px;
-    cursor: pointer;
-    font-size: 14px;
+.patrimonio-resumido, .patrimonio-detalhado {
+    transition: opacity 0.4s ease-in-out;
 }
+.patrimonio-detalhado { display: none; }
 
-.crypto-item:hover {
-    background: #f0f5ff;
-}
+/* Estado Expandido */
+.patrimonio-principal.expandido .patrimonio-resumido { display: none; }
+.patrimonio-principal.expandido .patrimonio-detalhado { display: block; }
 
-/* Botão */
-.btn-send {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
+/* Vista Resumida */
+.patrimonio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.patrimonio-header h2 { margin: 0; font-size: 18px; color: var(--text-dark); }
+.patrimonio-body { margin-left: 4px; }
+.total-label { font-size: 12px; color: #5a6465; font-weight: 600; text-transform: uppercase; }
+.total-valor { font-size: 32px; font-weight: 700; color: var(--text-dark); margin: 4px 0 8px; }
+#patrimonio-valor-numerico { letter-spacing: 2px; }
+.ver-detalhes { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 15px; }
+.ver-detalhes:hover { text-decoration: underline; }
 
-.btn-send:hover {
-    background: #0049c7;
-}
+/* Visibilidade de ícones */
+.btn-visibilidade { background: transparent; border: none; cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.patrimonio-principal.valor-visivel .olho-aberto { display: block; }
+.patrimonio-principal.valor-visivel .olho-fechado { display: none; }
+.olho-aberto { display: none; }
+.olho-fechado { display: block; }
 
-/* Equivalência */
-.equivalencia-value {
-    background: #f9f9f9;
-    border: 1.8px solid #d8e2e2;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-weight: 500;
-    color: #083d40;
-    min-width: 100px;
-    text-align: center;
-}
+/* 🔹 ESTILOS PARA VISTA DETALHADA 🔹 */
+.detalhado-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.detalhado-header h3 { margin: 0; font-size: 18px; color: var(--text-dark); }
+.fechar-detalhes { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 15px; }
+.fechar-detalhes:hover { text-decoration: underline; }
 
-/* Tipo de transação */
-.tipo-group .radios {
-    display: flex;
-    gap: 14px;
-}
+/* Grid de Resumo Geral */
+.detalhes-gerais { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; border-bottom: 1px solid #eef2f2; padding-bottom: 16px; margin-bottom: 16px; }
+.detalhe-item { display: flex; flex-direction: column; }
+.detalhe-label { font-size: 13px; color: #5a6465; margin-bottom: 4px; }
+.detalhe-valor { font-size: 18px; font-weight: 600; color: var(--text-dark); }
+.detalhe-valor.positivo { color: var(--positive); }
+.detalhe-valor.negativo { color: var(--negative); }
 
-.radio-item {
-    display: flex;
+/* Lista de Ativos */
+.ativos-lista-header, .ativo-item {
+    display: grid;
+    /* Ativo | Investido | Cotação | Saldo | Rendimento */
+    grid-template-columns: 2fr 1.5fr 1.2fr 1.2fr 1.2fr;
+    gap: 16px;
     align-items: center;
-    gap: 4px;
-    cursor: pointer;
 }
 
-.radio-item input {
-    cursor: pointer;
+.ativos-lista-header {
+    padding: 0 12px 8px;
+    border-bottom: 1px solid #eef2f2;
+}
+.ativos-lista-header span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a6465;
+    text-transform: uppercase;
+}
+.ativos-lista-header .col-direita, .ativo-item .col-direita {
+    text-align: right;
 }
 
+.ativo-item {
+    padding: 14px 12px;
+    border-bottom: 1px solid #f5f7f7;
+}
+.ativo-item:last-child {
+    border-bottom: none;
+}
+
+.ativo-info { display: flex; align-items: center; gap: 12px; }
+
+/* Estilos para o ícone (imagem ou emoji) */
+.ativo-icon-img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.ativo-icon-emoji {
+    font-size: 24px;
+    line-height: 28px; /* para alinhar com a imagem */
+}
+
+.ativo-nome-sigla .nome { font-weight: 600; }
+.ativo-nome-sigla .sigla { font-size: 13px; color: #5a6465; }
+
+.ativo-comprado .valor-comprado { font-weight: 600; }
+.ativo-comprado .quantidade { font-size: 13px; color: #5a6465; }
+
+.ativo-cotacao { font-weight: 600; }
+.ativo-mercado { font-weight: 600; }
+
+.ativo-rendimento { text-align: right; }
+.ativo-rendimento .valor-reais { font-weight: 600; }
+.ativo-rendimento .valor-percent { font-size: 13px; }
+.ativo-rendimento .positivo { color: var(--positive); }
+.ativo-rendimento .negativo { color: var(--negative); }
+
+.sem-ativos { text-align: center; padding: 20px; color: #6d8988; }
