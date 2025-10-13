@@ -11,6 +11,7 @@ import com.devsdoagi.agicripto.model.Usuarios;
 import com.devsdoagi.agicripto.repository.CarteiraRepository;
 import com.devsdoagi.agicripto.repository.UsuariosRepository;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +23,29 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class UsuariosService {
 
-    private UsuariosRepository usuarioRepository;
-    private CarteiraRepository carteiraRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UsuariosRepository usuarioRepository;
+    private final CarteiraRepository carteiraRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     public UsuariosService(UsuariosRepository usuarioRepository, CarteiraRepository carteiraRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.carteiraRepository = carteiraRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    // Metodo para checar a validade da sessão do usuário, e obter o seu ID
+    // Este metodo que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
+    public Integer checarSessaoEObterIdUsuario(HttpSession session) {
+
+        if (session == null || session.getAttribute("LOGADO") == null || !(Boolean) session.getAttribute("LOGADO")) {
+
+            throw new AutenticacaoException("Acesso negado. Usuário não autenticado ou sessão expirada.");
+
+        }
+
+        return (Integer) session.getAttribute("USUARIO_ID");
+
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.devsdoagi.agicripto.service;
 
 
+import com.devsdoagi.agicripto.DTO.HistoricoCriptomoedasResponseDTO;
 import com.devsdoagi.agicripto.exception.historicoCriptomoedas.HistoricoCriptomoedaNaoEncontradoException;
 import com.devsdoagi.agicripto.model.Criptomoedas;
 import com.devsdoagi.agicripto.model.HistoricoCriptomoedas;
@@ -8,6 +9,7 @@ import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
 import com.devsdoagi.agicripto.repository.HistoricoCriptomoedasRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HistoricoCriptomoedasService {
 
-    private final CriptomoedasRepository criptomoedasRepository;
+    @Autowired
     private final HistoricoCriptomoedasRepository historicoCriptomoedasRepository;
+
+    private final CriptomoedasRepository criptomoedasRepository;
     private final CriptomoedasService criptomoedasService;
 
     public HistoricoCriptomoedas buscarPorId(Integer id) {
@@ -29,8 +33,19 @@ public class HistoricoCriptomoedasService {
                 .orElseThrow(() -> new HistoricoCriptomoedaNaoEncontradoException(id));
     }
 
-    public List<HistoricoCriptomoedas> listarPorCriptomoeda(Integer idCriptomoeda) {
-        return historicoCriptomoedasRepository.findByCriptomoedas_Id(idCriptomoeda);
+    public List<HistoricoCriptomoedasResponseDTO> listarTodosComCriptomoeda() {
+        List<HistoricoCriptomoedas> historicos = historicoCriptomoedasRepository.findAll();
+
+        return historicos.stream()
+                .map(HistoricoCriptomoedasResponseDTO::new)
+                .toList();
+    }
+
+    public List<HistoricoCriptomoedasResponseDTO> listarPorCriptomoeda(Integer idCriptomoeda) {
+        return historicoCriptomoedasRepository.findByCriptomoedas_Id(idCriptomoeda)
+                .stream()
+                .map(HistoricoCriptomoedasResponseDTO::new)
+                .toList();
     }
 
     @Scheduled(cron = "0 0 * * * *")
@@ -59,6 +74,13 @@ public class HistoricoCriptomoedasService {
                 System.err.println("Erro ao atualizar " + cripto.getNome() + ": " + e.getMessage());
             }
         }
+    }
+
+    public BigDecimal obterCotacaoAtual(Integer idCriptomoeda) {
+
+        BigDecimal cotacaoAtual = historicoCriptomoedasRepository.findTopByCriptomoedas_IdOrderByMomentoDesc(idCriptomoeda).getCotacao_momento();
+        return cotacaoAtual;
+
     }
 
 }

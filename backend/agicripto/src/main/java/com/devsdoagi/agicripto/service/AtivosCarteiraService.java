@@ -10,6 +10,7 @@ import com.devsdoagi.agicripto.DTO.AtivosCarteiraResponseDTO;
 import com.devsdoagi.agicripto.model.Criptomoedas;
 import com.devsdoagi.agicripto.model.Carteira;
 
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -69,22 +70,51 @@ public class AtivosCarteiraService {
         return new AtivosCarteiraResponseDTO(ativoSalvo);
     }
 
-    // Lógica
-    public AtivosCarteiraResponseDTO atualizar(Integer id, AtivosCarteiraRequestDTO dto) {
-        AtivosCarteira ativoExistente = ativoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ativo não encontrado para atualização."));
+    //METODO PARA ATUALIZAR ATIVOS
+    public AtivosCarteira atualizar(
+            Carteira carteira,
+            Criptomoedas criptomoeda,
+            BigDecimal quantidade,
+            BigDecimal valorTotal,
+            boolean isCompra) {
 
-        // Atualiza os campos
-        if (dto.getQuantidade() != null) {
-            ativoExistente.setQuantidade(dto.getQuantidade());
-        }
-        if (dto.getValorTotalComprado() != null) {
-            ativoExistente.setValorTotalComprado(dto.getValorTotalComprado());
+        // Busca se o ativo já existe na carteira
+        AtivosCarteira ativo = ativoRepository
+                .findByCarteiraAndCriptomoedas(carteira, criptomoeda)
+                .orElse(null);
+
+        if (ativo == null) {
+            // Se não existe, cria um novo ativo (apenas em caso de compra)
+            if (isCompra) {
+                ativo = new AtivosCarteira();
+                ativo.setCarteira(carteira);
+                ativo.setCriptomoedas(criptomoeda);
+                ativo.setQuantidade(quantidade);
+                ativo.setValorTotalComprado(valorTotal);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Não é possível vender um ativo que não existe na carteira.");
+            }
+        } else {
+            // Atualiza conforme o tipo da operação
+            if (isCompra) {
+                ativo.setQuantidade(ativo.getQuantidade().add(quantidade));
+                ativo.setValorTotalComprado(ativo.getValorTotalComprado().add(valorTotal));
+            } else {
+                BigDecimal novaQuantidade = ativo.getQuantidade().subtract(quantidade);
+                BigDecimal novoValorTotal = ativo.getValorTotalComprado().subtract(valorTotal);
+
+                if (novaQuantidade.compareTo(BigDecimal.ZERO) < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Quantidade insuficiente para venda.");
+                }
+
+                ativo.setQuantidade(novaQuantidade);
+                ativo.setValorTotalComprado(novoValorTotal);
+            }
         }
 
-        // Salva e retorna
-        AtivosCarteira ativoAtualizado = ativoRepository.save(ativoExistente);
-        return new AtivosCarteiraResponseDTO(ativoAtualizado);
+        return ativoRepository.save(ativo);
     }
 
     public void deletar(Integer id) {

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/agicripto.main.iml" filepath="$PROJECT_DIR$/.idea/modules/agicripto.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/agicrypto.iml" filepath="$PROJECT_DIR$/.idea/agicrypto.iml" />
     </modules>
   </component>

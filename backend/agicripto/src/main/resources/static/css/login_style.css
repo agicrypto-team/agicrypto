@@ -80,6 +80,16 @@ body {
     box-shadow: 0 0 0 0.25rem rgba(0, 86, 217, 0.25);
 }
 
+#togglePassword {
+    position: absolute;
+    top: 50%;
+    right: 1rem; /* 16px */
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d; /* Cinza padrão do Bootstrap */
+}
+
+
 .form-check-input:checked {
     background-color: #002D9C;
     border-color: #002D9C;
@@ -101,8 +111,20 @@ body {
     box-shadow: 0 4px 15px rgba(0, 45, 156, 0.3);
 }
 
-/* === A MUDANÇA ESTÁ AQUI === */
 .btn-login .arrow {
-    /* Todas as propriedades que criavam o círculo foram removidas. */
     font-size: 1.2rem;
+}
+
+/* NOVO: Estilos para o link de cadastro */
+.signup-text {
+    color: #6c757d; /* Cinza sutil */
+}
+
+.signup-link {
+    color: #002D9C; /* Cor principal da marca */
+    transition: color 0.2s ease-in-out;
+}
+
+.signup-link:hover {
+    color: #0056D9; /* Tom mais claro do azul no hover */
 }
