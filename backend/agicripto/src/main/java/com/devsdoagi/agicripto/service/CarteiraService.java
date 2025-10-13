@@ -2,9 +2,11 @@ package com.devsdoagi.agicripto.service;
 
 import com.devsdoagi.agicripto.DTO.AtivoResponseDTO;
 import com.devsdoagi.agicripto.DTO.AtivoVenderResponseDTO;
+import com.devsdoagi.agicripto.DTO.HistoricoResponseDTO;
 import com.devsdoagi.agicripto.DTO.PortfolioResponseDTO;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.repository.AtivosCarteiraRepository;
+import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,15 +18,17 @@ public class CarteiraService {
 
     private final HistoricoCriptomoedasService historicoCriptomoedasService;
     private final AtivosCarteiraRepository ativosCarteiraRepository;
+    private final TransacoesRepository transacoesRepository;
 
     private static final int CURRENCY_SCALE = 2;
     private static final int PERCENTAGE_SCALE = 4;
         private static final int QUANTIDADE_SCALE = 8;
 
 
-    public CarteiraService(AtivosCarteiraRepository ativosCarteiraRepository, HistoricoCriptomoedasService historicoCriptomoedasService) {
+    public CarteiraService(AtivosCarteiraRepository ativosCarteiraRepository, HistoricoCriptomoedasService historicoCriptomoedasService, TransacoesRepository transacoesRepository) {
         this.ativosCarteiraRepository = ativosCarteiraRepository;
         this.historicoCriptomoedasService = historicoCriptomoedasService;
+        this.transacoesRepository = transacoesRepository;
     }
 
     public PortfolioResponseDTO obterPortfolioCliente(Integer userId) {
@@ -97,5 +101,18 @@ public class CarteiraService {
                         ativo.getCriptomoedas().getSigla()
                 ))
                 .toList();
+    }
+
+    public List<HistoricoResponseDTO> obterHistoricoTransacoes(Integer userId) {
+
+       return transacoesRepository.findByUsuariosId(userId).stream().map(transacao -> {
+
+           String nomeCripto = transacao.getCriptomoeda().getNome();
+           String siglaCripto =  transacao.getCriptomoeda().getSigla();
+
+           return new HistoricoResponseDTO(transacao.getTipo(), nomeCripto, siglaCripto, transacao.getValor().setScale(CURRENCY_SCALE, RoundingMode.HALF_UP), transacao.getQuantidade_cripto().setScale(QUANTIDADE_SCALE, RoundingMode.HALF_UP), transacao.getMomento());
+
+       }).toList();
+
     }
 }
