@@ -8,6 +8,7 @@ import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.repository.AtivosCarteiraRepository;
 import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
