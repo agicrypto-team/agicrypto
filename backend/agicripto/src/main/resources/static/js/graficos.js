@@ -17,24 +17,35 @@ async function carregarGraficos() {
             const labels = registros.map(r => r.momento);
             const valores = registros.map(r => r.cotacaoMomento);
 
+            // 🔹 Criação do card do gráfico
+            const card = document.createElement('div');
+            card.classList.add('grafico-card');
+
+            // 🔹 Título acima do gráfico
+            const titulo = document.createElement('h3');
+            titulo.textContent = sigla;
+            card.appendChild(titulo);
+
+            // 🔹 Canvas do Chart.js
             const canvas = document.createElement('canvas');
             canvas.id = `grafico-${sigla}`;
-            canvas.width = 400;
-            canvas.height = 200;
-            document.getElementById('container-graficos').appendChild(canvas);
+            card.appendChild(canvas);
+
+            // 🔹 Adiciona ao container principal
+            document.getElementById('container-graficos').appendChild(card);
 
             const cor = gerarCorDaPaleta(index);
 
             new Chart(canvas, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels,
                     datasets: [{
                         label: sigla,
                         data: valores,
                         borderWidth: 2,
                         borderColor: cor,
-                        backgroundColor: cor.replace('1)', '0.1)'), // versão mais clara da mesma cor
+                        backgroundColor: cor.replace('1)', '0.1)'),
                         fill: true,
                         tension: 0.2
                     }]
@@ -42,27 +53,23 @@ async function carregarGraficos() {
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { display: true },
-                        title: {
-                            display: true,
-                            text: `Variação da ${sigla}`,
-                            color: '#000',
-                            font: { size: 14, weight: 'bold' }
-                        }
+                        legend: { display: false }, // escondemos legenda para deixar visual limpo
+                        title: { display: false }
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#000' },
+                            ticks: { color: '#555', maxRotation: 45, minRotation: 45 },
                             grid: { color: '#eee' }
                         },
                         y: {
-                            ticks: { color: '#000' },
+                            ticks: { color: '#555' },
                             grid: { color: '#eee' }
                         }
                     }
                 }
             });
         });
+
 
     } catch (error) {
         console.error('Erro ao carregar gráficos:', error);
