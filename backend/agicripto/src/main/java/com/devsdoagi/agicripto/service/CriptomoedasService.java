@@ -135,14 +135,13 @@ public class CriptomoedasService {
                 return;
             }
 
-            String urlExchange = baseUrl + "exchange_rates";
+            String urlExchange = baseUrl + "simple/price?ids=usd&vs_currencies=brl";
             String exchangeResponse = restTemplate.getForObject(urlExchange, String.class);
-            JsonNode exchangeRoot = objectMapper.readTree(exchangeResponse);
 
-            JsonNode brlRateNode = exchangeRoot
-                    .path("rates")
-                    .path("brl")
-                    .path("value");
+            JsonNode brlRateNode = objectMapper
+                    .readTree(exchangeResponse)
+                    .path("usd")
+                    .path("brl");
 
             BigDecimal taxaCambio = null;
             if (brlRateNode.isNumber()) {
