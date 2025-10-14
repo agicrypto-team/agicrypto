@@ -1,0 +1,53 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+<line x1="1893" y1="1082" x2="1893" y2="182" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1828" y1="1082" x2="1828" y2="302" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1768" y1="1257" x2="1768" y2="357" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1703" y1="1152" x2="1703" y2="372" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1633" y1="1302" x2="1633" y2="402" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1568" y1="1216" x2="1568" y2="436" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1508" y1="1373" x2="1508" y2="473" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1443" y1="1296" x2="1443" y2="516" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1386" y1="1457" x2="1386" y2="557" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1321" y1="1382" x2="1321" y2="602" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1261" y1="1543" x2="1261" y2="643" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1196" y1="1442" x2="1196" y2="662" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1126" y1="1582" x2="1126" y2="682" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1061" y1="1486" x2="1061" y2="706" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="1001" y1="1621" x2="1001" y2="721" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="936" y1="1534" x2="936" y2="754" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="871" y1="1691" x2="871" y2="791" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="815" y1="1623" x2="815" y2="843" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="752" y1="1776" x2="752" y2="876" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="695" y1="1684" x2="695" y2="904" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="643" y1="1819" x2="643" y2="919" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="586" y1="1712" x2="586" y2="932" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="532" y1="1848" x2="532" y2="948" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="488" y1="1740" x2="488" y2="960" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="442" y1="1871" x2="442" y2="971" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="398" y1="1764" x2="398" y2="984" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="349" y1="1894" x2="349" y2="994" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="306" y1="1782" x2="306" y2="1002" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<line x1="271" y1="1910" x2="271" y2="1010" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M238.5 1800.5L238.5 1020.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M204.5 1806.5L204.5 1026.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M173.5 1812.5L173.5 1033.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M138.5 1819.5L138.5 1040.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M111.5 1826.5L111.5 1047.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M79.5 1835.5L79.5 1056.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<path d="M48.5 1845.5L48.5 1066.5" stroke="white" stroke-opacity="0.2" stroke-width="4"/>
+<g filter="url(#filter0_i_2001_802)">
+<path d="M-83 1108.5C141.458 1027.96 746.79 939.577 848.863 820.168C946.959 705.413 1145.5 702.269 1277.5 629C1389.22 566.986 1613.19 378.424 1740.5 367.5C1847.99 358.277 1919.91 76.2432 1969.5 63.9999" stroke="#55FF00" stroke-width="4"/>
+</g>
+<defs>
+<filter id="filter0_i_2001_802" x="-83.6755" y="62.0582" width="2053.66" height="1052.32" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_2001_802"/>
+</filter>
+</defs>
+</svg>

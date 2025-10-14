@@ -11,6 +11,8 @@ import com.devsdoagi.agicripto.model.Criptomoedas;
 import com.devsdoagi.agicripto.model.Carteira;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -23,14 +25,17 @@ public class AtivosCarteiraService {
     private final AtivosCarteiraRepository ativoRepository;
     private final CarteiraRepository carteiraRepository;
     private final CriptomoedasRepository criptomoedaRepository;
+   // private final HistoricoCriptomoedasService historicoCriptomoedasService;
+
 
     // Injeção de dependência via construtor
     @Autowired
     public AtivosCarteiraService(AtivosCarteiraRepository ativoRepository, CarteiraRepository carteiraRepository,
-                                 CriptomoedasRepository criptomoedaRepository) {
+                                 CriptomoedasRepository criptomoedaRepository, HistoricoCriptomoedasService historicoCriptomoedasService) {
         this.ativoRepository = ativoRepository;
         this.carteiraRepository = carteiraRepository;
         this.criptomoedaRepository = criptomoedaRepository;
+        //this.historicoCriptomoedasService = historicoCriptomoedasService;
     }
 
     // Mapeamento Entity -> ResponseDTO usando referência de metodo para o construtor
@@ -116,6 +121,23 @@ public class AtivosCarteiraService {
 
         return ativoRepository.save(ativo);
     }
+
+    /*public Map<String, BigDecimal> calcularFlutuacaoAtivos(Integer userId) {
+
+        List<AtivosCarteira> listaAtivos = ativoRepository.findByCarteira_Usuarios_Id(userId);
+
+
+        Map<String, BigDecimal> flutuacaoAtivos = new HashMap<>();
+
+        for (AtivosCarteira ativo : listaAtivos) {
+
+            BigDecimal cotacaoAtual = historicoCriptomoedasService.obterCotacaoAtual(ativo.getCriptomoedas().getId());
+
+
+            BigDecimal cotacaoDiaAnterior = historicoCriptomoedasService.obterCotacaoDiaAnterior(ativo.getCriptomoedas().getId());
+
+     */
+
 
     public void deletar(Integer id) {
         ativoRepository.deleteById(id);
