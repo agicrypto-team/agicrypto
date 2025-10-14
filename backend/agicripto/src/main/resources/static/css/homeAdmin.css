@@ -1,7 +1,7 @@
 :root {
-  --primary: #0064F5;
-  --secondary: #55FF00;
-  --text-dark: #0b3c40;
+  --primary: #0033B0;
+  --secondary: #4CAF50;
+  --text-dark: #1E1E1E;
   --bg-light: #f6f8f8;
 }
 
@@ -38,8 +38,7 @@ body {
 
 /* === Top Bar === */
 .top-nav {
-  background: var(--primary);
-  color: #fff;
+  color: var(--primary);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -53,8 +52,8 @@ body {
 /* === Botão Sair === */
 .btn-logout {
   background: transparent;
-  border: 2px solid #fff;
-  color: #fff;
+  border: 2px solid #0033B0;
+  color: var(--primary);
   padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
@@ -255,28 +254,6 @@ table th {
   background-color: #a71d2a;
 }
 
-/* === Gráficos ===
-.grafico {
-  margin-top: 22px;
-  background: #fff;
-  border-radius: 8px;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-}
-
-.grafico div {
-  width: 100%;
-  height: 100%;
-  display: block;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
-}
-*/
-
 /* ========== MODAL EDITAR ========== */
 .modal {
   display: none; /* começa invisível */
@@ -411,3 +388,16 @@ table th {
   height: 250px !important;
 }
 
+/* Footer */
+
+.footer-teste {
+  background: url("../../assets/footer.png") no-repeat center bottom;
+  background-size: 100% auto; /* força a ocupar toda a largura */
+  width: 100%;
+  height: 320px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  margin-top: 40px;
+}
