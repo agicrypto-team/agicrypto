@@ -7,6 +7,7 @@ const API_PORTFOLIO = "http://localhost:8080/carteira/portfolio";
 
 let todasCriptos = [];
 let ativosUsuario = [];
+const usuarioId = sessionStorage.getItem("usuarioId");
 
 // 🔹 Carregar dados do usuário
 async function carregarUsuarioCliente() {
@@ -66,16 +67,19 @@ async function carregarListasCriptomoedas(usuarioId) {
         } else {
             console.warn("Falha ao buscar lista de criptos:", resCriptos.status);
         }
+        const resAtivos = await fetch(`${API_ATIVOS}/do-usuario/${usuarioId}`, { method: "GET", credentials: "same-origin" });
 
-        const resAtivos = await fetch(`${API_ATIVOS}/do-usuario`, { method: "GET", credentials: "same-origin" });
         if (resAtivos.ok) {
             const ativos = await resAtivos.json();
+
             ativosUsuario = ativos.map(a => ({
-                id: a.criptomoeda?.id,
-                nome: a.criptomoeda?.nome,
-                sigla: a.criptomoeda?.sigla,
-                icone: a.criptomoeda?.icone || "💰"
+                id: a.criptomoeda?.id || a.id,
+                nome: a.criptomoeda?.nome || a.nome,
+                sigla: a.criptomoeda?.sigla || a.sigla,
+                icone: a.criptomoeda?.icone || a.icone
+
             }));
+            console.log("ativosUsuario carregados:", ativosUsuario); // <-- Aqui
         } else {
             console.warn("Falha ao buscar ativos do usuário:", resAtivos.status);
         }
@@ -232,6 +236,7 @@ async function carregarHistoricoTransacoes() {
 // 🔹 Inicializa dropdown de criptos e envio de transações
 function inicializarDropdown() {
     const cryptoInput = document.querySelector("#crypto");
+    console.log("Elemento do input de cripto:", cryptoInput);
     const dropdown = document.querySelector(".crypto-dropdown");
     if (!cryptoInput || !dropdown) return;
 
@@ -251,6 +256,7 @@ function inicializarDropdown() {
                 <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>`;
             item.addEventListener("mousedown", e => e.preventDefault());
             item.addEventListener("click", () => {
+             console.log("CLICK NO DROPDOWN:", c);
                 cryptoInput.value = `${c.nome} (${c.sigla})`;
                 cryptoInput.dataset.id = c.id;
                 dropdown.style.display = "none";
@@ -275,23 +281,42 @@ function inicializarDropdown() {
 
     form.addEventListener("submit", async e => {
         e.preventDefault();
+
         const tipo = document.querySelector("input[name='tipo']:checked").value;
         const usuarioId = sessionStorage.getItem("usuarioId");
         const valor = parseFloat((valorInput.value || "").replace(",", "."));
         const criptoId = parseInt(cryptoInput.dataset.id);
 
-        if (!criptoId || isNaN(valor)) {
-            alert("Selecione uma criptomoeda e informe o valor corretamente.");
+        console.log("usuarioId:", usuarioId);
+        console.log("criptoId:", criptoId);
+        console.log("valor:", valor);
+
+        if (!usuarioId || !criptoId || isNaN(valor)) {
+            alert("Preencha todos os campos corretamente.");
             return;
         }
+
+        // Busca a cotação da cripto selecionada
+        const listaCriptos = tipo === "compra" ? todasCriptos : ativosUsuario;
+        const criptoSelecionada = listaCriptos.find(c => c.id === criptoId);
+
+        if (!criptoSelecionada || !criptoSelecionada.cotacao || criptoSelecionada.cotacao <= 0) {
+            alert("Cotação inválida da criptomoeda.");
+            return;
+        }
+
+        const quantidadeCripto = valor / criptoSelecionada.cotacao;
+        equivalenciaEl.textContent = quantidadeCripto.toFixed(6); // opcional: mostra valor equivalente
 
         const payload = {
             usuarioId: parseInt(usuarioId),
             criptomoedaId: criptoId,
-            tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1),
+            tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1), // Compra / Venda
             valor: valor,
-            quantidadeCripto: 0
+            quantidadeCripto: quantidadeCripto
         };
+
+        console.log("Enviando payload:", payload);
 
         try {
             const res = await fetch(API_TRANSACOES, {
@@ -313,6 +338,7 @@ function inicializarDropdown() {
             } else {
                 let errObj = {};
                 try { errObj = await res.json(); } catch (_) { /* ignore */ }
+                console.error("Erro ao enviar transação:", errObj);
                 alert("Erro: " + (errObj.message || "Falha ao criar transação"));
             }
         } catch (err) {

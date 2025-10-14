@@ -91,7 +91,7 @@ public class AtivosCarteiraController {
     }
 
     // ✅ NOVO ENDPOINT: lista apenas as criptomoedas que o usuário possui (para o botão "Vender")
-    @GetMapping("/do-usuario")
+    @GetMapping("/do-usuario/{idUsario}")
     public ResponseEntity<List<AtivoVenderResponseDTO>> listarCriptomoedasDoUsuario(HttpSession session) {
         Integer userId = usuariosService.checarSessaoEObterIdUsuario(session);
         List<AtivoVenderResponseDTO> ativos = carteiraService.listarCriptomoedasUsuario(userId);
