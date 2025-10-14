@@ -1,5 +1,5 @@
 :root {
-    --primary: #0064F5;
+    --primary: #002D9C;
     --secondary: #55FF00;
     --text-dark: #0b3c40;
     --bg-light: #f6f8f8;
@@ -74,7 +74,7 @@ body {
 
 /* Transações */
 .transacoes-lista {
-    max-height: 380px; /* mostra ~5 transações */
+    max-height: 380px;
     overflow-y: auto;
     background:#fff;
     border-radius:10px;
@@ -86,7 +86,7 @@ body {
 .transacoes-lista::-webkit-scrollbar { width: 8px; }
 .transacoes-lista::-webkit-scrollbar-track { background: #f0f3f3; border-radius: 8px; }
 .transacoes-lista::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 8px; }
-.transacoes-lista::-webkit-scrollbar-thumb:hover { background: #0049c7; }
+.transacoes-lista::-webkit-scrollbar-thumb:hover { background: #001f6f; }
 
 .transacao {
     display:flex;
@@ -132,7 +132,7 @@ body {
 .crypto-item { padding: 8px 10px; cursor: pointer; font-size: 14px; }
 .crypto-item:hover { background: #f0f5ff; }
 .btn-send { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer; transition: background 0.3s ease; }
-.btn-send:hover { background: #0049c7; }
+.btn-send:hover { background: #001f6f; }
 .equivalencia-value { background: #f9f9f9; border: 1.8px solid #d8e2e2; border-radius: 8px; padding: 10px 12px; font-weight: 500; color: #083d40; min-width: 100px; text-align: center; }
 .tipo-group .radios { display: flex; gap: 14px; }
 .radio-item { display: flex; align-items: center; gap: 4px; cursor: pointer; }
@@ -184,7 +184,11 @@ body {
 /* Grid de Resumo Geral */
 .detalhes-gerais { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; border-bottom: 1px solid #eef2f2; padding-bottom: 16px; margin-bottom: 16px; }
 .detalhe-item { display: flex; flex-direction: column; }
-.detalhe-label { font-size: 13px; color: #5a6465; margin-bottom: 4px; }
+.detalhe-label {
+    font-size: 14px; /* Alterado para 14px */
+    color: #5a6465;
+    margin-bottom: 4px;
+}
 .detalhe-valor { font-size: 18px; font-weight: 600; color: var(--text-dark); }
 .detalhe-valor.positivo { color: var(--positive); }
 .detalhe-valor.negativo { color: var(--negative); }
@@ -192,8 +196,7 @@ body {
 /* Lista de Ativos */
 .ativos-lista-header, .ativo-item {
     display: grid;
-    /* Ativo | Investido | Cotação | Saldo | Rendimento */
-    grid-template-columns: 2fr 1.5fr 1.2fr 1.2fr 1.2fr;
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     align-items: center;
 }
@@ -203,26 +206,44 @@ body {
     border-bottom: 1px solid #eef2f2;
 }
 .ativos-lista-header span {
-    font-size: 12px;
+    font-size: 13.5px; /* Alterado para 13px */
     font-weight: 600;
     color: #5a6465;
-    text-transform: uppercase;
 }
-.ativos-lista-header .col-direita, .ativo-item .col-direita {
-    text-align: right;
+
+/* Estilos para o ícone de tooltip */
+.tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 6px;
+    cursor: help;
+    user-select: none;
+    transition: transform 0.2s ease;
+}
+.tooltip-icon:hover {
+    transform: scale(1.1);
+}
+.detalhe-label, .ativos-lista-header span {
+    display: inline-flex;
+    align-items: center;
 }
 
 .ativo-item {
     padding: 14px 12px;
     border-bottom: 1px solid #f5f7f7;
 }
-.ativo-item:last-child {
-    border-bottom: none;
-}
+.ativo-item:last-child { border-bottom: none; }
 
 .ativo-info { display: flex; align-items: center; gap: 12px; }
 
-/* Estilos para o ícone (imagem ou emoji) */
 .ativo-icon-img {
     width: 28px;
     height: 28px;
@@ -231,7 +252,11 @@ body {
 }
 .ativo-icon-emoji {
     font-size: 24px;
-    line-height: 28px; /* para alinhar com a imagem */
+    line-height: 28px;
+}
+
+.ativos-lista-header .tooltip-icon {
+    color: #fff !important;
 }
 
 .ativo-nome-sigla .nome { font-weight: 600; }
@@ -243,7 +268,7 @@ body {
 .ativo-cotacao { font-weight: 600; }
 .ativo-mercado { font-weight: 600; }
 
-.ativo-rendimento { text-align: right; }
+.ativo-rendimento {}
 .ativo-rendimento .valor-reais { font-weight: 600; }
 .ativo-rendimento .valor-percent { font-size: 13px; }
 .ativo-rendimento .positivo { color: var(--positive); }

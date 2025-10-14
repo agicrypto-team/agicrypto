@@ -20,6 +20,10 @@ body {
     z-index: 2; /* Garante que o texto fique na frente das barras */
 }
 
+.left-column .header-text h2 {
+    font-size: 3rem; /* Reduz um pouco o tamanho padrão do display-4 para melhor encaixe */
+}
+
 .highlight-green {
     color: #4CAF50; /* Um tom de verde similar ao da imagem */
     font-weight: 600;
