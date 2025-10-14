@@ -110,8 +110,18 @@ async function carregarPortfolio() {
         };
         const formatarRendimentoReais = (valor) => {
             const numero = Number(valor);
-            const prefixo = numero > 0 ? '+' : '';
-            return `${prefixo} R$ ${numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            let prefixo = '';
+
+            if (numero > 0) {
+                prefixo = '+ ';
+            } else if (numero < 0) {
+                prefixo = '- ';
+            }
+
+            // Formata o valor absoluto (sem sinal) do número
+            const valorFormatado = Math.abs(numero).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            return `${prefixo}R$ ${valorFormatado}`;
         };
         const formatarRendimentoPercentual = (valor) => {
             const numero = Number(valor);
