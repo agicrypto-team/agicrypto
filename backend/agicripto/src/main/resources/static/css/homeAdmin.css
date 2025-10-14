@@ -6,260 +6,408 @@
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+/* === Estrutura Base === */
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg-light);
-    color: var(--primary); /* Define o azul como cor padrão do texto (ex: links, ou elementos que herdam) */
-    -webkit-font-smoothing: antialiased;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-light);
+  color: var(--primary);
+  -webkit-font-smoothing: antialiased;
 }
 
+/* === Logo Sidebar === */
 .sidebar-logo {
-    max-width: 110px;
-    height: auto;
-    display: block;
-    margin-bottom: 0px;
+  max-width: 110px;
+  height: auto;
+  display: block;
+  margin-bottom: 0px;
 }
 
-/* Container Principal (Mantém o conteúdo centralizado) --- */
+/* === Container Principal === */
 .container {
-    width: 92%;
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 18px 0;
+  width: 92%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 0;
 }
 
-/* Top Bar (Barra de Navegação Superior)*/
+/* === Top Bar === */
 .top-nav {
-    background: var(--primary);
-    color: #fff;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .nav-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
 }
 
-/* Botão Sair */
+/* === Botão Sair === */
 .btn-logout {
-    background: transparent;
-    border: 2px solid #fff;
-    color: #fff;
-    padding: 6px 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .btn-logout:hover {
-    background: #fff;
-    color: var(--primary);
-}
-
-/* Títulos e Saudações  */
-.greeting h1 {
-    font-size: 34px;
-    margin: 22px 0;
-    color: var(--primary);
-}
-
-.page-title {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: var(--primary);
-}
-
-.username {
-    color: var(--primary);
-}
-
-/*  Cards (Seções brancas) */
-.card {
-    background: #fff;
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.section-subtitle { /* Novo seletor baseado no seu HTML */
-    color: var(--primary);
-    margin-bottom: 15px;
-    font-size: 1.2em;
-}
-
-/*  Formulário de Cadastro (Efeito do flexbox para a linha de inputs)  */
-#cadastro-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.form-row {
-    display: flex;
-    gap: 20px;
-}
-
-.form-group {
-    flex: 1;
-}
-
-#cadastro-form label {
-    display: block;
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: var(--text-dark);
-}
-
-/* Estilo dos Inputs */
-.form-group input {
-    padding: 12px 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #f7f7f7;
-    width: 100%;
-    font-size: 16px;
-    height: 40px;
-}
-
-.cadastrar h2 {
-  font-size:26px;
-  margin: 24px 0 8px 0;
+  background: #fff;
   color: var(--primary);
 }
 
-/*  Botão (Adicionar)  */
+/* === Títulos e Saudações === */
+.greeting h1 {
+  font-size: 34px;
+  margin: 22px 0;
+  color: var(--primary);
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: var(--primary);
+}
+
+.username {
+  color: var(--primary);
+}
+
+/* === Cards (Seções Brancas) === */
+.card {
+  background: #fff;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section-subtitle {
+  color: var(--primary);
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+/* === Formulário de Cadastro === */
+#cadastro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group {
+  flex: 1;
+}
+
+#cadastro-form label {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+/* === Inputs === */
+.form-group input {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f7f7f7;
+  width: 100%;
+  font-size: 16px;
+  height: 40px;
+}
+
+/* === Botão Cadastrar === */
 .form-action-button {
-    /* Mantenho flex-basis/width para garantir o alinhamento correto, embora não estritamente necessário */
-    width: 170px; /* Define uma largura para o botão */
-    height: 40px; /* Define a altura para alinhar com os inputs */
-    align-self: flex-end; /* Alinha o botão à direita na coluna */
+  width: 170px;
+  height: 40px;
+  align-self: flex-end;
 }
 
 .btn-primary {
-    background-color: var(--primary);
-    color: white;
-    height: 85%; /* Usa a altura do contêiner .form-action-button */
-    width: 100%;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s;
-}
-/* Estilo para a Imagem do Ícone */
-.crypto-icon {
-    width: 24px;
-    height: 24px;
-    vertical-align: middle;
+  background-color: var(--primary);
+  color: white;
+  height: 85%;
+  width: 100%;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
 }
 
-/* Efeito hover */
 .btn-primary:hover {
-    background-color: #0056D4;/
+  background-color: #0056D4;
 }
 
-/* --- Tabela --- */
-table {
-    width: 100%;
-    border-collapse: collapse;
+/* === Ícones Criptomoedas === */
+.crypto-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
 }
 
-table th, table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-    color: var(--text-dark);
-}
-
-table th {
-    color: var(--primary);
-}
-
-/* --- Botão Excluir --- */
-.btn-delete {
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-.btn-delete:hover {
-  background-color: #cc0000;
-}
-
-/* --- Loading (Para o username) --- */
+/* === Loading username === */
 .loading {
-    display: inline-block;
-    color: transparent;
-    background: linear-gradient(100deg, #ddd 40%, #eee 50%, #ddd 60%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 4px;
-    width: 200px;
-}
-
-/* Contêiner para organizar os botões de ação */
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-/* Estilo Básico para o Botão de Edição */
-.btn-action {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1em;
-    padding: 6px 8px;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-.btn-edit {
-    background-color: #007bff; /* Azul padrão, similar ao primário */
-    color: white;
-    font-size: 14px;
-    padding: 6px 12px;
-}
-
-.btn-edit:hover {
-    background-color: #0056b3;
+  display: inline-block;
+  color: transparent;
+  background: linear-gradient(100deg, #ddd 40%, #eee 50%, #ddd 60%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 200px;
 }
 
 @keyframes shimmer {
-    0% { background-position: -100% 0; }
-    100% { background-position: 100% 0; }
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
 }
 
-/* Gráfico */
+/* === Tabela === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+table th {
+  color: var(--primary);
+}
+
+#tabelaCriptomoedas {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+#tabelaCriptomoedas th,
+#tabelaCriptomoedas td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+#tabelaCriptomoedas img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* === Botões de Ação (Editar / Excluir) === */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-edit,
+.btn-delete {
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+/* Botão Editar */
+.btn-edit {
+  background-color: #007bff;
+}
+.btn-edit:hover {
+  background-color: #0056b3;
+}
+
+/* Botão Excluir */
+.btn-delete {
+  background-color: #dc3545;
+}
+.btn-delete:hover {
+  background-color: #a71d2a;
+}
+
+/* === Gráficos ===
 .grafico {
-  margin-top:22px;
-  background:#e6e7e8;
-  border-radius:8px;
-  height:420px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 8px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.grafico div {
+  width: 100%;
+  height: 100%;
+  display: block;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 6px 14px rgba(0,0,0,0.05);
-  padding:12px;
 }
-.grafico canvas {
-  width:100%;
-  height:100%;
-  display:block;
-  border-radius:6px;
-  background:#e6e7e8;
+*/
+
+/* ========== MODAL EDITAR ========== */
+.modal {
+  display: none; /* começa invisível */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
+
+.modal-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  position: relative;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h3 {
+  color: #0066ff;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.modal-content label {
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-top: 10px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.modal-content input:focus {
+  border-color: #0066ff;
+}
+
+.btn-save {
+  width: 100%;
+  margin-top: 20px;
+  background: #0066ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.btn-save:hover {
+  background: #004fcc;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #666;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close:hover {
+  color: #000;
+}
+
+/* Layout gráficos */
+
+.container-graficos {
+  display: flex;
+  gap: 25px;
+  overflow-x: auto;
+  padding: 30px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.container-graficos::-webkit-scrollbar {
+  height: 8px;
+}
+.container-graficos::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.grafico-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 20px;
+  min-width: 360px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.grafico-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.grafico-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.grafico-card canvas {
+  width: 100% !important;
+  height: 250px !important;
+}
+

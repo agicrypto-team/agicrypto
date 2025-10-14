@@ -20,7 +20,7 @@ public class ViewController {
 
     @GetMapping("/home")
     public String mostrarTelaHome() {
-        return "forward:/pages/cliente/homeUsuario.html";
+        return "forward:/pages/cliente/homeCliente.html";
     }
 
     @GetMapping("/admin")

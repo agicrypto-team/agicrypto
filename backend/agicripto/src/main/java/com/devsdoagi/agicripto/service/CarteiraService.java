@@ -1,11 +1,14 @@
 package com.devsdoagi.agicripto.service;
 
 import com.devsdoagi.agicripto.DTO.AtivoResponseDTO;
+import com.devsdoagi.agicripto.DTO.AtivoVenderResponseDTO;
+import com.devsdoagi.agicripto.DTO.HistoricoResponseDTO;
 import com.devsdoagi.agicripto.DTO.PortfolioResponseDTO;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.repository.AtivosCarteiraRepository;
-
+import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,72 +19,101 @@ public class CarteiraService {
 
     private final HistoricoCriptomoedasService historicoCriptomoedasService;
     private final AtivosCarteiraRepository ativosCarteiraRepository;
+    private final TransacoesRepository transacoesRepository;
 
-    public CarteiraService(AtivosCarteiraRepository ativosCarteiraRepository, HistoricoCriptomoedasService historicoCriptomoedasService) {
+    private static final int CURRENCY_SCALE = 2;
+    private static final int PERCENTAGE_SCALE = 4;
+        private static final int QUANTIDADE_SCALE = 8;
 
+
+    public CarteiraService(AtivosCarteiraRepository ativosCarteiraRepository, HistoricoCriptomoedasService historicoCriptomoedasService, TransacoesRepository transacoesRepository) {
         this.ativosCarteiraRepository = ativosCarteiraRepository;
         this.historicoCriptomoedasService = historicoCriptomoedasService;
+        this.transacoesRepository = transacoesRepository;
     }
 
     public PortfolioResponseDTO obterPortfolioCliente(Integer userId) {
-
         List<AtivosCarteira> listaAtivos = ativosCarteiraRepository.findByCarteira_Usuarios_Id(userId);
 
         List<AtivoResponseDTO> listaAtivosDTO = listaAtivos.stream().map(ativo -> {
-
             BigDecimal cotacaoAtual = historicoCriptomoedasService.obterCotacaoAtual(ativo.getCriptomoedas().getId());
-            BigDecimal valorAtualMercado = ativo.getQuantidade().multiply(cotacaoAtual);
-            BigDecimal rendimento = valorAtualMercado.subtract(ativo.getValorTotalComprado());
-            int precisao = 4;
+            BigDecimal valorAtualMercado = ativo.getQuantidade().multiply(cotacaoAtual).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
+            BigDecimal rendimento = valorAtualMercado.subtract(ativo.getValorTotalComprado()).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
             BigDecimal rendimentoPercentual;
+
             if (ativo.getValorTotalComprado().compareTo(BigDecimal.ZERO) <= 0) {
-
-                rendimentoPercentual = BigDecimal.ZERO;
-
+                rendimentoPercentual = BigDecimal.ZERO.setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
             } else {
-
                 rendimentoPercentual = rendimento
-                        .divide(ativo.getValorTotalComprado(), precisao, RoundingMode.HALF_UP)
-                        .multiply(new BigDecimal("100.00"));
-
+                        .divide(ativo.getValorTotalComprado(), PERCENTAGE_SCALE, RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100.00")).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
             }
 
             return new AtivoResponseDTO(
                     ativo.getCriptomoedas().getNome(),
                     ativo.getCriptomoedas().getSigla(),
                     ativo.getCriptomoedas().getIcone(),
-                    ativo.getValorTotalComprado(),
-                    ativo.getQuantidade(),
-                    cotacaoAtual,
+                    ativo.getValorTotalComprado().setScale(CURRENCY_SCALE, RoundingMode.HALF_UP),
+                    ativo.getQuantidade().setScale(QUANTIDADE_SCALE, RoundingMode.HALF_UP),
+                    cotacaoAtual.setScale(CURRENCY_SCALE, RoundingMode.HALF_UP),
                     valorAtualMercado,
                     rendimento,
                     rendimentoPercentual
-                    );
-
+            );
         }).toList();
 
-        BigDecimal patrimonioTotal = listaAtivosDTO.stream().map(AtivoResponseDTO::valorAtualMercado).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal patrimonioTotal = listaAtivosDTO.stream()
+                .map(AtivoResponseDTO::valorAtualMercado)
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
 
-        BigDecimal valorTotalComprado = listaAtivosDTO.stream().map(AtivoResponseDTO::valorComprado).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal valorTotalComprado = listaAtivosDTO.stream()
+                .map(AtivoResponseDTO::valorComprado)
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
 
-        BigDecimal rendimentoTotal = listaAtivosDTO.stream().map(AtivoResponseDTO::rendimento).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal rendimentoTotal = listaAtivosDTO.stream()
+                .map(AtivoResponseDTO::rendimento)
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
 
-        int precisao = 4;
         BigDecimal rendimentoPercentualTotal;
+
         if (valorTotalComprado.compareTo(BigDecimal.ZERO) <= 0) {
-
-            rendimentoPercentualTotal = BigDecimal.ZERO;
-
+            rendimentoPercentualTotal = BigDecimal.ZERO.setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
         } else {
-
             rendimentoPercentualTotal = rendimentoTotal
-                    .divide(valorTotalComprado, precisao, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100.00"));
-
+                    .divide(valorTotalComprado, PERCENTAGE_SCALE, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal("100.00")).setScale(CURRENCY_SCALE, RoundingMode.HALF_UP);
         }
 
-        return new PortfolioResponseDTO(valorTotalComprado, patrimonioTotal, rendimentoTotal, rendimentoPercentualTotal, listaAtivosDTO);
-
+        return new PortfolioResponseDTO(
+                valorTotalComprado,
+                patrimonioTotal,
+                rendimentoTotal,
+                rendimentoPercentualTotal,
+                listaAtivosDTO
+        );
     }
 
+    // ✅ NOVO METODO: lista apenas as criptomoedas que o usuário possui
+    public List<AtivoVenderResponseDTO> listarCriptomoedasUsuario(Integer userId) {
+        return ativosCarteiraRepository.findByCarteira_Usuarios_Id(userId)
+                .stream()
+                .map(ativo -> new AtivoVenderResponseDTO(
+                        ativo.getCriptomoedas().getNome(),
+                        ativo.getCriptomoedas().getSigla()
+                ))
+                .toList();
+    }
+
+    public List<HistoricoResponseDTO> obterHistoricoTransacoes(Integer userId) {
+
+       return transacoesRepository.findByUsuariosId(userId).stream().map(transacao -> {
+
+           String nomeCripto = transacao.getCriptomoeda().getNome();
+           String siglaCripto =  transacao.getCriptomoeda().getSigla();
+
+           return new HistoricoResponseDTO(transacao.getTipo(), nomeCripto, siglaCripto, transacao.getValor().setScale(CURRENCY_SCALE, RoundingMode.HALF_UP), transacao.getQuantidade_cripto().setScale(QUANTIDADE_SCALE, RoundingMode.HALF_UP), transacao.getMomento());
+
+       }).toList();
+
+    }
 }

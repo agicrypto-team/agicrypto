@@ -1,5 +1,6 @@
 package com.devsdoagi.agicripto.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class HistoricoCriptomoedas {
 
     @JoinColumn(name = "id_criptomoeda")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Criptomoedas criptomoedas;
 
     @Column(nullable = false, precision = 18, scale = 8)

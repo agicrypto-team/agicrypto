@@ -7,80 +7,114 @@
     <link rel="stylesheet" href="../../css/homeAdmin.css">
 </head>
 <body>
-    <header class="top-nav">
-        <div class="container nav-inner">
-            <aside class="sidebar">
-                <img src="../../assets/AgiCripto.svg" alt="Logo AgiCripto" class="sidebar-logo">
-            </aside>
-            <nav class="nav-right">
-                <button class="btn-logout">Sair</button>
-            </nav>
+<header class="top-nav">
+    <div class="container nav-inner">
+        <aside class="sidebar">
+            <img src="../../assets/AgiCripto.svg" alt="Logo AgiCripto" class="sidebar-logo">
+        </aside>
+        <nav class="nav-right">
+            <button class="btn-logout">Sair</button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="greeting">
+        <h1>Olá, <span class="username loading">carregando...</span>!</h1>
+    </section>
+
+    <br>
+
+    <section class="grafico" aria-label="Gráfico de carteira">
+        <h2 class="section-subtitle">Dashboard Criptomoedas Cadastradas</h2>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <div id="container-graficos" class="container-graficos">
         </div>
-    </header>
+    </section>
 
-    <main class="container">
+    <br>
+    <!-- CADASTRO -->
+    <section class="add-transaction" aria-labelledby="add-transacao-title">
+        <h2 class="section-subtitle">Cadastrar Nova Criptomoeda</h2>
 
-        <section class="greeting">
-            <h1>Olá, <span class="username loading">carregando...</span>!</h1>
-        </section>
-
-
-        <section class="add-transaction" aria-labelledby="add-transacao-title">
-            <h2 class="section-subtitle">Cadastrar Nova Criptomoeda</h2>
-
-            <form id="cadastro-form" class="form-grid">
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="nome">Nome</label>
-                        <input type="text" id="nome" required placeholder="Nome">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="sigla">Sigla</label>
-                        <input type="text" id="sigla" required maxlength="5" placeholder="Sigla">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="link_imagem">Link da Imagem</label>
-                        <input type="url" id="link_imagem" placeholder="Link da Imagem">
-                    </div>
+        <form id="cadastro-form" class="form-grid" onsubmit="cadastrarCriptomoeda(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" required placeholder="Nome">
                 </div>
 
-                <div class="form-action-button">
-                    <input type="hidden" id="idResponsavel" name="idResponsavel" value="1">
-                    <button type="submit" class="btn btn-primary">Cadastrar</button>
-                    <p id="statusMessage"></p>
+                <div class="form-group">
+                    <label for="sigla">Sigla</label>
+                    <input type="text" id="sigla" required maxlength="5" placeholder="Sigla">
                 </div>
-            </form>
-        </section>
 
-        <section class="card table-section">
-            <h3 class="section-subtitle">Criptomoedas Cadastradas</h3>
-            <table id="cripto-table">
-                <thead>
-                <tr>
-                    <th></th> <th>Nome</th>
-                    <th>Sigla</th>
-                    <th>Link da Imagem</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
+                <div class="form-group">
+                    <label for="icone">Link da Imagem</label>
+                    <input type="url" id="icone" placeholder="Link da imagem">
+                </div>
+            </div>
 
-                </tbody>
-            </table>
-        </section>
+            <div class="form-action-button">
+                <input type="hidden" id="idResponsavel" name="idResponsavel" value="1">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                <p id="statusMessage"></p>
+            </div>
+        </form>
+    </section>
 
-        <!-- Gráfico -->
-        <section class="grafico" aria-label="Gráfico de carteira">
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <canvas id="graficoCotacoes" width="1200" height="420"></canvas>
+    <!-- LISTAGEM -->
+    <section class="card">
+        <h2 class="section-subtitle">Criptomoedas Cadastradas</h2>
 
-        </section>
-    </main>
-    <script src="../../js/homeAdmin.js"></script>
+        <table id="tabelaCriptomoedas">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Moeda</th>
+                <th></th>
+                <th>Imagem</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="tabela-criptomoedas">
+            <!-- Linhas geradas via JavaScript -->
+            </tbody>
+            <!-- ===================== MODAL EDITAR ===================== -->
+            <div id="modalEditar" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="fecharModal">&times;</span>
+                    <h3>Editar Criptomoeda</h3>
+
+                    <form id="formEditarCripto">
+                        <input type="hidden" id="editarId">
+
+                        <label for="editarNome">Nome:</label>
+                        <input type="text" id="editarNome" required>
+
+                        <label for="editarSigla">Sigla:</label>
+                        <input type="text" id="editarSigla" required>
+
+                        <label for="editarIcone">URL do Ícone:</label>
+                        <input type="text" id="editarIcone" required>
+
+                        <button type="submit" class="btn-save">Salvar</button>
+                    </form>
+                </div>
+            </div>
+
+        </table>
+    </section>
+
+    <!-- <section class="grafico" aria-label="Gráfico de carteira">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <canvas id="graficoCotacoes" width="1200" height="420"></canvas>
+    </section> -->
+
+</main>
+<script src="../../js/homeAdmin.js"></script>
+<script src="../../js/graficos.js"></script>
 </body>
 </html>
-

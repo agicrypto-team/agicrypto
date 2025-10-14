@@ -135,14 +135,13 @@ public class CriptomoedasService {
                 return;
             }
 
-            String urlExchange = baseUrl + "exchange_rates";
+            String urlExchange = baseUrl + "simple/price?ids=usd&vs_currencies=brl";
             String exchangeResponse = restTemplate.getForObject(urlExchange, String.class);
-            JsonNode exchangeRoot = objectMapper.readTree(exchangeResponse);
 
-            JsonNode brlRateNode = exchangeRoot
-                    .path("rates")
-                    .path("brl")
-                    .path("value");
+            JsonNode brlRateNode = objectMapper
+                    .readTree(exchangeResponse)
+                    .path("usd")
+                    .path("brl");
 
             BigDecimal taxaCambio = null;
             if (brlRateNode.isNumber()) {
@@ -196,14 +195,14 @@ public class CriptomoedasService {
                 throw new RuntimeException("Cotação USD não encontrada para: " + nomeCriptomoeda);
             }
 
-            String urlExchange = baseUrl + "exchange_rates";
+            String urlExchange = baseUrl + "simple/price?ids=usd&vs_currencies=brl";
             String exchangeResponse = restTemplate.getForObject(urlExchange, String.class);
             JsonNode exchangeRoot = objectMapper.readTree(exchangeResponse);
 
-            JsonNode brlRateNode = exchangeRoot
-                    .path("rates")
-                    .path("brl")
-                    .path("value");
+            JsonNode brlRateNode = objectMapper
+                    .readTree(exchangeResponse)
+                    .path("usd")
+                    .path("brl");
 
             BigDecimal taxaCambio = null;
             if (brlRateNode.isNumber()) {
@@ -222,6 +221,30 @@ public class CriptomoedasService {
             return BigDecimal.ZERO;
         }
     }
+    public boolean deletarPorId(Integer id) {
+        Optional<Criptomoedas> cripto = criptomoedasRepository.findById(id);
+        if (cripto.isPresent()) {
+            criptomoedasRepository.deleteById(id);
+            return true; // exclusão bem-sucedida
+        }
+        return false; // id não encontrado
+    }
+
+    public CriptomoedasResponseDTO atualizar(Integer id, CriptomoedasRequestDTO request) {
+        Optional<Criptomoedas> optionalCripto = criptomoedasRepository.findById(id);
+        if (optionalCripto.isEmpty()) {
+            throw new RuntimeException("Criptomoeda não encontrada");
+        }
+
+        Criptomoedas cripto = optionalCripto.get();
+        cripto.setNome(request.nome());
+        cripto.setSigla(request.sigla());
+        cripto.setIcone(request.icone());
+
+        Criptomoedas salva = criptomoedasRepository.save(cripto);
+        return new CriptomoedasResponseDTO(salva);
+    }
+
 
 
 //    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {

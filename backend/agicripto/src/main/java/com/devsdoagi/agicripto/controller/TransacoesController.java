@@ -2,7 +2,9 @@ package com.devsdoagi.agicripto.controller;
 
 import com.devsdoagi.agicripto.DTO.TransacoesRequestDTO;
 import com.devsdoagi.agicripto.DTO.TransacoesResponseDTO;
+import com.devsdoagi.agicripto.model.Transacoes;
 import com.devsdoagi.agicripto.service.TransacoesService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,8 +34,14 @@ public class TransacoesController {
         return transacoesService.buscarPorId(id);
     }
 
-    @PostMapping("/cadastrar")
-    public TransacoesResponseDTO cadastrar(@RequestBody TransacoesRequestDTO dto) {
-        return transacoesService.salvar(dto);
+   // @PostMapping("/cadastrar")
+   // public TransacoesResponseDTO cadastrar(@RequestBody TransacoesRequestDTO dto) {
+   //     return transacoesService.salvar(dto);
+ //   }
+
+    @PostMapping
+    public ResponseEntity<TransacoesResponseDTO> criarTransacao(@RequestBody TransacoesRequestDTO dto) {
+        TransacoesResponseDTO transacao = transacoesService.salvar(dto);
+        return ResponseEntity.ok(transacao);
     }
 }

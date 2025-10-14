@@ -1,6 +1,7 @@
 package com.devsdoagi.agicripto.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,6 +45,7 @@ public class Criptomoedas {
     private LocalDateTime momentoCadastro;
 
     @OneToMany(mappedBy = "criptomoedas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<HistoricoCriptomoedas> HistoricoCriptomoedas = new ArrayList<>();
 
 

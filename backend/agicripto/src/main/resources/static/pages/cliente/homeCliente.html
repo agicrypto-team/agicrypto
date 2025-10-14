@@ -1,134 +1,111 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Agicripto - Home Cliente</title>
-  <link rel="stylesheet" href="../../css/homeCliente.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Agicripto - Home Cliente</title>
+    <link rel="stylesheet" href="../../css/homeCliente.css">
 </head>
 <body>
-  <!-- NAV -->
-  <header class="top-nav">
+<header class="top-nav">
     <div class="container nav-inner">
-      <a class="logo" href="#">agi<span>cripto</span></a>
-      <nav class="nav-right">
-        <button class="btn-logout">Sair</button>
-      </nav>
+        <a class="logo" href="#">agi<span>cripto</span></a>
+        <nav class="nav-right">
+            <button class="btn-logout">Sair</button>
+        </nav>
     </div>
-  </header>
+</header>
 
-  <main class="container">
-    <!-- Saudaçao -->
+<main class="container">
     <section class="greeting">
-      <h1>Olá, <span class="username loading">carregando...</span>!</h1>
+        <h1>Olá, <span class="username loading">carregando...</span>!</h1>
     </section>
 
-    <!-- Cards resumo -->
-    <section class="cards-grid" aria-label="Resumo">
-      <article class="card">
-        <div class="card-header">
-          <span class="card-icon">💼</span>
-          <span class="card-title">Patrimônio Total</span>
-          <span class="card-info">i</span>
-        </div>
-        <div class="card-value">R$ 0,00</div>
-      </article>
-
-      <article class="card">
-        <div class="card-header">
-          <span class="card-icon">📈</span>
-          <span class="card-title">Lucro Total</span>
-          <span class="card-info">i</span>
-        </div>
-        <div class="card-value">R$ 0,00</div>
-      </article>
-
-      <article class="card">
-        <div class="card-header">
-          <span class="card-icon">⚖️</span>
-          <span class="card-title">Variação</span>
-          <span class="card-info">i</span>
-        </div>
-        <div class="card-value">0%</div>
-      </article>
-    </section>
-
-    <!-- Adicionar Nova Transação -->
-    <section class="add-transaction" aria-labelledby="add-transacao-title">
-      <h2 id="add-transacao-title">Adicionar Nova Transação</h2>
-
-      <label class="label-crypto" for="crypto">Criptomoeda</label>
-      <input id="crypto" class="crypto-input" type="text" placeholder="Selecione ou digite a criptomoeda" />
-
-      <form class="transaction-form" onsubmit="return false;">
-        <div class="form-row">
-          <!-- Tipo da Transação -->
-          <div class="form-group tipo-group">
-            <label class="group-label">Tipo da Transação</label>
-            <div class="radios">
-              <label class="radio-item">
-                <input type="radio" name="tipo" value="compra" checked>
-                <span>Compra</span>
-              </label>
-              <label class="radio-item">
-                <input type="radio" name="tipo" value="venda">
-                <span>Venda</span>
-              </label>
+    <section class="patrimonio-principal" id="secao-patrimonio" aria-labelledby="patrimonio-title">
+        <div class="patrimonio-resumido">
+            <div class="patrimonio-header">
+                <h2 id="patrimonio-title">Meu Patrimônio</h2>
+                <button class="btn-visibilidade" id="btn-visibilidade" aria-label="Alternar visibilidade do saldo">
+                    <svg class="olho-aberto" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z" fill="#5A6465"/></svg>
+                    <svg class="olho-fechado" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75C21.27 7.61 17 4.5 12 4.5c-1.77 0-3.39.53-4.79 1.4l1.57 1.57c.56-.22 1.18-.36 1.83-.36zM2 4.27l3.28 3.28.46.46C3.08 8.95 1.55 10.82 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#5A6465"/></svg>
+                </button>
             </div>
-          </div>
-
-          <!-- Valor -->
-          <div class="form-group valor-group">
-            <label for="valor" class="group-label">Valor</label>
-            <input id="valor" name="valor" class="input-valor" type="text" placeholder="R$" />
-          </div>
-
-          <!-- Equivalência + Botão -->
-          <div class="form-group equivalencia-group">
-            <label class="group-label">Equivalência</label>
-            <div class="equivalencia-value" id="equivalencia">0</div>
-            <button type="submit" class="btn-send">Enviar Transação <span class="arrow">→</span></button>
-          </div>
+            <div class="patrimonio-body">
+                <span class="total-label">TOTAL</span>
+                <div class="total-valor" id="patrimonio-valor">
+                    R$ <span id="patrimonio-valor-numerico" data-valor-real="">••••••••</span>
+                </div>
+                <a href="#" class="ver-detalhes">Ver detalhes ></a>
+            </div>
         </div>
-      </form>
+
+        <div class="patrimonio-detalhado">
+            <div class="detalhado-header">
+                <h3>Resumo do Portfólio</h3>
+                <a href="#" class="fechar-detalhes">< Voltar</a>
+            </div>
+
+            <div class="detalhes-gerais" id="detalhes-gerais-container">
+            </div>
+
+            <div class="ativos-lista">
+                <div class="ativos-lista-header">
+                    <span>Ativo</span>
+                    <span>Total Investido</span>
+                    <span>Cotação</span>
+                    <span>Saldo</span>
+                    <span class="col-direita">Rendimento</span>
+                </div>
+                <div class="ativos-lista-body" id="ativos-lista-container">
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- Histórico de Transações -->
+    <section class="add-transaction" aria-labelledby="add-transacao-title">
+        <h2 id="add-transacao-title">Adicionar Nova Transação</h2>
+        <form class="transaction-form" onsubmit="return false;">
+            <div class="form-group tipo-group">
+                <label class="group-label">Tipo da Transação</label>
+                <div class="radios">
+                    <label class="radio-item"><input type="radio" name="tipo" value="compra" checked><span>Compra</span></label>
+                    <label class="radio-item"><input type="radio" name="tipo" value="venda"><span>Venda</span></label>
+                </div>
+            </div>
+
+            <div class="form-row horizontal-row">
+                <div class="form-group crypto-group">
+                    <label class="group-label" for="crypto">Criptomoeda</label>
+                    <div class="crypto-wrapper">
+                        <input id="crypto" class="crypto-input" type="text" placeholder="Selecione ou digite" autocomplete="off" />
+                        <div class="crypto-dropdown" id="crypto-dropdown"></div>
+                    </div>
+                </div>
+                <div class="form-group valor-group">
+                    <label for="valor" class="group-label">Valor</label>
+                    <input id="valor" name="valor" class="input-valor" type="text" placeholder="R$" required />
+                </div>
+                <div class="form-group equivalencia-group">
+                    <label class="group-label">Equivalência</label>
+                    <div class="equivalencia-value" id="equivalencia">0</div>
+                </div>
+                <div class="form-group send-group">
+                    <button type="submit" class="btn-send">Enviar Transação <span class="arrow">→</span></button>
+                </div>
+            </div>
+        </form>
+    </section>
+
     <section class="historico" aria-labelledby="historico-title">
-      <h2 id="historico-title">Histórico de Transações</h2>
-
-      <div class="transacoes-lista">
-        <div class="transacao">
-          <div class="tx-left">
-            <div class="tx-name">Bitcoin (BTC)</div>
-            <div class="tx-date">01/10/2025</div>
-          </div>
-          <div class="tx-right">
-            <div class="tx-type compra">Compra</div>
-            <div class="tx-value">R$ 2.500,00</div>
-          </div>
-        </div>
-
-        <div class="transacao">
-          <div class="tx-left">
-            <div class="tx-name">Ethereum (ETH)</div>
-            <div class="tx-date">28/09/2025</div>
-          </div>
-          <div class="tx-right">
-            <div class="tx-type venda">Venda</div>
-            <div class="tx-value">R$ 1.200,00</div>
-          </div>
-        </div>
-
-        <div class="show-more">Ver mais</div>
-      </div>
+        <h2 id="historico-title">Histórico de Transações</h2>
+        <div class="transacoes-lista" id="transacoes-lista"></div>
     </section>
 
-    <!-- Gráfico -->
     <section class="grafico" aria-label="Gráfico de carteira">
-      <canvas id="portfolioChart" width="1200" height="420"></canvas>
+        <canvas id="portfolioChart" width="1200" height="420"></canvas>
     </section>
-  </main>
-  <script src="../../js/homeCliente.js"></script>
+</main>
+
+<script src="../../js/homeCliente.js"></script>
 </body>
 </html>

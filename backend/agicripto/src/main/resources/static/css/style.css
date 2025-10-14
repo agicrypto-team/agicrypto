@@ -202,15 +202,12 @@ body * {
 }
 
 #campo-treino {
-    /* Padding para afastar do conteúdo anterior e posterior */
-    padding: 80px 20px; 
     display: flex;
     justify-content: center;
 }
 
 .treino-container {
-    width: 100%;
-    max-width: 1200px;
+    width: 98%;
     text-align: center; /* Centraliza o texto do header */
 }
 
@@ -340,4 +337,93 @@ body * {
     margin-bottom: 20px;
 }
 
+/* ======= CONTAINER PRINCIPAL ======= */
+.container-equipe {
+  width: 100%;
+  max-width: 1200px;
+  margin: 60px auto;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
 
+.titulo-equipe h1 {
+  font-size: 2.5rem;
+  color: #0057ff;
+  font-weight: 600;
+  margin-bottom: 40px;
+}
+
+/* ======= GRID DE MEMBROS ======= */
+.cards-equipe {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+/* ======= CARD INDIVIDUAL ======= */
+.card-membro {
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ======= FOTO ======= */
+.card-membro .apresentacao {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+/* ======= TEXTO ======= */
+.card-membro p {
+  margin: 4px 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.card-membro p:nth-child(3) {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* ======= ÍCONES ======= */
+.icons {
+  width: 28px;
+  height: 28px;
+  margin: 8px 6px 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.icons:hover {
+  transform: scale(1.15);
+}
+
+/* ======= RESPONSIVIDADE ======= */
+@media (max-width: 900px) {
+  .cards-equipe {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .card-membro {
+    width: 160px;
+    padding: 15px;
+  }
+
+  .card-membro .apresentacao {
+    width: 100px;
+    height: 100px;
+  }
+
+  .icons {
+    width: 24px;
+    height: 24px;
+  }
+}

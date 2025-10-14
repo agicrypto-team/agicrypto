@@ -51,6 +51,27 @@ public class CriptomoedasController {
         // 2. Retorna a resposta DTO com status 201 CREATED
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    // ===================== DELETE =====================
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirCriptomoeda(@PathVariable Integer id) {
+        boolean removido = criptomoedasService.deletarPorId(id);
+        if (removido) {
+            return ResponseEntity.noContent().build(); // 204 OK sem corpo
+        } else {
+            return ResponseEntity.notFound().build(); // 404 se o id não existir
+        }
+    }
+
+    // ===================== ATUSLIZAR CRIPTOMOEDA  ======================
+    @PutMapping("/{id}")
+    public ResponseEntity<CriptomoedasResponseDTO> atualizarCriptomoeda(
+            @PathVariable Integer id,
+            @RequestBody CriptomoedasRequestDTO request) {
+        CriptomoedasResponseDTO atualizada = criptomoedasService.atualizar(id, request);
+        return ResponseEntity.ok(atualizada);
+    }
+
+
 }
 
 
