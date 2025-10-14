@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
-
+html{
+    scroll-behavior: smooth;
+}
 body {
     width: 100vw;
     min-height: 100vh; 
@@ -36,11 +38,31 @@ body * {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: 0.5%;
+  gap: 15%;
+  padding-right: 200px;
+  border: 2px solid transparent; 
+  border-radius: 10px;
+
+ 
 }
 
-.indice ul {
+.indice a {
   color: #fff;
+  text-decoration: none;
+  white-space: nowrap; 
+  padding: 10px 20px;
+  transition: all 1s ease-out;
+
+}
+
+.indice a:hover {
+  color: #fff;
+  border: 2px solid white;
+  border-radius: 100px;
+  transform: translateY(-2px);
+  text-decoration: none;
+  white-space: nowrap; 
+
 }
 
 .btn-redirect-login {
@@ -60,16 +82,72 @@ body * {
 .top-background {
     width: 100%;
     min-height: 100vh;
+    
+    position: relative; 
+    overflow: hidden; 
 
-    background: linear-gradient(
-      /*135deg,*/
-      to bottom right,
-      rgba(26, 0, 177, 1) 0%,    /* Azul escuro no canto */
-      rgba(0, 90, 200, 1) 5%,   /* Azul intermediário */
-      rgba(0, 166, 255, 1) 60%,  /* Azul claro ocupa boa parte */
-      rgba(200, 230, 255, 0.6) 85%, /* Azul bem clarinho antes do branco */
-      rgba(255, 255, 255, 1) 100%   /* Transição suave para branco */
-    );
+    background-image: 
+        url("../assets/testegraf.svg"),
+        linear-gradient(#1A00B1, #00A6FF); 
+
+  
+    background-position: 
+        center bottom, 
+        center center; 
+
+    background-position-x:
+        10px,
+        center;
+
+    background-position-y:
+        30px,
+        center;
+
+
+    background-repeat: 
+        no-repeat,   
+        no-repeat;    
+
+    background-size: 
+        100% auto, 
+        cover;
+        
+        
+}
+
+/* Estilo base para todos os ícones */
+.coin-icon {
+    position: absolute; /* Permite o posicionamento preciso */
+    width: 50px;       /* Tamanho do ícone, ajuste conforme necessário */
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.coin-icon:hover {
+    transform: scale(1.1); /* Efeito de zoom ao passar o mouse */
+}
+
+
+.icon-sol {
+    bottom: 13%; /* 22% da altura total da seção, a partir da base */
+    left: 15%;   /* 15% da largura total da seção, a partir da esquerda */
+}
+
+.icon-eth {
+    bottom: 32%;
+    left: 44.5%;
+}
+
+.icon-btc {
+    bottom: 55%;
+    left: 74%;
+    width: 60px;   
+    height: 60px;
+}
+
+.icon-xrp {
+    bottom: 67%;
+    right: 9%; /* Podemos usar 'right' para alinhar a partir da direita */
 }
 
 
@@ -159,26 +237,22 @@ body * {
 #quem-somos {
     width: 100%;
     /* Adicione um padding substancial para que ele comece a aparecer */
-    padding: 100px 0; 
+    padding: 100px  0; 
     /* Garante que o texto fique centralizado horizontalmente */
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
 }
 
 /* Container de conteúdo para limitar a largura e usar Flexbox */
 .container-quem-somos {
-    width: 90%;
     max-width: 1200px; /* Limite a largura para melhor leitura */
-    display: flex;
-    justify-content: space-between; /* Espaça o texto e a área da logo */
-    gap: 50px; /* Espaçamento entre as duas colunas */
-    align-items: center;
+    margin-left: 60px; /* Espaçamento da margem esquerda */
 }
 
 .textos-quem-somos {
-    flex: 1; /* Ocupa o espaço restante */
-    max-width: 500px; /* Limita a largura do bloco de texto */
+    max-width: 600px; /* Limita a largura do bloco de texto */
     color: #fff; /* Use uma cor escura, pois o fundo agora é branco */
+    text-align: left;
 }
 
 /* Estilo para o título "Quem somos nós" */
@@ -199,11 +273,25 @@ body * {
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 20px;
+    
+}
+
+.secao-degrade-transicao {
+  height: 200px; 
+/* O degradê começa com a cor da seção de cima e termina com a cor do body */
+  background-image: url("../assets/fim\ graf.svg"),;
+  background: linear-gradient(to bottom, #00A6FF, #FFFFFF);
 }
 
 #campo-treino {
     display: flex;
     justify-content: center;
+
+    background-image: url("../assets/Formas 3.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-position-y: 40px;
 }
 
 .treino-container {
@@ -338,12 +426,24 @@ body * {
 }
 
 /* ======= CONTAINER PRINCIPAL ======= */
+
+#campo-equipe{
+    display: flex;
+    justify-content: center;
+
+    background-image: url("../assets/Formas 2.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .container-equipe {
   width: 100%;
   max-width: 1200px;
   margin: 60px auto;
   text-align: center;
   font-family: "Poppins", sans-serif;
+
 }
 
 .titulo-equipe h1 {

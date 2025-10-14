@@ -4,10 +4,13 @@ import com.devsdoagi.agicripto.model.HistoricoCriptomoedas;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface HistoricoCriptomoedasRepository extends JpaRepository<HistoricoCriptomoedas, Integer> {
 
     List<HistoricoCriptomoedas> findByCriptomoedas_Id(Integer idCriptomoeda);
-    HistoricoCriptomoedas findTopByCriptomoedas_IdOrderByMomentoDesc(Integer idCriptomoeda);
+
+    //HistoricoCriptomoedas findTopByCriptomoedas_IdOrderByMomentoDesc(Integer idCriptomoeda);
+    Optional<HistoricoCriptomoedas> findTopByCriptomoedas_IdOrderByMomentoDesc(Integer idCriptomoeda);
 
 }

@@ -1,8 +1,11 @@
 package com.devsdoagi.agicripto.service;
+import com.devsdoagi.agicripto.DTO.TransacoesResponseDTO;
+import com.devsdoagi.agicripto.model.Transacoes;
 import com.devsdoagi.agicripto.repository.AtivosCarteiraRepository;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.repository.CarteiraRepository;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
+import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraRequestDTO;
@@ -11,6 +14,8 @@ import com.devsdoagi.agicripto.model.Criptomoedas;
 import com.devsdoagi.agicripto.model.Carteira;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -23,14 +28,19 @@ public class AtivosCarteiraService {
     private final AtivosCarteiraRepository ativoRepository;
     private final CarteiraRepository carteiraRepository;
     private final CriptomoedasRepository criptomoedaRepository;
+   // private final HistoricoCriptomoedasService historicoCriptomoedasService;
+    private final TransacoesRepository transacoesRepository;
+
 
     // Injeção de dependência via construtor
     @Autowired
     public AtivosCarteiraService(AtivosCarteiraRepository ativoRepository, CarteiraRepository carteiraRepository,
-                                 CriptomoedasRepository criptomoedaRepository) {
+                                 CriptomoedasRepository criptomoedaRepository, HistoricoCriptomoedasService historicoCriptomoedasService, TransacoesRepository transacoesRepository) {
         this.ativoRepository = ativoRepository;
         this.carteiraRepository = carteiraRepository;
         this.criptomoedaRepository = criptomoedaRepository;
+        //this.historicoCriptomoedasService = historicoCriptomoedasService;
+        this.transacoesRepository = transacoesRepository;
     }
 
     // Mapeamento Entity -> ResponseDTO usando referência de metodo para o construtor
@@ -117,6 +127,33 @@ public class AtivosCarteiraService {
         return ativoRepository.save(ativo);
     }
 
+    /*public Map<String, BigDecimal> calcularFlutuacaoAtivos(Integer userId) {
+
+        List<AtivosCarteira> listaAtivos = ativoRepository.findByCarteira_Usuarios_Id(userId);
+
+
+        Map<String, BigDecimal> flutuacaoAtivos = new HashMap<>();
+
+        for (AtivosCarteira ativo : listaAtivos) {
+
+            BigDecimal cotacaoAtual = historicoCriptomoedasService.obterCotacaoAtual(ativo.getCriptomoedas().getId());
+
+
+            BigDecimal cotacaoDiaAnterior = historicoCriptomoedasService.obterCotacaoDiaAnterior(ativo.getCriptomoedas().getId());
+
+     */
+
+    // ✅ Lista os ativos do usuário
+    public List<AtivosCarteiraResponseDTO> listarAtivosPorUsuario(Integer idUsuario) {
+        List<AtivosCarteira> ativos = ativoRepository.findByCarteira_Usuarios_Id(idUsuario);
+        return ativos.stream().map(AtivosCarteiraResponseDTO::new).toList();
+    }
+
+    // ✅ Lista as transações do usuário
+    public List<TransacoesResponseDTO> listarTransacoesPorUsuario(Integer idUsuario) {
+        List<Transacoes> transacoes = transacoesRepository.findByUsuariosId(idUsuario);
+        return transacoes.stream().map(TransacoesResponseDTO::new).toList();
+    }
     public void deletar(Integer id) {
         ativoRepository.deleteById(id);
     }
