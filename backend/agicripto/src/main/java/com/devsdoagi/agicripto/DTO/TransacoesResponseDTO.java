@@ -1,90 +1,45 @@
 package com.devsdoagi.agicripto.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import com.devsdoagi.agicripto.model.Transacoes;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransacoesResponseDTO {
 
     private Integer id;
     private String tipo;
     private BigDecimal valor;
-    private BigDecimal quantidadeCripto;
+    private Double quantidadeCripto;
     private LocalDateTime momento;
     private Integer usuarioId;
     private String usuarioNome;
     private Integer criptomoedaId;
     private String criptomoedaNome;
 
-    // Getters e Setters
-    public Integer getId() {
-        return id;
-    }
+    // Construtor que converte automaticamente a entidade Transacoes em DTO
+    public TransacoesResponseDTO(Transacoes t) {
+        this.id = t.getId();
+        this.tipo = t.getTipo();
+        this.valor = t.getValor();
+        this.quantidadeCripto = t.getQuantidade_cripto().doubleValue();
+        this.momento = t.getMomento();
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+        if (t.getUsuarios() != null) {
+            this.usuarioId = t.getUsuarios().getId();
+            this.usuarioNome = t.getUsuarios().getNome();
+        }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
-    }
-
-    public BigDecimal getQuantidadeCripto() {
-        return quantidadeCripto;
-    }
-
-    public void setQuantidadeCripto(BigDecimal quantidadeCripto) {
-        this.quantidadeCripto = quantidadeCripto;
-    }
-
-    public LocalDateTime getMomento() {
-        return momento;
-    }
-
-    public void setMomento(LocalDateTime momento) {
-        this.momento = momento;
-    }
-
-    public Integer getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public String getUsuarioNome() {
-        return usuarioNome;
-    }
-
-    public void setUsuarioNome(String usuarioNome) {
-        this.usuarioNome = usuarioNome;
-    }
-
-    public Integer getCriptomoedaId() {
-        return criptomoedaId;
-    }
-
-    public void setCriptomoedaId(Integer criptomoedaId) {
-        this.criptomoedaId = criptomoedaId;
-    }
-
-    public String getCriptomoedaNome() {
-        return criptomoedaNome;
-    }
-
-    public void setCriptomoedaNome(String criptomoedaNome) {
-        this.criptomoedaNome = criptomoedaNome;
+        if (t.getCriptomoeda() != null) {
+            this.criptomoedaId = t.getCriptomoeda().getId();
+            this.criptomoedaNome = t.getCriptomoeda().getNome();
+        }
     }
 }
+

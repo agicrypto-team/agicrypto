@@ -1,8 +1,11 @@
 package com.devsdoagi.agicripto.service;
+import com.devsdoagi.agicripto.DTO.TransacoesResponseDTO;
+import com.devsdoagi.agicripto.model.Transacoes;
 import com.devsdoagi.agicripto.repository.AtivosCarteiraRepository;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.repository.CarteiraRepository;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
+import com.devsdoagi.agicripto.repository.TransacoesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraRequestDTO;
@@ -26,16 +29,18 @@ public class AtivosCarteiraService {
     private final CarteiraRepository carteiraRepository;
     private final CriptomoedasRepository criptomoedaRepository;
    // private final HistoricoCriptomoedasService historicoCriptomoedasService;
+    private final TransacoesRepository transacoesRepository;
 
 
     // Injeção de dependência via construtor
     @Autowired
     public AtivosCarteiraService(AtivosCarteiraRepository ativoRepository, CarteiraRepository carteiraRepository,
-                                 CriptomoedasRepository criptomoedaRepository, HistoricoCriptomoedasService historicoCriptomoedasService) {
+                                 CriptomoedasRepository criptomoedaRepository, HistoricoCriptomoedasService historicoCriptomoedasService, TransacoesRepository transacoesRepository) {
         this.ativoRepository = ativoRepository;
         this.carteiraRepository = carteiraRepository;
         this.criptomoedaRepository = criptomoedaRepository;
         //this.historicoCriptomoedasService = historicoCriptomoedasService;
+        this.transacoesRepository = transacoesRepository;
     }
 
     // Mapeamento Entity -> ResponseDTO usando referência de metodo para o construtor
@@ -138,7 +143,17 @@ public class AtivosCarteiraService {
 
      */
 
+    // ✅ Lista os ativos do usuário
+    public List<AtivosCarteiraResponseDTO> listarAtivosPorUsuario(Integer idUsuario) {
+        List<AtivosCarteira> ativos = ativoRepository.findByCarteira_Usuarios_Id(idUsuario);
+        return ativos.stream().map(AtivosCarteiraResponseDTO::new).toList();
+    }
 
+    // ✅ Lista as transações do usuário
+    public List<TransacoesResponseDTO> listarTransacoesPorUsuario(Integer idUsuario) {
+        List<Transacoes> transacoes = transacoesRepository.findByUsuariosId(idUsuario);
+        return transacoes.stream().map(TransacoesResponseDTO::new).toList();
+    }
     public void deletar(Integer id) {
         ativoRepository.deleteById(id);
     }

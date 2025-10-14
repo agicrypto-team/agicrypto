@@ -60,33 +60,56 @@ async function realizarLogout() {
 // 🔹 Carrega listas de criptomoedas
 async function carregarListasCriptomoedas(usuarioId) {
     try {
+        // --- 1️⃣ Busca todas criptomoedas ---
         const resCriptos = await fetch(API_CRYPTOS);
         if (resCriptos.ok) {
             const criptos = await resCriptos.json();
-            todasCriptos = criptos.map(c => ({ id: c.id, nome: c.nome, sigla: c.sigla, icone: c.icone || "💰" }));
+            todasCriptos = criptos.map(c => ({
+                id: c.id,
+                nome: c.nome,
+                sigla: c.sigla,
+                icone: c.icone || "💰"
+            }));
         } else {
             console.warn("Falha ao buscar lista de criptos:", resCriptos.status);
         }
-        const resAtivos = await fetch(`${API_ATIVOS}/do-usuario/${usuarioId}`, { method: "GET", credentials: "same-origin" });
 
+        // --- 2️⃣ Busca ativos do usuário ---
+        const resAtivos = await fetch(`${API_ATIVOS}/do-usuario/${usuarioId}`, { method: "GET", credentials: "same-origin" });
         if (resAtivos.ok) {
             const ativos = await resAtivos.json();
 
-            ativosUsuario = ativos.map(a => ({
-                id: a.criptomoeda?.id || a.id,
-                nome: a.criptomoeda?.nome || a.nome,
-                sigla: a.criptomoeda?.sigla || a.sigla,
-                icone: a.criptomoeda?.icone || a.icone
+            // 🔹 Corrige: garante que cada ativo tenha os dados da criptomoeda
+            ativosUsuario = await Promise.all(ativos.map(async (a) => {
+                let cripto = a.criptomoeda;
 
+                // Se o backend não retornou o objeto criptomoeda completo, busca diretamente
+                if (!cripto || !cripto.id) {
+                    const resCripto = await fetch(`${API_CRYPTOS}/${a.idCriptomoeda || a.id}`);
+                    if (resCripto.ok) {
+                        cripto = await resCripto.json();
+                    }
+                }
+
+                return {
+                    id: cripto?.id || a.id,
+                    nome: cripto?.nome || "Desconhecida",
+                    sigla: cripto?.sigla || "---",
+                    icone: cripto?.icone || "💰",
+                    quantidade: a.quantidade || 0
+                };
             }));
-            console.log("ativosUsuario carregados:", ativosUsuario); // <-- Aqui
+
+            console.log("📈 Ativos do usuário (corrigidos):", ativosUsuario);
         } else {
             console.warn("Falha ao buscar ativos do usuário:", resAtivos.status);
         }
+
     } catch (err) {
         console.error("Erro ao carregar listas de criptomoedas:", err);
     }
 }
+
 
 // 🔹 Carregar dados do Portfólio
 async function carregarPortfolio() {
@@ -256,7 +279,7 @@ function inicializarDropdown() {
                 <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>`;
             item.addEventListener("mousedown", e => e.preventDefault());
             item.addEventListener("click", () => {
-             console.log("CLICK NO DROPDOWN:", c);
+            console.log("CLICK NO DROPDOWN:", c);
                 cryptoInput.value = `${c.nome} (${c.sigla})`;
                 cryptoInput.dataset.id = c.id;
                 dropdown.style.display = "none";
@@ -281,43 +304,41 @@ function inicializarDropdown() {
 
     form.addEventListener("submit", async e => {
         e.preventDefault();
-
         const tipo = document.querySelector("input[name='tipo']:checked").value;
         const usuarioId = sessionStorage.getItem("usuarioId");
         const valor = parseFloat((valorInput.value || "").replace(",", "."));
         const criptoId = parseInt(cryptoInput.dataset.id);
 
-        console.log("usuarioId:", usuarioId);
-        console.log("criptoId:", criptoId);
-        console.log("valor:", valor);
+        if (!criptoId || isNaN(valor)) {
+                    console.log("usuarioId:", usuarioId);
+                    console.log("criptoId:", criptoId);
+                    console.log("valor:", valor);
 
-        if (!usuarioId || !criptoId || isNaN(valor)) {
-            alert("Preencha todos os campos corretamente.");
-            return;
+                    if (!usuarioId || !criptoId || isNaN(valor)) {
+                        alert("Preencha todos os campos corretamente.");
+                        return;
+                    }
+                    // Busca a cotação da cripto selecionada
+                    const listaCriptos = tipo === "compra" ? todasCriptos : ativosUsuario;
+                    const criptoSelecionada = listaCriptos.find(c => c.id === criptoId);
+
+                    if (!criptoSelecionada || !criptoSelecionada.cotacao || criptoSelecionada.cotacao <= 0) {
+                        alert("Cotação inválida da criptomoeda.");
+
+                    return;
         }
-
-        // Busca a cotação da cripto selecionada
-        const listaCriptos = tipo === "compra" ? todasCriptos : ativosUsuario;
-        const criptoSelecionada = listaCriptos.find(c => c.id === criptoId);
-
-        if (!criptoSelecionada || !criptoSelecionada.cotacao || criptoSelecionada.cotacao <= 0) {
-            alert("Cotação inválida da criptomoeda.");
-            return;
-        }
-
         const quantidadeCripto = valor / criptoSelecionada.cotacao;
-        equivalenciaEl.textContent = quantidadeCripto.toFixed(6); // opcional: mostra valor equivalente
+         equivalenciaEl.textContent = quantidadeCripto.toFixed(6); // opcional: mostra valor equivalente
+        }
 
         const payload = {
             usuarioId: parseInt(usuarioId),
             criptomoedaId: criptoId,
-            tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1), // Compra / Venda
+            tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1),
             valor: valor,
-            quantidadeCripto: quantidadeCripto
+            quantidadeCripto: 0
         };
-
         console.log("Enviando payload:", payload);
-
         try {
             const res = await fetch(API_TRANSACOES, {
                 method: "POST",

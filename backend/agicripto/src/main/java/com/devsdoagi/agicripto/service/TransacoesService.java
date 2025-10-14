@@ -45,7 +45,7 @@ public class TransacoesService {
         dto.setId(t.getId());
         dto.setTipo(t.getTipo());
         dto.setValor(t.getValor());
-        dto.setQuantidadeCripto(t.getQuantidade_cripto());
+        dto.setQuantidadeCripto(t.getQuantidade_cripto().doubleValue());
         dto.setMomento(t.getMomento());
         dto.setUsuarioId(t.getUsuarios().getId());
         dto.setUsuarioNome(t.getUsuarios().getNome());

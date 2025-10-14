@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -31,6 +32,16 @@ public class HistoricoCriptomoedasController {
     public ResponseEntity<List<HistoricoCriptomoedasResponseDTO>> listarPorCriptomoeda(@PathVariable Integer idCriptomoeda) {
         return ResponseEntity.ok(historicoCriptomoedasService.listarPorCriptomoeda(idCriptomoeda));
     }
+
+    @GetMapping("/{idCriptomoeda}/cotacao-atual")
+    public ResponseEntity<BigDecimal> obterCotacaoAtual(@PathVariable Integer idCriptomoeda) {
+        BigDecimal cotacao = historicoCriptomoedasService.obterCotacaoAtual(idCriptomoeda);
+        if (cotacao == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(cotacao);
+    }
+
 
     /*
     @GetMapping("/{id}")

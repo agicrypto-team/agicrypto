@@ -2,7 +2,7 @@ package com.devsdoagi.agicripto.controller;
 
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraRequestDTO;
 import com.devsdoagi.agicripto.DTO.AtivosCarteiraResponseDTO;
-import com.devsdoagi.agicripto.DTO.AtivoVenderResponseDTO;
+import com.devsdoagi.agicripto.DTO.TransacoesResponseDTO;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.model.Carteira;
 import com.devsdoagi.agicripto.model.Criptomoedas;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -90,11 +89,23 @@ public class AtivosCarteiraController {
         service.deletar(id);
     }
 
-    // ✅ NOVO ENDPOINT: lista apenas as criptomoedas que o usuário possui (para o botão "Vender")
+     /* // ✅ NOVO ENDPOINT: lista apenas as criptomoedas que o usuário possui (para o botão "Vender")
     @GetMapping("/do-usuario/{idUsario}")
     public ResponseEntity<List<AtivoVenderResponseDTO>> listarCriptomoedasDoUsuario(HttpSession session) {
         Integer userId = usuariosService.checarSessaoEObterIdUsuario(session);
         List<AtivoVenderResponseDTO> ativos = carteiraService.listarCriptomoedasUsuario(userId);
         return ResponseEntity.ok(ativos);
+    }*/
+
+
+    @GetMapping("/do-usuario/{idUsuario}")
+    public ResponseEntity<List<AtivosCarteiraResponseDTO>> listarAtivosDoUsuario(@PathVariable Integer idUsuario) {
+        List<AtivosCarteiraResponseDTO> ativos = service.listarAtivosPorUsuario(idUsuario);
+        return ResponseEntity.ok(ativos);
+    }
+    @GetMapping("/transacoes/{idUsuario}")
+    public ResponseEntity<List<TransacoesResponseDTO>> listarTransacoesUsuario(@PathVariable Integer idUsuario) {
+        List<TransacoesResponseDTO> transacoes = service.listarTransacoesPorUsuario(idUsuario);
+        return ResponseEntity.ok(transacoes);
     }
 }
