@@ -5,64 +5,10 @@ const API_ATIVOS = "http://localhost:8080/api/ativos-carteira";
 const API_HISTORICO = "http://localhost:8080/carteira/historico";
 const API_PORTFOLIO = "http://localhost:8080/carteira/portfolio";
 
-let todasCriptos = []; // Criptos para COMPRA
-let ativosUsuario = []; // Criptos que o usuário possui (para VENDA)
+let todasCriptos = [];
+let ativosUsuario = [];
 
-// Variável global para o ID do usuário (necessária para algumas chamadas)
-const usuarioId = sessionStorage.getItem("usuarioId");
-
-
-/**
- * 🔹 UTILS
- */
-
-function escapeHtml(unsafe) {
-    if (unsafe === null || unsafe === undefined) return "";
-    return String(unsafe)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-
-/**
- * 🔹 FORMATADORES
- */
-
-const formatarReais = (valor, semSimbolo = false) => {
-    const numeroFormatado = Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return semSimbolo ? numeroFormatado : `R$ ${numeroFormatado}`;
-};
-
-const formatarRendimentoReais = (valor) => {
-    // Usado para rendimento em R$ (melhor tratamento de prefixo da primeira versão)
-    const numero = Number(valor);
-    const prefixo = numero > 0 ? '+ ' : numero < 0 ? '- ' : '';
-    const valorAbs = Math.abs(numero).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return `${prefixo}R$ ${valorAbs}`;
-};
-
-const formatarRendimentoPercentual = (valor) => {
-    const numero = Number(valor);
-    const prefixo = numero > 0 ? '+' : '';
-    return `${prefixo}${numero.toFixed(2).replace('.', ',')}%`;
-};
-
-const obterClasseRendimento = (valor) => {
-    const numero = Number(valor);
-    if (numero > 0) return 'positivo';
-    if (numero < 0) return 'negativo';
-    return 'neutro';
-};
-
-
-/**
- * 🔹 CARREGAMENTO DE DADOS
- */
-
-// 🔹 Carregar dados do usuário (Otimizado com Promise.all da primeira versão)
+// 🔹 Carregar dados do usuário
 async function carregarUsuarioCliente() {
     const usernameEl = document.querySelector(".username");
     if (!usernameEl) return;
@@ -75,21 +21,19 @@ async function carregarUsuarioCliente() {
             usernameEl.textContent = usuario.nome;
             usernameEl.classList.remove("loading");
 
-            // Armazenamento em sessão
             sessionStorage.setItem("usuarioId", usuario.id);
             sessionStorage.setItem("usuarioNome", usuario.nome);
             sessionStorage.setItem("usuarioTipo", usuario.tipo);
 
-            // Carrega dados iniciais em paralelo (otimização)
             await Promise.all([
                 carregarListasCriptomoedas(usuario.id),
                 carregarPortfolio(),
                 carregarHistoricoTransacoes()
             ]);
 
-            inicializarDropdown(); // Depende das listas de criptos
+            inicializarDropdown();
 
-            // Inicializa tooltips (recurso da primeira versão)
+            // Inicializa os tooltips DEPOIS que todo o conteúdo dinâmico foi carregado
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
@@ -108,62 +52,50 @@ async function carregarUsuarioCliente() {
     }
 }
 
+// 🔹 Logout
+async function realizarLogout() {
+    try {
+        await fetch(`${API_BASE_URL}/logout`, { method: "POST", credentials: "same-origin" });
+    } catch (err) {
+        console.error("Erro ao realizar logout:", err);
+    } finally {
+        sessionStorage.clear();
+        window.location.replace("/pages/auth/login.html");
+    }
+}
 
-// 🔹 Carrega listas de criptomoedas (Lógica de ativos do usuário da versão que funcionava)
+// 🔹 Carrega listas de criptomoedas
 async function carregarListasCriptomoedas(usuarioId) {
     try {
-        // --- 1️⃣ Busca todas criptomoedas ---
-        const resCriptos = await fetch(API_CRYPTOS);
+        const [resCriptos, resAtivos] = await Promise.all([
+            fetch(API_CRYPTOS),
+            fetch(`${API_ATIVOS}/do-usuario`, { method: "GET", credentials: "same-origin" })
+        ]);
+
         if (resCriptos.ok) {
             const criptos = await resCriptos.json();
-            todasCriptos = criptos.map(c => ({
-                id: c.id,
-                nome: c.nome,
-                sigla: c.sigla,
-                icone: c.icone || "💰"
-            }));
+            todasCriptos = criptos.map(c => ({ id: c.id, nome: c.nome, sigla: c.sigla, icone: c.icone || "💰" }));
         } else {
             console.warn("Falha ao buscar lista de criptos:", resCriptos.status);
         }
 
-        // --- 2️⃣ Busca ativos do usuário (Versão que funcionava, usando ID na URL) ---
-        // Se o seu backend exige o ID na URL para listar ativos, essa é a lógica correta:
-        const resAtivos = await fetch(`${API_ATIVOS}/do-usuario/${usuarioId}`, { method: "GET", credentials: "same-origin" });
-
         if (resAtivos.ok) {
             const ativos = await resAtivos.json();
-
-            // Lógica para garantir que os dados da criptomoeda estejam disponíveis (mantido do seu código funcional)
-            ativosUsuario = await Promise.all(ativos.map(async (a) => {
-                let cripto = a.criptomoeda;
-
-                if (!cripto || !cripto.id) {
-                    const resCripto = await fetch(`${API_CRYPTOS}/${a.idCriptomoeda || a.id}`);
-                    if (resCripto.ok) {
-                        cripto = await resCripto.json();
-                    }
-                }
-
-                return {
-                    id: cripto?.id || a.id,
-                    nome: cripto?.nome || "Desconhecida",
-                    sigla: cripto?.sigla || "---",
-                    icone: cripto?.icone || "💰",
-                    quantidade: a.quantidade || 0
-                };
+            ativosUsuario = ativos.map(a => ({
+                id: a.criptomoeda?.id,
+                nome: a.criptomoeda?.nome,
+                sigla: a.criptomoeda?.sigla,
+                icone: a.criptomoeda?.icone || "💰"
             }));
-
         } else {
             console.warn("Falha ao buscar ativos do usuário:", resAtivos.status);
         }
-
     } catch (err) {
         console.error("Erro ao carregar listas de criptomoedas:", err);
     }
 }
 
-
-// 🔹 Carregar dados do Portfólio (Incluindo tooltips e formatação correta)
+// 🔹 Carregar dados do Portfólio
 async function carregarPortfolio() {
     try {
         const res = await fetch(API_PORTFOLIO, { method: "GET", credentials: "same-origin" });
@@ -171,12 +103,32 @@ async function carregarPortfolio() {
 
         const portfolio = await res.json();
 
-        // 1. Card principal
+        const formatarReais = (valor, semSimbolo = false) => {
+            const numeroFormatado = Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return semSimbolo ? numeroFormatado : `R$ ${numeroFormatado}`;
+        };
+        const formatarRendimentoReais = (valor) => {
+            const numero = Number(valor);
+            const prefixo = numero > 0 ? '+ ' : numero < 0 ? '- ' : '';
+            const valorAbs = Math.abs(numero).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return `${prefixo}R$ ${valorAbs}`;
+        };
+        const formatarRendimentoPercentual = (valor) => {
+            const numero = Number(valor);
+            const prefixo = numero > 0 ? '+' : '';
+            return `${prefixo}${numero.toFixed(2).replace('.', ',')}%`;
+        };
+        const obterClasseRendimento = (valor) => {
+            const numero = Number(valor);
+            if (numero > 0) return 'positivo';
+            if (numero < 0) return 'negativo';
+            return 'neutro';
+        };
+
         const patrimonioNumericoEl = document.getElementById('patrimonio-valor-numerico');
         patrimonioNumericoEl.dataset.valorReal = formatarReais(portfolio.patrimonioTotal, true);
         patrimonioNumericoEl.textContent = '••••••••';
 
-        // 2. Detalhes gerais (com tooltips da primeira versão)
         const detalhesContainer = document.getElementById('detalhes-gerais-container');
         const classeRendimentoGeral = obterClasseRendimento(portfolio.rendimentoTotal);
         detalhesContainer.innerHTML = `
@@ -198,17 +150,17 @@ async function carregarPortfolio() {
             </div>
         `;
 
-        // 3. Lista de ativos
         const ativosContainer = document.getElementById('ativos-lista-container');
-        if (portfolio.listaAtivos?.length > 0) {
+        if (portfolio.listaAtivos && portfolio.listaAtivos.length > 0) {
             ativosContainer.innerHTML = portfolio.listaAtivos.map(ativo => {
                 const classeRendimentoAtivo = obterClasseRendimento(ativo.rendimento);
                 return `
                     <div class="ativo-item">
                         <div class="ativo-info">
                             ${ativo.icone
-                                ? `<img src="${escapeHtml(ativo.icone)}" alt="${escapeHtml(ativo.nome)}" class="ativo-icon-img">`
-                                : '<span class="ativo-icon-emoji">💰</span>'}
+                    ? `<img src="${escapeHtml(ativo.icone)}" alt="${escapeHtml(ativo.nome)}" class="ativo-icon-img">`
+                    : '<span class="ativo-icon-emoji">💰</span>'
+                }
                             <div class="ativo-nome-sigla">
                                 <div class="nome">${escapeHtml(ativo.nome)}</div>
                                 <div class="sigla">${escapeHtml(ativo.sigla)}</div>
@@ -238,7 +190,7 @@ async function carregarPortfolio() {
 }
 
 
-// 🔹 Histórico de transações
+// 🔹 Carregar histórico de transações
 async function carregarHistoricoTransacoes() {
     const container = document.querySelector("#transacoes-lista");
     if (!container) return;
@@ -261,8 +213,7 @@ async function carregarHistoricoTransacoes() {
 
         historico.forEach((tx, index) => {
             const data = new Date(tx.momentoTransacao);
-            const dataFormatada = data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }) +
-                " " + data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+            const dataFormatada = data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }) + " " + data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
             const tipoClass = (tx.tipoTransacao || "").toLowerCase();
             const valorFormatado = `R$ ${Number(tx.valorComprado).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
@@ -271,12 +222,12 @@ async function carregarHistoricoTransacoes() {
             item.style.animationDelay = `${index * 0.06}s`;
             item.innerHTML = `
                 <div class="tx-left">
-                    <div class="tx-name">${escapeHtml(tx.nomeCripto)} (${escapeHtml(tx.siglaCripto)})</div>
-                    <div class="tx-date">${dataFormatada}</div>
+                  <div class="tx-name">${escapeHtml(tx.nomeCripto)} (${escapeHtml(tx.siglaCripto)})</div>
+                  <div class="tx-date">${dataFormatada}</div>
                 </div>
                 <div class="tx-right">
-                    <div class="tx-type ${tipoClass}">${escapeHtml(tx.tipoTransacao)}</div>
-                    <div class="tx-value">${valorFormatado}</div>
+                  <div class="tx-type ${tipoClass}">${escapeHtml(tx.tipoTransacao)}</div>
+                  <div class="tx-value">${valorFormatado}</div>
                 </div>`;
             container.appendChild(item);
         });
@@ -286,12 +237,7 @@ async function carregarHistoricoTransacoes() {
     }
 }
 
-
-/**
- * 🔹 TRANSAÇÕES E EQUIVALÊNCIA (CÓDIGO FUNCIONAL RECUPERADO)
- */
-
-// 🔹 Inicializa dropdown de criptomoedas e envio de transações
+// 🔹 Inicializa dropdown de criptos e envio de transações
 function inicializarDropdown() {
     const cryptoInput = document.querySelector("#crypto");
     const dropdown = document.querySelector(".crypto-dropdown");
@@ -302,12 +248,8 @@ function inicializarDropdown() {
     const equivalenciaEl = document.querySelector("#equivalencia");
     const form = document.querySelector(".transaction-form");
 
-    // Reintroduzindo a variável para guardar a cripto selecionada (essencial para a equivalência)
     let criptomoedaSelecionada = null;
 
-    // ================================
-    // 🔸 1. Atualiza lista do dropdown
-    // ================================
     function atualizarDropdown() {
         const tipoSelecionado = document.querySelector("input[name='tipo']:checked").value;
         const lista = tipoSelecionado === "compra" ? todasCriptos : ativosUsuario;
@@ -319,88 +261,35 @@ function inicializarDropdown() {
             item.dataset.id = c.id;
             item.innerHTML = `
                 <span class="crypto-name">${escapeHtml(c.nome)}</span>
-                <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>
-            `;
+                <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>`;
             item.addEventListener("mousedown", e => e.preventDefault());
             item.addEventListener("click", () => {
-                // 🔹 Guarda a cripto selecionada globalmente
                 criptomoedaSelecionada = c;
                 cryptoInput.value = `${c.nome} (${c.sigla})`;
                 cryptoInput.dataset.id = c.id;
                 dropdown.style.display = "none";
-
-                // 🔹 Recalcula equivalência se já houver valor digitado
-                calcularEquivalencia();
             });
             dropdown.appendChild(item);
         });
     }
 
-    tipoRadios.forEach(r => r.addEventListener("change", () => {
-        // Limpa a seleção e re-renderiza o dropdown
-        criptomoedaSelecionada = null;
-        cryptoInput.value = "";
-        cryptoInput.dataset.id = "";
-        equivalenciaEl.textContent = "0";
-        atualizarDropdown();
-    }));
+    tipoRadios.forEach(r => r.addEventListener("change", atualizarDropdown));
     atualizarDropdown();
 
-    // ================================
-    // 🔸 2. Exibir/ocultar dropdown
-    // ================================
     cryptoInput.addEventListener("focus", () => dropdown.style.display = "block");
     cryptoInput.addEventListener("blur", () => {
         setTimeout(() => dropdown.style.display = "none", 150);
     });
 
-    // ================================
-    // 🔸 3. Cálculo de equivalência (CÓDIGO FUNCIONAL RECUPERADO)
-    // ================================
-    async function calcularEquivalencia() {
-        const valorReais = parseFloat((valorInput.value || "").replace(",", "."));
-        if (!criptomoedaSelecionada || isNaN(valorReais) || valorReais <= 0) {
-            equivalenciaEl.textContent = "0";
-            return;
-        }
-
-        try {
-            // 🔹 Busca cotação atual da cripto no backend
-            const res = await fetch(`http://localhost:8080/api/historicos/${criptomoedaSelecionada.id}/cotacao-atual`);
-            if (!res.ok) throw new Error("Erro ao buscar cotação.");
-
-            const cotacao = await res.json();
-            if (!cotacao || cotacao <= 0) {
-                equivalenciaEl.textContent = "0";
-                return;
-            }
-
-            // 🔹 Calcula a equivalência (quantidade de cripto que o valor em R$ compra/vende)
-            const quantidadeCripto = valorReais / cotacao;
-            equivalenciaEl.textContent = quantidadeCripto.toFixed(8);
-        } catch (err) {
-            console.error("Erro ao calcular equivalência:", err);
-            equivalenciaEl.textContent = "0";
-        }
-    }
-
-    // 🔹 Atualiza automaticamente quando digitar valor
-    valorInput.addEventListener("input", calcularEquivalencia);
-
-    // ================================
-    // 🔸 4. Envio da transação (CÓDIGO FUNCIONAL RECUPERADO com quantidadeCripto)
-    // ================================
     form.addEventListener("submit", async e => {
         e.preventDefault();
-
         const tipo = document.querySelector("input[name='tipo']:checked").value;
         const usuarioId = sessionStorage.getItem("usuarioId");
         const valor = parseFloat((valorInput.value || "").replace(",", "."));
         const criptoId = parseInt(cryptoInput.dataset.id);
-        const quantidadeCripto = parseFloat(equivalenciaEl.textContent || "0"); // Usa o valor calculado
 
-        if (!usuarioId || !criptoId || isNaN(valor) || isNaN(quantidadeCripto) || quantidadeCripto <= 0) {
-            alert("Preencha todos os campos corretamente.");
+        if (!criptoId || isNaN(valor)) {
+            alert("Selecione uma criptomoeda e informe o valor corretamente.");
             return;
         }
 
@@ -409,7 +298,7 @@ function inicializarDropdown() {
             criptomoedaId: criptoId,
             tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1),
             valor: valor,
-            quantidadeCripto: quantidadeCripto // Valor essencial para o backend
+            quantidadeCripto: 0
         };
 
         try {
@@ -425,17 +314,17 @@ function inicializarDropdown() {
                 form.reset();
                 equivalenciaEl.textContent = "0";
                 cryptoInput.dataset.id = "";
-                criptomoedaSelecionada = null;
 
-                // 🔹 Atualiza dados de tela
-                await carregarListasCriptomoedas(usuarioId);
-                await carregarPortfolio();
-                await carregarHistoricoTransacoes();
+                await Promise.all([
+                    carregarListasCriptomoedas(usuarioId),
+                    carregarPortfolio(),
+                    carregarHistoricoTransacoes()
+                ]);
                 atualizarDropdown();
+
             } else {
                 let errObj = {};
                 try { errObj = await res.json(); } catch (_) { /* ignore */ }
-                console.error("Erro ao enviar transação:", errObj);
                 alert("Erro: " + (errObj.message || "Falha ao criar transação"));
             }
         } catch (err) {
@@ -445,58 +334,54 @@ function inicializarDropdown() {
     });
 }
 
-
-/**
- * 🔹 INICIALIZAÇÃO E EVENTOS DE TELA
- */
-
-// 🔹 Logout
-async function realizarLogout() {
-    try {
-        await fetch(`${API_BASE_URL}/logout`, { method: "POST", credentials: "same-origin" });
-    } catch (err) {
-        console.error("Erro ao realizar logout:", err);
-    } finally {
-        sessionStorage.clear();
-        window.location.replace("/pages/auth/login.html");
-    }
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return "";
+    return String(unsafe)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
-
+// 🔹 INICIALIZAÇÃO
 window.addEventListener("DOMContentLoaded", () => {
-    // Carrega o cliente e, em cascata, todos os dados
     carregarUsuarioCliente();
 
     const logoutBtn = document.querySelector(".btn-logout");
     if (logoutBtn) logoutBtn.addEventListener("click", realizarLogout);
 
-    const secaoPatrimonio = document.getElementById('secao-patrimonio');
+    const secaoPatrimonioCard = document.querySelector('.patrimonio-principal');
+
     const btnVerDetalhes = document.querySelector('.ver-detalhes');
     const btnFecharDetalhes = document.querySelector('.fechar-detalhes');
     const btnVisibilidade = document.getElementById('btn-visibilidade');
     const patrimonioNumericoEl = document.getElementById('patrimonio-valor-numerico');
 
-    // Evento para expandir para a visão detalhada
     btnVerDetalhes.addEventListener('click', (e) => {
         e.preventDefault();
-        secaoPatrimonio.classList.add('expandido');
+        secaoPatrimonioCard.classList.add('expandido');
     });
 
-    // Evento para voltar para a visão resumida
     btnFecharDetalhes.addEventListener('click', (e) => {
         e.preventDefault();
-        secaoPatrimonio.classList.remove('expandido');
-        secaoPatrimonio.classList.remove('valor-visivel');
+        secaoPatrimonioCard.classList.remove('expandido');
+        secaoPatrimonioCard.classList.remove('valor-visivel');
         patrimonioNumericoEl.textContent = '••••••••';
     });
 
-    // Evento para alternar a visibilidade
     btnVisibilidade.addEventListener('click', () => {
-        const estaVisivel = secaoPatrimonio.classList.toggle('valor-visivel');
+        const estaVisivel = secaoPatrimonioCard.classList.toggle('valor-visivel');
         if (estaVisivel) {
             patrimonioNumericoEl.textContent = patrimonioNumericoEl.dataset.valorReal;
         } else {
             patrimonioNumericoEl.textContent = '••••••••';
+        }
+    });
+
+    document.body.addEventListener('shown.bs.tooltip', (event) => {
+        if (event.target.classList.contains('mathjax-tooltip') && window.MathJax) {
+            window.MathJax.typesetPromise();
         }
     });
 });
