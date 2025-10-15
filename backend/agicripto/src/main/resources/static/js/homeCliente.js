@@ -1,3 +1,4 @@
+// ===================== CONFIGURAÇÕES GERAIS =====================
 const API_BASE_URL = "http://localhost:8080/api/usuarios";
 const API_TRANSACOES = "http://localhost:8080/transacoes";
 const API_CRYPTOS = "http://localhost:8080/api/criptomoedas";
@@ -5,11 +6,12 @@ const API_ATIVOS = "http://localhost:8080/api/ativos-carteira";
 const API_HISTORICO = "http://localhost:8080/carteira/historico";
 const API_PORTFOLIO = "http://localhost:8080/carteira/portfolio";
 
+// ===================== VARIAVEIS GLOBAIS =====================
 let todasCriptos = [];
 let ativosUsuario = [];
 const usuarioId = sessionStorage.getItem("usuarioId");
 
-// 🔹 Carregar dados do usuário
+// ===================== CARREGAR DADOS DO USUARIO =====================
 async function carregarUsuarioCliente() {
     const usernameEl = document.querySelector(".username");
     if (!usernameEl) return;
@@ -45,7 +47,7 @@ async function carregarUsuarioCliente() {
     }
 }
 
-// 🔹 Logout
+// ===================== LOGOUT =====================
 async function realizarLogout() {
     try {
         await fetch(`${API_BASE_URL}/logout`, { method: "POST", credentials: "same-origin" });
@@ -57,10 +59,10 @@ async function realizarLogout() {
     }
 }
 
-// 🔹 Carrega listas de criptomoedas
+// ===================== CARREGA LISTA DE CRIPTO E ATIVOS DO USUARIO =====================
 async function carregarListasCriptomoedas(usuarioId) {
     try {
-        // --- 1️⃣ Busca todas criptomoedas ---
+        // --- Busca todas criptomoedas ---
         const resCriptos = await fetch(API_CRYPTOS);
         if (resCriptos.ok) {
             const criptos = await resCriptos.json();
@@ -74,7 +76,7 @@ async function carregarListasCriptomoedas(usuarioId) {
             console.warn("Falha ao buscar lista de criptos:", resCriptos.status);
         }
 
-        // --- 2️⃣ Busca ativos do usuário ---
+        // ---  Busca ativos do usuário ---
         const resAtivos = await fetch(`${API_ATIVOS}/do-usuario/${usuarioId}`, { method: "GET", credentials: "same-origin" });
         if (resAtivos.ok) {
             const ativos = await resAtivos.json();
@@ -111,7 +113,7 @@ async function carregarListasCriptomoedas(usuarioId) {
 }
 
 
-// 🔹 Carregar dados do Portfólio
+// ===================== PORTIFÓLIO =====================
 async function carregarPortfolio() {
     try {
         const res = await fetch(API_PORTFOLIO, { method: "GET", credentials: "same-origin" });
@@ -209,7 +211,7 @@ async function carregarPortfolio() {
 }
 
 
-// 🔹 Carregar histórico de transações
+// ===================== HISTORICO DE TRANSAÇÕES =====================
 async function carregarHistoricoTransacoes() {
     const container = document.querySelector("#transacoes-lista");
     if (!container) return;
@@ -255,16 +257,21 @@ async function carregarHistoricoTransacoes() {
         container.innerHTML = "<div class='erro-transacoes'>Erro ao carregar histórico.</div>";
     }
 }
-
-// 🔹 Inicializa dropdown de criptos e envio de transações
+// ===================== DROPDOWN E ENVIO DAS TRANSAÇÕES=====================
+// 🔹 Inicializa dropdown de criptomoedas e envio de transações
 function inicializarDropdown() {
     const cryptoInput = document.querySelector("#crypto");
-    console.log("Elemento do input de cripto:", cryptoInput);
     const dropdown = document.querySelector(".crypto-dropdown");
     if (!cryptoInput || !dropdown) return;
 
     const tipoRadios = document.querySelectorAll("input[name='tipo']");
+    const valorInput = document.querySelector("#valor");
+    const equivalenciaEl = document.querySelector("#equivalencia");
+    const form = document.querySelector(".transaction-form");
 
+    let criptomoedaSelecionada = null;
+
+    //  Atualiza lista do dropdown
     function atualizarDropdown() {
         const tipoSelecionado = document.querySelector("input[name='tipo']:checked").value;
         const lista = tipoSelecionado === "compra" ? todasCriptos : ativosUsuario;
@@ -276,13 +283,18 @@ function inicializarDropdown() {
             item.dataset.id = c.id;
             item.innerHTML = `
                 <span class="crypto-name">${escapeHtml(c.nome)}</span>
-                <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>`;
+                <span class="crypto-sigla">(${escapeHtml(c.sigla)})</span>
+            `;
             item.addEventListener("mousedown", e => e.preventDefault());
             item.addEventListener("click", () => {
-            console.log("CLICK NO DROPDOWN:", c);
+                // Guarda a cripto selecionada globalmente
+                criptomoedaSelecionada = c;
                 cryptoInput.value = `${c.nome} (${c.sigla})`;
                 cryptoInput.dataset.id = c.id;
                 dropdown.style.display = "none";
+
+                // Recalcula equivalência se já houver valor digitado
+                calcularEquivalencia();
             });
             dropdown.appendChild(item);
         });
@@ -291,44 +303,56 @@ function inicializarDropdown() {
     tipoRadios.forEach(r => r.addEventListener("change", atualizarDropdown));
     atualizarDropdown();
 
+// ===================== EXIBIR E OCULTAR DROPDOWN =====================
     cryptoInput.addEventListener("focus", () => dropdown.style.display = "block");
     cryptoInput.addEventListener("blur", () => {
         setTimeout(() => dropdown.style.display = "none", 150);
     });
 
-    const form = document.querySelector(".transaction-form");
-    const valorInput = document.querySelector("#valor");
-    const equivalenciaEl = document.querySelector("#equivalencia");
+// ===================== CALCULO DE EQUIVALENCIA =====================
+    async function calcularEquivalencia() {
+        const valorReais = parseFloat((valorInput.value || "").replace(",", "."));
+        if (!criptomoedaSelecionada || isNaN(valorReais) || valorReais <= 0) {
+            equivalenciaEl.textContent = "0";
+            return;
+        }
 
-    if (!form) return;
+        try {
+            //  Busca cotação atual da cripto no backend
+            const res = await fetch(`http://localhost:8080/api/historicos/${criptomoedaSelecionada.id}/cotacao-atual`);
+            if (!res.ok) throw new Error("Erro ao buscar cotação.");
 
+            const cotacao = await res.json();
+            if (!cotacao || cotacao <= 0) {
+                equivalenciaEl.textContent = "0";
+                return;
+            }
+
+            //  Calcula a equivalência (quantidade de cripto que o valor em R$ compra)
+            const quantidadeCripto = valorReais / cotacao;
+            equivalenciaEl.textContent = quantidadeCripto.toFixed(8);
+        } catch (err) {
+            console.error("Erro ao calcular equivalência:", err);
+            equivalenciaEl.textContent = "0";
+        }
+    }
+
+    // Atualiza automaticamente quando digitar valor
+    valorInput.addEventListener("input", calcularEquivalencia);
+
+// ===================== ENVIO DE TRANSAÇÃO =====================
     form.addEventListener("submit", async e => {
         e.preventDefault();
+
         const tipo = document.querySelector("input[name='tipo']:checked").value;
         const usuarioId = sessionStorage.getItem("usuarioId");
         const valor = parseFloat((valorInput.value || "").replace(",", "."));
         const criptoId = parseInt(cryptoInput.dataset.id);
+        const quantidadeCripto = parseFloat(equivalenciaEl.textContent || "0");
 
-        if (!criptoId || isNaN(valor)) {
-                    console.log("usuarioId:", usuarioId);
-                    console.log("criptoId:", criptoId);
-                    console.log("valor:", valor);
-
-                    if (!usuarioId || !criptoId || isNaN(valor)) {
-                        alert("Preencha todos os campos corretamente.");
-                        return;
-                    }
-                    // Busca a cotação da cripto selecionada
-                    const listaCriptos = tipo === "compra" ? todasCriptos : ativosUsuario;
-                    const criptoSelecionada = listaCriptos.find(c => c.id === criptoId);
-
-                    if (!criptoSelecionada || !criptoSelecionada.cotacao || criptoSelecionada.cotacao <= 0) {
-                        alert("Cotação inválida da criptomoeda.");
-
-                    return;
-        }
-        const quantidadeCripto = valor / criptoSelecionada.cotacao;
-         equivalenciaEl.textContent = quantidadeCripto.toFixed(6); // opcional: mostra valor equivalente
+        if (!usuarioId || !criptoId || isNaN(valor) || isNaN(quantidadeCripto) || quantidadeCripto <= 0) {
+            alert("Preencha todos os campos corretamente.");
+            return;
         }
 
         const payload = {
@@ -336,9 +360,9 @@ function inicializarDropdown() {
             criptomoedaId: criptoId,
             tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1),
             valor: valor,
-            quantidadeCripto: 0
+            quantidadeCripto: quantidadeCripto
         };
-        console.log("Enviando payload:", payload);
+
         try {
             const res = await fetch(API_TRANSACOES, {
                 method: "POST",
@@ -352,6 +376,9 @@ function inicializarDropdown() {
                 form.reset();
                 equivalenciaEl.textContent = "0";
                 cryptoInput.dataset.id = "";
+                criptomoedaSelecionada = null;
+
+                //  Atualiza dados de tela
                 await carregarListasCriptomoedas(usuarioId);
                 await carregarPortfolio();
                 await carregarHistoricoTransacoes();
@@ -379,7 +406,7 @@ function escapeHtml(unsafe) {
         .replaceAll("'", "&#039;");
 }
 
-// 🔹 Inicialização
+// ===================== INICIALIZAÇÃO =====================
 window.addEventListener("DOMContentLoaded", () => {
     carregarUsuarioCliente();
 
