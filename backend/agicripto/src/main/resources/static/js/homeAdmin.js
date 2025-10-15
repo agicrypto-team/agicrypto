@@ -127,9 +127,9 @@ async function cadastrarCriptomoeda(event) {
         document.getElementById('cadastro-form').reset();
 
     } catch (error) {
-        console.error('Falha ao cadastrar:', error);
-        statusMessage.textContent = `Falha ao cadastrar: ${error.message}`;
-        statusMessage.style.color = 'red';
+        console.error('');
+        statusMessage.textContent = ``;
+        statusMessage.style.color = '';
     }
 }
 // ===================== LISTAR CRIPTOMOEDAS =====================
