@@ -1,4 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
+@property --angle{
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 html{
     scroll-behavior: smooth;
 }
@@ -13,7 +18,6 @@ body {
 
     /* A cor de fundo principal da página agora é BRANCA */
     background-color: #fff; 
-
 }
 
 body * {
@@ -48,10 +52,11 @@ body * {
 
 .indice a {
   color: #fff;
+  border: 2px solid transparent;
   text-decoration: none;
   white-space: nowrap; 
   padding: 10px 20px;
-  transition: all 1s ease-out;
+  transition: all 0.5s ease-in-out;
 
 }
 
@@ -64,20 +69,47 @@ body * {
   white-space: nowrap; 
 
 }
+.indice a:active {
+  color: #fff;
+  border: 2px solid #55FF00;
+  border-radius: 100px;
+  transform: translateY(0px);
+  text-decoration: none;
+  white-space: nowrap; 
+
+}
 
 .btn-redirect-login {
+  font-size: medium;
   width: 10%;
   padding: 8px;
-  border: solid;
+  border: 2px transparent;
   border-radius: 20px;
-  
   color: #fff;
   background: none;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
 }
 
 .btn-redirect-login:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid white;
+  border-radius: 100px;
+  transform: translateY(-2px);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
 }
+
+.btn-redirect-login:active {
+  border: 2px solid #55FF00;
+  border-radius: 100px;
+  transform: translateY(0px);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 
 .top-background {
     width: 100%;
@@ -111,7 +143,6 @@ body * {
     background-size: 
         100% auto, 
         cover;
-        
         
 }
 
@@ -184,18 +215,15 @@ body * {
     flex-direction: column;
 }
 
-/* Remova a margem extra que você adicionou, a margem do <h3> já deve dar o espaço necessário */
 #hero > br {
     display: none;
 }
 
 .titulo-principal {
-    /* Mantenha o estilo de fonte, mas garanta que ele ocupe 100% da largura do #hero */
   width: 100%;
 }
 
 .subtitulo {
-    /* O texto do subtítulo é quem mais se beneficia do text-align: center */
   width: 100%; 
 }
 
@@ -211,7 +239,7 @@ body * {
     width: fit-content; /* Ocupa apenas a largura do conteúdo */
     padding: 20px 40px;
     border: 2px solid white; /* Borda branca de 2px */
-    border-radius: 25px; /* Bordas arredondadas */
+    border-radius: 100px; /* Bordas arredondadas */
 
     /* Estilo do texto */
     color: white;
@@ -224,7 +252,8 @@ body * {
 }
 
 .btn-saiba-mais:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Um leve brilho ao passar o mouse */
+  border: 2px solid #55FF00;
+  border-radius: 100px;
 }
 
 /* Estilo para a seta */
@@ -265,7 +294,7 @@ body * {
 
 /* O destaque verde para a palavra "somos nós" */
 .destaque-verde {
-    color: #4CAF50; /* A mesma cor verde/amarela usada no destaque "sem risco." */
+    color: #55FF00; /* A mesma cor verde/amarela usada no destaque "sem risco." */
 }
 
 /* Estilo para os parágrafos */
@@ -277,10 +306,18 @@ body * {
 }
 
 .secao-degrade-transicao {
-  height: 200px; 
-/* O degradê começa com a cor da seção de cima e termina com a cor do body */
-  background-image: url("../assets/fim\ graf.svg"),;
-  background: linear-gradient(to bottom, #00A6FF, #FFFFFF);
+    height: 250px;
+    position: relative;
+    margin-top: -150px; 
+    background-image: 
+    linear-gradient(to bottom, transparent, #00A6FF 40%, #FFFFFF);
+
+    background-repeat: no-repeat;
+  
+    background-position: 
+        center;
+    background-size: 
+        cover;
 }
 
 #campo-treino {
@@ -459,7 +496,7 @@ body * {
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 50px;
 }
 
 /* ======= CARD INDIVIDUAL ======= */
@@ -472,10 +509,10 @@ body * {
 
 /* ======= FOTO ======= */
 .card-membro .apresentacao {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 100%;
   margin-bottom: 15px;
 }
 

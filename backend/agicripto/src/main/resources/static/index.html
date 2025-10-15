@@ -18,7 +18,7 @@
                     <a href="#campo-treino">Nossa Plataforma</a>
                     <a href="#campo-equipe">Equipe</a>
                 </div>
-                <button class="btn-redirect-login">Acessar</button>
+                <button id="btn-redirect-login" class="btn-redirect-login">Acessar</button>
             </nav>
         </header>
 
@@ -53,6 +53,7 @@
             </div>
         </section>
     </div>
+    
 
     <div class="secao-degrade-transicao"></div>
 
@@ -139,7 +140,7 @@
                     <img src="assets/Frame 98.png" alt="img-membro" class="apresentacao">
                     <p>Gabriel Paraiso</p>
                     <p>Desenvolvedor FullStack</p>
-                    <a href="https://github.com/giselemarins" target="_blank" rel="noopener noreferrer">
+                    <a href="https://github.com/RyzzenDev" target="_blank" rel="noopener noreferrer">
                         <img src="assets/github-vetor.png" alt="GitHub" class="icons">
                     </a>
                     <a href="https://www.linkedin.com/in/gabriel-paraiso/" target="_blank" rel="noopener noreferrer">
@@ -176,6 +177,12 @@
     </section>
     <footer>
     </footer>
+    <script>
+        document.getElementById('btn-redirect-login').addEventListener('click', function() {
+            window.location.href = 'pages/auth/login.html';
+        });
+    </script>
+
 
     <script src="/js/main.js"></script>
 </body>
