@@ -323,28 +323,24 @@ body * {
 #campo-treino {
     display: flex;
     justify-content: center;
-
     background-image: url("../assets/Formas 3.svg");
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
-    background-position-y: 40px;
+    background-position: center 40px;
 }
 
 .treino-container {
     width: 98%;
-    text-align: center; /* Centraliza o texto do header */
+    text-align: center;
 }
 
-/* Estilo do Título Principal da Seção */
 .header-treino h2 {
     font-size: 3rem;
     font-weight: bold;
-    color: #00A6FF; /* Azul do tema */
+    color: #00a6ff;
     margin-bottom: 10px;
 }
 
-/* Estilo do Subtítulo */
 .header-treino p {
     font-size: 1.2rem;
     color: #666;
@@ -354,55 +350,53 @@ body * {
     margin-right: auto;
 }
 
-/* Container dos Cartões (Usando Flexbox para o layout) */
 .card-deck {
     display: flex;
-    justify-content: space-between; /* Distribui os cartões */
-    align-items: flex-start; /* Alinha no topo */
+    justify-content: center; 
+    flex-wrap: wrap; 
+    align-items: stretch; 
     gap: 20px;
     padding: 0 20px;
 }
 
-/* Estilo Base dos Cartões */
 .treino-card {
-    flex: 1; /* Faz com que os 3 cartões tenham a mesma largura */
-    background-color: #007bff; /* Um tom de azul para os cartões */
+    flex: 1;
+    background-color: #007bff;
     border-radius: 20px;
     padding: 20px;
-    position: relative; /* Para posicionar o "+" e o conteúdo */
+    position: relative;
     color: white;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra para o efeito 3D */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s;
-    min-height: 400px; /* Altura mínima para visualização */
+    min-height: 400px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Para empurrar a descrição para baixo */
+    justify-content: space-between;
+    max-width: 400px; 
 }
 
 .treino-card:hover {
-    transform: translateY(-5px); /* Efeito sutil ao passar o mouse */
+    transform: translateY(-5px);
 }
 
-/* Ícone de Mais (+) */
 .icone-mais {
     position: absolute;
     top: 15px;
     right: 15px;
     font-size: 1.5rem;
     font-weight: bold;
-    color: white; /* Cor padrão */
+    color: white;
 }
 
 .icone-verde {
-    color: #4CAF50; /* Verde para o Cartão 3 */
+    color: #4CAF50;
 }
 
-/* Estilo para os Títulos dentro do Card */
 .card-titulo {
     font-size: 0.9rem;
     font-weight: bold;
     margin-bottom: 5px;
-    color: #ddd; /* Um cinza claro */
+    color: #ddd;
 }
 
 .card-descricao {
@@ -411,57 +405,154 @@ body * {
     text-align: center;
 }
 
-/* Título em destaque para o cartão 2 */
 .destaque-amarelo {
-    color: #FFC107; /* Amarelo/Dourado para o "lorem ipsum" */
+    color: #FFC107;
 }
 
-/* --- Mockups dos Elementos Internos --- */
-
-/* Cartão 1: Gráfico */
-.grafico-mock {
-    height: 100px;
-    background: linear-gradient(to bottom, rgba(0, 166, 255, 0.5), #00A6FF);
-    border-radius: 10px;
-    margin-bottom: 30px;
-    /* Linha verde mock - use um pseudo-elemento ou imagem real no futuro */
-}
-
-/* Cartão 2: Moedas */
-.moedas-mock {
+.grafico-mock, .moedas-mock, .preco-mock {
+     background: #00a6ff;
+    margin-bottom: 0;
     height: 150px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    background-color: #007bff; /* Fundo mais escuro/sólido, como no exemplo */
-    border-radius: 10px;
-    margin-bottom: 20px;
-    /* Você pode adicionar o padrão de fundo com um background-image no futuro */
-}
-
-.moedas-info {
-    position: absolute;
-    bottom: 5px;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: white;
-}
-
-/* Cartão 3: Preço */
-.preco-mock {
-    height: 150px;
+    border-radius: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 2.8rem;
     font-weight: bold;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.1); /* Um fundo sutil */
-    border-radius: 10px;
-    margin-bottom: 20px;
+    color: #55FF00;
 }
 
+.treino-card.card-grafico {
+    background-color: #0066FF;
+    padding: 0;
+    justify-content: flex-start;
+}
+
+.card-grafico .icone-mais {
+    top: 30px;
+    left: 30px;
+    right: auto;
+    color: #55FF00;
+    z-index: 2;
+}
+
+.card-grafico .grafico-mock {
+    height: 150px;
+    background: #00a6ff url('../assets/grafico-do-card.svg') center center / cover no-repeat;
+    margin-bottom: 0;
+    border-radius: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.card-grafico .card-titulo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #55FF00;
+    padding: 0 30px;
+    margin-top: 25px;
+    text-align: left;
+}
+
+.card-grafico .card-descricao {
+    color: #FFFFFF;
+    font-size: 1.0rem;
+    padding: 0 30px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.treino-card.card-moedas {
+    background-color: #0066FF;
+    padding: 0;
+    justify-content: flex-start;
+}
+
+.card-moedas .moedas-mock {
+    background: #00a6ff;
+    margin-bottom: 0;
+    height: 150px;
+    border-radius: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.card-moedas .moedas-info {
+    position: static; 
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #55FF00;
+}
+
+.card-moedas .card-titulo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #55FF00;
+    padding: 0 30px;
+    margin-top: 25px;
+    text-align: left;
+}
+
+.card-moedas .card-descricao {
+    color: #FFFFFF;
+    font-size: 1.0rem;
+    padding: 0 30px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+
+.treino-card.card-preco {
+    background-color: #0066FF;
+    padding: 0;
+    justify-content: flex-start;
+}
+
+.card-preco .icone-mais {
+    top: 30px;
+    left: 30px;
+    right: auto;
+    color: #55FF00;
+    z-index: 2;
+}
+
+.card-preco .preco-mock {
+    background: #00a6ff;
+    margin-bottom: 0;
+    height: 150px;
+    border-radius: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #55FF00;
+}
+
+.card-preco .card-titulo {
+    font-size: 1.0rem;
+    font-weight: bold;
+    color: #55FF00;
+    padding: 0 30px;
+    margin-top: 25px;
+    text-align: left;
+}
+
+.card-preco .card-descricao {
+    color: #FFFFFF;
+    font-size: 1.0rem;
+    padding: 0 30px;
+    margin-bottom: 20px;
+    text-align: left;
+}
 /* ======= CONTAINER PRINCIPAL ======= */
 
 #campo-equipe{
@@ -520,12 +611,12 @@ body * {
 .card-membro p {
   margin: 4px 0;
   font-size: 0.95rem;
-  color: #333;
+  color: #000000;
 }
 
 .card-membro p:nth-child(3) {
   font-size: 0.85rem;
-  color: #777;
+  color: #4b4b4b;
 }
 
 /* ======= ÍCONES ======= */
