@@ -105,7 +105,6 @@ async function cadastrarCriptomoeda(event) {
     try {
         statusMessage.textContent = 'Enviando dados...';
         statusMessage.style.color = 'blue';
-
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -114,7 +113,6 @@ async function cadastrarCriptomoeda(event) {
             },
             body: JSON.stringify(criptoData)
         });
-
         if (!response.ok) {
             throw new Error(`Erro do servidor: ${response.status} - ${response.statusText}`);
         }
@@ -126,9 +124,14 @@ async function cadastrarCriptomoeda(event) {
 
         document.getElementById('cadastro-form').reset();
 
+        //  Espera 1 segundo e recarrega a página
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+
     } catch (error) {
-        console.error('');
-        statusMessage.textContent = ``;
+        console.error('Erro ao cadastrar criptomoeda:', error);
+        statusMessage.textContent = '';
         statusMessage.style.color = '';
     }
 }
