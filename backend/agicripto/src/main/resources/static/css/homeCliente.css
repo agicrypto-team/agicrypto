@@ -56,13 +56,14 @@ body {
     align-items:center;
     justify-content:space-between;
     padding: 14px 0;
-    position: relative;
+    position: relative; /* Necessário para a centralização absoluta */
 }
 
 /* Estilos para a navegação central */
 .main-nav {
     display: flex;
     gap: 32px;
+    /* Centralização absoluta */
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -98,7 +99,7 @@ body {
 /* Greeting */
 .greeting h1 {
     font-size:34px;
-    margin: 35px 0 35px 0;
+    margin: 35px 0 35px 0; /* Aumentada margem inferior */
     color: var(--primary);
 }
 .username { color: var(--primary); }
@@ -111,21 +112,14 @@ body {
     scroll-margin-top: 100px;
 }
 
-/* Estilo padrão para títulos de seção */
-.section-title {
-    font-size: 28px;
-    color: var(--text-dark);
-    margin-bottom: 20px;
-    margin-top: 72px;
-}
-#secao-patrimonio {
-    margin-top: 0;
-}
-
 
 /* Histórico */
 .historico {
-    margin-top: 0;
+    margin-top: 72px;
+}
+.historico h2 {
+    margin-bottom: 14px;
+    color: var(--text-dark);
 }
 
 /* Transações */
@@ -137,8 +131,12 @@ body {
     padding:12px;
     box-shadow: 0 6px 14px rgba(0,0,0,0.05);
     scrollbar-width: thin;
-    scrollbar-color: #ccc #f0f3f3;
+    scrollbar-color: var(--primary) #f0f3f3;
 }
+.transacoes-lista::-webkit-scrollbar { width: 8px; }
+.transacoes-lista::-webkit-scrollbar-track { background: #f0f3f3; border-radius: 8px; }
+.transacoes-lista::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 8px; }
+.transacoes-lista::-webkit-scrollbar-thumb:hover { background: #0049c7; }
 
 .transacao {
     display:flex;
@@ -167,11 +165,16 @@ body {
 
 /* Formulário de adicionar transação */
 .add-transaction {
-    margin-top: 0;
+    margin-top: 72px;
     background: #fff;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+}
+
+.add-transaction h2 {
+    margin-bottom: 16px;
+    color: var(--text-dark);
 }
 
 .transaction-form {
@@ -216,6 +219,7 @@ body {
     border-color: var(--primary);
 }
 
+/* 🔹 Dropdown corrigido */
 .crypto-dropdown {
     position: absolute;
     top: 100%;
@@ -291,6 +295,7 @@ body {
     background: #fff;
     border-radius: 8px;
     padding: 20px 24px;
+    margin-bottom: 28px;
     box-shadow: 0 6px 14px rgba(0,0,0,0.05);
     position: relative;
     overflow: hidden;
@@ -306,9 +311,11 @@ body {
 }
 .patrimonio-detalhado { display: none; }
 
+/* Estado Expandido */
 .patrimonio-principal.expandido .patrimonio-resumido { display: none; }
 .patrimonio-principal.expandido .patrimonio-detalhado { display: block; }
 
+/* Vista Resumida */
 .patrimonio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .patrimonio-header h2 { margin: 0; font-size: 18px; color: var(--text-dark); }
 .patrimonio-body { margin-left: 4px; }
@@ -318,17 +325,20 @@ body {
 .ver-detalhes { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 15px; }
 .ver-detalhes:hover { text-decoration: underline; }
 
+/* Visibilidade de ícones */
 .btn-visibilidade { background: transparent; border: none; cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 .patrimonio-principal.valor-visivel .olho-aberto { display: block; }
 .patrimonio-principal.valor-visivel .olho-fechado { display: none; }
 .olho-aberto { display: none; }
 .olho-fechado { display: block; }
 
+/* 🔹 ESTILOS PARA VISTA DETALHADA 🔹 */
 .detalhado-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
 .detalhado-header h3 { margin: 0; font-size: 18px; color: var(--text-dark); }
 .fechar-detalhes { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 15px; }
 .fechar-detalhes:hover { text-decoration: underline; }
 
+/* Grid de Resumo Geral */
 .detalhes-gerais { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; border-bottom: 1px solid #eef2f2; padding-bottom: 16px; margin-bottom: 16px; }
 .detalhe-item { display: flex; flex-direction: column; }
 .detalhe-label {
@@ -340,6 +350,7 @@ body {
 .detalhe-valor.positivo { color: var(--positive); }
 .detalhe-valor.negativo { color: var(--negative); }
 
+/* Lista de Ativos */
 .ativos-lista-header, .ativo-item {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -357,6 +368,7 @@ body {
     color: #5a6465;
 }
 
+/* Estilos para o ícone de tooltip */
 .tooltip-icon {
     display: inline-flex;
     align-items: center;
@@ -433,8 +445,9 @@ body {
     margin-top: 40px;
 }
 
+/* 👇 REGRA ADICIONADA AQUI 👇 */
 .grafico {
-    margin-top: 0;
+    margin-top: 72px;
 }
 
 .container-graficos {
@@ -444,40 +457,15 @@ body {
     padding: 30px;
     scroll-behavior: smooth;
     scrollbar-width: thin;
-    scrollbar-color: #ccc #f0f3f3;
 }
 
-/* ============================================== */
-/* === BLOCO DE ESTILOS UNIFICADO P/ SCROLLBARS === */
-/* ============================================== */
-
-/* A barra em si (largura para vertical, altura para horizontal) */
-.transacoes-lista::-webkit-scrollbar,
 .container-graficos::-webkit-scrollbar {
-    width: 8px;
     height: 8px;
 }
-
-/* O trilho (fundo da barra) */
-.transacoes-lista::-webkit-scrollbar-track,
-.container-graficos::-webkit-scrollbar-track {
-    background: #f0f3f3;
-    border-radius: 10px;
-}
-
-/* O polegar (a parte que você arrasta) */
-.transacoes-lista::-webkit-scrollbar-thumb,
 .container-graficos::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 10px;
 }
-
-/* O polegar ao passar o mouse ou clicar */
-.transacoes-lista::-webkit-scrollbar-thumb:hover,
-.container-graficos::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8; /* Cinza um pouco mais escuro para o hover */
-}
-
 
 .grafico-card {
     background: #fff;
