@@ -3,6 +3,8 @@ package com.devsdoagi.agicripto.DTO;
 import com.devsdoagi.agicripto.DTO.usuarios.UsuariosResponseDTO;
 import com.devsdoagi.agicripto.model.Criptomoedas;
 
+import java.math.BigDecimal;
+
 // Record para o objeto de resposta da Criptomoeda.
 // Inclui um objeto 'responsavel' que usa o UsuarioDTO para quebrar o loop.
 public record CriptomoedasResponseDTO(
