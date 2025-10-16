@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface AtivosCarteiraRepository extends JpaRepository<AtivosCarteira, Integer>{
 
+    boolean existsByCriptomoedas_Id(Integer id);
+
     List<AtivosCarteira> findByCarteira_Usuarios_Id(Integer userId);
     Optional<AtivosCarteira> findByCarteiraAndCriptomoedas(Carteira carteira, Criptomoedas criptomoedas);
 

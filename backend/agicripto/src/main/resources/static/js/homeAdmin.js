@@ -103,8 +103,6 @@ async function cadastrarCriptomoeda(event) {
     };
 
     try {
-        statusMessage.textContent = 'Enviando dados...';
-        statusMessage.style.color = 'blue';
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -119,8 +117,6 @@ async function cadastrarCriptomoeda(event) {
 
         const data = await response.json();
 
-        statusMessage.textContent = `Criptomoeda ${data.nome} cadastrada com sucesso! (ID: ${data.id})`;
-        statusMessage.style.color = 'green';
 
         document.getElementById('cadastro-form').reset();
 
@@ -239,25 +235,33 @@ document.getElementById("formEditarCripto").addEventListener("submit", async (e)
 
 // ===================== EXCLUIR =====================
 async function excluirCripto(id) {
+    if (!confirm("Tem certeza que deseja excluir esta criptomoeda?")) return;
 
-
-    if (confirm("Tem certeza que deseja excluir esta criptomoeda?")) {
-        try {
-            const response = await fetch(`http://localhost:8080/api/criptomoedas/${id}`, {
-                method: "DELETE"
-            });
-
-            if (response.ok) {
-                alert("Criptomoeda excluída com sucesso!");
-                listarCriptomoedas();
-            } else {
-                alert("Erro ao excluir a criptomoeda.");
+    try {
+        const response = await fetch(`http://localhost:8080/api/criptomoedas/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Accept": "text/plain"
             }
-        } catch (error) {
-            console.error("Erro na exclusão:", error);
+        });
+
+        const msg = await response.text(); // lê sempre como texto
+
+        if (response.ok) {
+            alert(msg || " Criptomoeda excluída com sucesso!");
+            listarCriptomoedas();
+        } else {
+            // Exibe a mensagem vinda do backend, mesmo em erro (400/500)
+            alert(msg || `Erro ${response.status}: Não é possível excluir esta criptomoeda, pois há investimentos vinculados a ela. `);
         }
+
+    } catch (error) {
+        console.error("Erro na exclusão:", error);
+        alert("Erro ao se conectar ao servidor.");
     }
 }
+
+
 
 // ===================== CARREGAR AUTOMATICAMENTE =====================
 document.addEventListener("DOMContentLoaded", listarCriptomoedas);

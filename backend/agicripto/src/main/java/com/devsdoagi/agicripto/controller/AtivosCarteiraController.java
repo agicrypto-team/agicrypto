@@ -6,13 +6,16 @@ import com.devsdoagi.agicripto.DTO.TransacoesResponseDTO;
 import com.devsdoagi.agicripto.model.AtivosCarteira;
 import com.devsdoagi.agicripto.model.Carteira;
 import com.devsdoagi.agicripto.model.Criptomoedas;
+import com.devsdoagi.agicripto.repository.AtivosCarteiraRepository;
 import com.devsdoagi.agicripto.repository.CarteiraRepository;
 import com.devsdoagi.agicripto.repository.CriptomoedasRepository;
 import com.devsdoagi.agicripto.service.AtivosCarteiraService;
 import com.devsdoagi.agicripto.service.CarteiraService;
+import com.devsdoagi.agicripto.service.CriptomoedasService;
 import com.devsdoagi.agicripto.service.UsuariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,13 +34,18 @@ public class AtivosCarteiraController {
     private final CarteiraRepository carteiraRepository;
     @Autowired
     private final CriptomoedasRepository criptomoedasRepository;
+    @Autowired
+    private final AtivosCarteiraRepository ativosCarteiraRepository;
+    private final CriptomoedasService  criptomoedaService;
 
-    public AtivosCarteiraController(AtivosCarteiraService service, CarteiraService carteiraService, UsuariosService usuariosService, CarteiraRepository carteiraRepository, CriptomoedasRepository criptomoedasRepository) {
+    public AtivosCarteiraController(AtivosCarteiraService service, CarteiraService carteiraService, UsuariosService usuariosService, CarteiraRepository carteiraRepository, CriptomoedasRepository criptomoedasRepository, AtivosCarteiraRepository ativosCarteiraRepository, CriptomoedasService criptomoedaService) {
         this.service = service;
         this.carteiraService = carteiraService;
         this.usuariosService = usuariosService;
         this.carteiraRepository = carteiraRepository;
         this.criptomoedasRepository = criptomoedasRepository;
+        this.ativosCarteiraRepository = ativosCarteiraRepository;
+        this.criptomoedaService = criptomoedaService;
     }
 
     @GetMapping
@@ -83,11 +91,11 @@ public class AtivosCarteiraController {
     }
 
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletar(@PathVariable Integer id) {
-        service.deletar(id);
-    }
+  //  @DeleteMapping("/{id}")
+  //  @ResponseStatus(HttpStatus.NO_CONTENT)
+   // public void deletar(@PathVariable Integer id) {
+      //  service.deletar(id);
+//    }
 
      /* // ✅ NOVO ENDPOINT: lista apenas as criptomoedas que o usuário possui (para o botão "Vender")
     @GetMapping("/do-usuario/{idUsario}")
@@ -108,4 +116,26 @@ public class AtivosCarteiraController {
         List<TransacoesResponseDTO> transacoes = service.listarTransacoesPorUsuario(idUsuario);
         return ResponseEntity.ok(transacoes);
     }
+    @GetMapping("/existe/{idCriptomoeda}")
+    public ResponseEntity<Boolean> verificarExistencia(@PathVariable Integer idCriptomoeda) {
+        boolean existe = ativosCarteiraRepository.existsByCriptomoedas_Id(idCriptomoeda);
+        return ResponseEntity.ok(existe);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> excluirCriptomoeda(@PathVariable Integer id) {
+        // Verifica se há investimentos (ativos) usando essa cripto
+        if (ativosCarteiraRepository.existsByCriptomoedas_Id(id)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN) // força tipo texto
+                    .body("Não é possível excluir esta criptomoeda, pois há investimentos vinculados a ela.");
+        }
+
+        // Caso não tenha vínculo, pode excluir normalmente
+        criptomoedaService.deletarPorId(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_PLAIN) // força tipo texto
+                .body(" Criptomoeda excluída com sucesso!");
+    }
+
 }
