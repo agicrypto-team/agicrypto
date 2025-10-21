@@ -25,7 +25,7 @@ public class UsuariosController {
         this.usuarioService = usuarioService;
     }
 
-    /* ROTAS REFERENTES AO LOGIN */
+    // ===================== ROTAS REFERENTES AO LOGIN =====================
     @PostMapping("/login")
     public ResponseEntity<UsuariosResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpSession session) {
         Usuarios usuario = usuarioService.autenticar(loginRequest);
@@ -41,6 +41,7 @@ public class UsuariosController {
         return ResponseEntity.ok(new UsuariosResponseDTO(usuario));
     }
 
+    // ===================== OBTER INFORMAÇÕES DA SESSÃO ATUAL =====================
     @GetMapping("/sessao")
     public ResponseEntity<UsuariosResponseDTO> sessao(HttpSession session) {
         Integer id = (Integer) session.getAttribute("USUARIO_ID");
@@ -53,8 +54,7 @@ public class UsuariosController {
         Usuarios usuario = usuarioService.buscarUsuarioPorId(id);
         return ResponseEntity.ok(new UsuariosResponseDTO(usuario));
     }
-
-
+    // ===================== ENCERRAR A SESSÃO DO USUÁRIO (LOGOUT) =====================
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpSession session) {
 
@@ -65,10 +65,7 @@ public class UsuariosController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
-
-    /* ROTAS REFERENTE A CADASTRO */
-
-    // Cadastra novo cliente
+    // ===================== CADASTRAR NOVO USUÁRIO COMO CLIENTE =====================
     @PostMapping("/cliente")
     public ResponseEntity<UsuariosResponseDTO> cadastrarCliente(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
 
@@ -77,7 +74,7 @@ public class UsuariosController {
 
     }
 
-    // Cadastra novo admin
+    // ===================== CADASTRAR NOVO USUÁRIO COMO ADMINISTRADOR =====================
     @PostMapping("/admin")
     public ResponseEntity<UsuariosResponseDTO> cadastrarAdmin(@Valid @RequestBody CadastroUsuariosRequestDTO usuario) {
 
@@ -86,9 +83,7 @@ public class UsuariosController {
 
     }
 
-    /* ROTAS INTERNAS PARA NÍVEL ADMIN */
-
-    // Lista todos os clientes (rota para uso interno/admin)
+    // ===================== LISTAR TODOS OS CLIENTES (ACESSO RESTRITO A ADMIN) =====================
     @GetMapping("/clientes")
     public ResponseEntity<List<UsuariosResponseDTO>> listarClientes(HttpSession session) {
 
@@ -99,8 +94,7 @@ public class UsuariosController {
         return ResponseEntity.ok(listaClientesDTO);
 
     }
-
-    // Lista todos os administradores (rota para uso interno/admin)
+    // ===================== LISTAR TODOS OS ADMINISTRADORES (ACESSO RESTRITO A ADMIN) =====================
     @GetMapping("/admins")
     public ResponseEntity<List<UsuariosResponseDTO>> listarAdmins(HttpSession session) {
 
@@ -110,9 +104,7 @@ public class UsuariosController {
         return ResponseEntity.ok(listaAdminsDTO);
 
     }
-
-
-    // Cliente deleta o seu próprio perfil
+    // ===================== DELETAR O PRÓPRIO PERFIL DO CLIENTE =====================
     @DeleteMapping("/cliente/me")
     public ResponseEntity<Void> autoDeletarPerfilCliente(HttpSession session) {
 
@@ -122,13 +114,13 @@ public class UsuariosController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
-
     /*
     // Admin deleta o perfil do cliente
     @DeleteMapping("/cliente")
     public ResponseEntity<Void> adminDeletarCliente(HttpSession session) {}
     */
 
+    // ===================== OBTER DADOS DO USUÁRIO LOGADO PELA SESSÃO =====================
     @GetMapping("/eu")
     public ResponseEntity<UsuariosResponseDTO> obterDadosUsuario(HttpSession session) {
 
@@ -138,8 +130,4 @@ public class UsuariosController {
         return ResponseEntity.ok(new UsuariosResponseDTO(usuario));
 
     }
-
-
-
-
 }

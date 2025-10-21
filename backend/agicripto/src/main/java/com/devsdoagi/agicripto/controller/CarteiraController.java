@@ -18,6 +18,7 @@ public class CarteiraController {
     private final CarteiraService carteiraService;
     private final UsuariosService usuariosService;
 
+    // ===================== CONSTRUTOR DA CLASSE (INJEÇÃO DE DEPENDÊNCIA) =====================
     public CarteiraController(CarteiraService carteiraService, UsuariosService usuariosService) {
 
         this.carteiraService = carteiraService;
@@ -25,6 +26,7 @@ public class CarteiraController {
 
     }
 
+    // ===================== OBTER DADOS DE PORTFÓLIO DO CLIENTE PELA SESSÃO =====================
     @GetMapping("/portfolio")
     public ResponseEntity<PortfolioResponseDTO> obterPortfolioCliente(HttpSession session) {
 
@@ -32,7 +34,7 @@ public class CarteiraController {
         return ResponseEntity.ok(carteiraService.obterPortfolioCliente(userId));
 
     }
-
+    // ===================== FUNÇÃO: OBTER HISTÓRICO DE TRANSAÇÕES DO CLIENTE PELA SESSÃO =====================
     @GetMapping("/historico")
     public ResponseEntity<List<HistoricoResponseDTO>> obterHistoricoTransacoes(HttpSession session) {
 

@@ -27,27 +27,21 @@ public class UsuariosService {
     private final CarteiraRepository carteiraRepository;
     private final PasswordEncoder passwordEncoder;
 
-
+    // ===================== CONSTRUTOR DA CLASSE (INJEÇÃO DE DEPENDÊNCIA) =====================
     public UsuariosService(UsuariosRepository usuarioRepository, CarteiraRepository carteiraRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.carteiraRepository = carteiraRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-    // Metodo para checar a validade da sessão do usuário, e obter o seu ID
-    // Este metodo que garante que as requisições que necessitam de o usuário estar logado sejam sucedidas somente se os usuários estiverem de fato devidamente logados
+    // ===================== VALIDAR SESSÃO ATIVA E OBTER ID DO USUÁRIO LOGADO =====================
     public Integer checarSessaoEObterIdUsuario(HttpSession session) {
 
         if (session == null || session.getAttribute("LOGADO") == null || !(Boolean) session.getAttribute("LOGADO")) {
-
             throw new AutenticacaoException("Acesso negado. Usuário não autenticado ou sessão expirada.");
-
         }
-
         return (Integer) session.getAttribute("USUARIO_ID");
-
     }
-
+    // =====================  CADASTRAR NOVO CLIENTE E CRIAR SUA CARTEIRA INICIAL =====================
     @Transactional
     public Usuarios cadastrarCliente(CadastroUsuariosRequestDTO usuarioDTO) {
 
@@ -76,7 +70,7 @@ public class UsuariosService {
 
         return novoCliente;
     }
-
+    // ===================== CADASTRAR NOVO USUÁRIO COMO ADMINISTRADOR =====================
     @Transactional
     public Usuarios cadastrarAdmin(CadastroUsuariosRequestDTO usuarioDTO) {
 
@@ -98,80 +92,51 @@ public class UsuariosService {
 
         Usuarios novoAdmin = usuarioRepository.save(usuario);
 
-        /*
-        // É possível com que ao criar novo Admin não seja criada uma carteira para ele?
-        Carteira novaCarteira = new Carteira();
-        novaCarteira.setUsuarios(novoAdmin);
-        novaCarteira.setMomento_atualizacao(LocalDateTime.now());
-        carteiraRepository.save(novaCarteira);
-
-        */
-
         return novoAdmin;
     }
-
+    // ===================== AUTENTICAR USUÁRIO VERIFICANDO E-MAIL E SENHA (SEM ENCODER) =====================
     public Usuarios autenticar(LoginRequestDTO loginRequest) {
 
         Usuarios usuario = usuarioRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new AutenticacaoException("E-mail ou senha inválidos."));
 
-        /*if (!passwordEncoder.matches(loginRequest.senha(), usuario.getSenha())) {
-            throw new AutenticacaoException("E-mail ou senha inválidos.");
-        }*/
-
         if (!loginRequest.senha().equals(usuario.getSenha())) {
             throw new AutenticacaoException("E-mail ou senha inválidos.");
         }
-
         return usuario;
-
     }
-
+    // ===================== BUSCAR USUÁRIO NO REPOSITÓRIO PELO ID =====================
     public Usuarios buscarUsuarioPorId(Integer userId) {
 
         return usuarioRepository.findById(userId).orElseThrow(() -> new AutenticacaoException("Usuário não cadastrado com o ID: " + userId));
 
     }
-
+    // ===================== VALIDAR SE O USUÁRIO POSSUI PERMISSÃO DE ADMINISTRADOR =====================
     public void validarUsuarioAdmin(Integer userId) {
 
         Usuarios usuario = usuarioRepository.findById(userId).orElseThrow(() -> new AutenticacaoException("Usuário não cadastrado."));
 
-
         if(!usuario.getTipo().equals("Admin")) {
-
             throw new PermissaoDeUsuarioException("Usuário não é um administrador");
-
         }
 
     }
-
-
+    // ===================== LISTAR TODOS OS USUÁRIOS COM O TIPO "CLIENTE" =====================
     public List<Usuarios> listarClientes() {
-
         return usuarioRepository.findByTipo("Cliente");
-
     }
-
+    // ===================== LISTAR TODOS OS USUÁRIOS COM O TIPO "ADMIN" =====================
     public List<Usuarios> listarAdmins() {
-
         return usuarioRepository.findByTipo("Admin");
-
     }
-
+    // ===================== DELETAR PERFIL DO CLIENTE PELO PRÓPRIO ID =====================
     @Transactional
     public void autoDeletarPerfilCliente(Integer userId) {
 
         if(usuarioRepository.existsById(userId)) {
-
             usuarioRepository.deleteById(userId);
-
         }
-
         else {
-
             throw new NotExistingUserException("Cliente não existente no banco de dados.");
-
         }
     }
-
 }

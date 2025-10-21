@@ -24,15 +24,16 @@ public class HistoricoCriptomoedasService {
 
     @Autowired
     private final HistoricoCriptomoedasRepository historicoCriptomoedasRepository;
-
     private final CriptomoedasRepository criptomoedasRepository;
     private final CriptomoedasService criptomoedasService;
 
+    // ===================== BUSCAR HISTÓRICO DE COTAÇÃO POR ID =====================
     public HistoricoCriptomoedas buscarPorId(Integer id) {
         return historicoCriptomoedasRepository.findById(id)
                 .orElseThrow(() -> new HistoricoCriptomoedaNaoEncontradoException(id));
     }
 
+    // ===================== LISTAR TODOO HISTÓRICO DE COTAÇÕES E CONVERTER PARA DTO =====================
     public List<HistoricoCriptomoedasResponseDTO> listarTodosComCriptomoeda() {
         List<HistoricoCriptomoedas> historicos = historicoCriptomoedasRepository.findAll();
 
@@ -40,14 +41,14 @@ public class HistoricoCriptomoedasService {
                 .map(HistoricoCriptomoedasResponseDTO::new)
                 .toList();
     }
-
+    // ===================== LISTAR HISTÓRICO DE COTAÇÕES POR ID DA CRIPTOMOEDA E CONVERTER PARA DTO =====================
     public List<HistoricoCriptomoedasResponseDTO> listarPorCriptomoeda(Integer idCriptomoeda) {
         return historicoCriptomoedasRepository.findByCriptomoedas_Id(idCriptomoeda)
                 .stream()
                 .map(HistoricoCriptomoedasResponseDTO::new)
                 .toList();
     }
-
+    // ===================== ATUALIZAR COTAÇÕES DE TODAS AS CRIPTOMOEDAS PERIODICAMENTE =====================
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void atualizarCotaçõesPeriodicamente() {
@@ -75,13 +76,11 @@ public class HistoricoCriptomoedasService {
             }
         }
     }
-
+    // ===================== FUNÇÃO: OBTER A COTAÇÃO MAIS RECENTE DA CRIPTOMOEDA =====================
     public BigDecimal obterCotacaoAtual(Integer idCriptomoeda) {
         return historicoCriptomoedasRepository
                 .findTopByCriptomoedas_IdOrderByMomentoDesc(idCriptomoeda)
                 .map(HistoricoCriptomoedas::getCotacao_momento)
                 .orElse(null);
     }
-
-
 }

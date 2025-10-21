@@ -23,16 +23,17 @@ public class HistoricoCriptomoedasController {
     @Autowired
     private final HistoricoCriptomoedasService historicoCriptomoedasService;
 
+    // ===================== LISTAR TODOO HISTÓRICO DE COTAÇÕES =====================
     @GetMapping
     public ResponseEntity<List<HistoricoCriptomoedasResponseDTO>> listarTodos() {
         return ResponseEntity.ok(historicoCriptomoedasService.listarTodosComCriptomoeda());
     }
-
+    // ===================== LISTAR HISTÓRICO DE COTAÇÕES POR ID DA CRIPTOMOEDA =====================
     @GetMapping("/{idCriptomoeda}")
     public ResponseEntity<List<HistoricoCriptomoedasResponseDTO>> listarPorCriptomoeda(@PathVariable Integer idCriptomoeda) {
         return ResponseEntity.ok(historicoCriptomoedasService.listarPorCriptomoeda(idCriptomoeda));
     }
-
+    // ===================== FUNÇÃO: OBTER A COTAÇÃO MAIS RECENTE DA CRIPTOMOEDA =====================
     @GetMapping("/{idCriptomoeda}/cotacao-atual")
     public ResponseEntity<BigDecimal> obterCotacaoAtual(@PathVariable Integer idCriptomoeda) {
         BigDecimal cotacao = historicoCriptomoedasService.obterCotacaoAtual(idCriptomoeda);
@@ -55,6 +56,4 @@ public class HistoricoCriptomoedasController {
     }
 
     */
-
-
 }

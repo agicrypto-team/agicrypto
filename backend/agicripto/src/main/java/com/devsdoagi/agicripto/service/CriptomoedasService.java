@@ -32,16 +32,13 @@ import com.devsdoagi.agicripto.exception.criptomoedas.CriptomoedaJaCadastradaExc
 public class CriptomoedasService {
     @Autowired
     private CriptomoedasRepository criptomoedasRepository;
-
     @Autowired
     private UsuariosRepository usuariosRepository;
-
     @Autowired
     private HistoricoCriptomoedasRepository historicoCriptomoedasRepository;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Construtor: O Spring faz a injeção automaticamente aqui.
+    // ===================== CONSTRUTOR DA CLASSE (INJEÇÃO DE DEPENDÊNCIA) =====================
     public CriptomoedasService(CriptomoedasRepository criptomoedasRepository, UsuariosRepository usuariosRepository) {
         this.criptomoedasRepository = criptomoedasRepository;
         this.usuariosRepository = usuariosRepository;
@@ -52,14 +49,14 @@ public class CriptomoedasService {
         // 1. Busca todas as entidades Criptomoedas no banco
         List<Criptomoedas> criptos = criptomoedasRepository.findAll();
 
-        // 2. Converte a lista de entidades para a lista de DTOs
+        // Converte a lista de entidades para a lista de DTOs
         // O 'return' e o 'Collectors' foram adicionados/corrigidos aqui.
         return criptos.stream()
                 .map(CriptomoedasResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
-    // Busca uma criptomoeda pelo ID.
+    // ===================== BUSCAR CRIPTOMOEDA NO REPOSITÓRIO PELO ID =====================
     public Optional<Criptomoedas> findById(Integer id) {
         return criptomoedasRepository.findById(id);
     }
@@ -80,6 +77,7 @@ public class CriptomoedasService {
         return restTemplate.getForObject(url, String.class);
     }
 
+    // ===================== CADASTRAR NOVA CRIPTOMOEDA (COM VALIDAÇÕES E COTAÇÃO INICIAL) =====================
     @Transactional // Garante que a criação da Criptomoeda e do Historico sejam atômicas.
     public CriptomoedasResponseDTO cadastrar(CriptomoedasRequestDTO request) {
 
@@ -112,7 +110,7 @@ public class CriptomoedasService {
         }
         return new CriptomoedasResponseDTO(criptomoeda);
     }
-
+    // ===================== FUNÇÃO: BUSCAR E SALVAR COTAÇÃO INICIAL DA CRIPTOMOEDA VIA API EXTERNA =====================
     private void salvarCotacaoInicial(Criptomoedas criptomoeda) {
         String nomeParaBusca = criptomoeda.getNome().toLowerCase().replace("\\s+", "-");
 
@@ -173,7 +171,7 @@ public class CriptomoedasService {
                     + criptomoeda.getNome() + ". Mensagem: " + e.getMessage());
         }
     }
-
+    // ===================== BUSCAR COTAÇÃO ATUAL DA CRIPTOMOEDA EM BRL VIA API EXTERNA =====================
     public BigDecimal buscarCotacaoEmBRL(String nomeCriptomoeda) {
         String nomeParaBusca = nomeCriptomoeda.toLowerCase().replace("\\s+", "-");
 
@@ -221,6 +219,7 @@ public class CriptomoedasService {
             return BigDecimal.ZERO;
         }
     }
+    // ===================== FUNÇÃO: DELETAR CRIPTOMOEDA PELO ID =====================
     public boolean deletarPorId(Integer id) {
         Optional<Criptomoedas> cripto = criptomoedasRepository.findById(id);
         if (cripto.isPresent()) {
@@ -229,7 +228,7 @@ public class CriptomoedasService {
         }
         return false; // id não encontrado
     }
-
+    // ===================== FUNÇÃO: ATUALIZAR DADOS DE CRIPTOMOEDA EXISTENTE =====================
     public CriptomoedasResponseDTO atualizar(Integer id, CriptomoedasRequestDTO request) {
         Optional<Criptomoedas> optionalCripto = criptomoedasRepository.findById(id);
         if (optionalCripto.isEmpty()) {
@@ -244,31 +243,5 @@ public class CriptomoedasService {
         Criptomoedas salva = criptomoedasRepository.save(cripto);
         return new CriptomoedasResponseDTO(salva);
     }
-
-
-
-//    public CriptomoedasResponseDTO create(CriptomoedasRequestDTO request) {
-//        if (request.id_responsavel() == null) {
-//            throw new IllegalArgumentException("id_responsavel não pode ser nulo");
-//        }
-//
-//        // Log para depuração
-//        System.out.println("DEBUG - id_responsavel vindo do request: " + request.id_responsavel());
-//
-//        Usuarios responsavel = usuariosRepository.findById(request.id_responsavel())
-//                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-//
-//        Criptomoedas criptomoeda = new Criptomoedas();
-//        criptomoeda.setNome(request.nome());
-//        criptomoeda.setSigla(request.sigla());
-//        criptomoeda.setIcone(request.icone());
-//        criptomoeda.setUsuarios(responsavel);
-//        criptomoeda.setMomentoCadastro(LocalDateTime.now());
-//
-//        criptomoeda = criptomoedasRepository.save(criptomoeda);
-//
-//        return new CriptomoedasResponseDTO(criptomoeda);
-//    }
-
 }
 

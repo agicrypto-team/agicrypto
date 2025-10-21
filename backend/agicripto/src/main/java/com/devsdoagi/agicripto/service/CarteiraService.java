@@ -23,15 +23,16 @@ public class CarteiraService {
 
     private static final int CURRENCY_SCALE = 2;
     private static final int PERCENTAGE_SCALE = 4;
-        private static final int QUANTIDADE_SCALE = 8;
+    private static final int QUANTIDADE_SCALE = 8;
 
-
+    // ===================== CONSTRUTOR DA CLASSE (INJEÇÃO DE DEPENDÊNCIA) =====================
     public CarteiraService(AtivosCarteiraRepository ativosCarteiraRepository, HistoricoCriptomoedasService historicoCriptomoedasService, TransacoesRepository transacoesRepository) {
         this.ativosCarteiraRepository = ativosCarteiraRepository;
         this.historicoCriptomoedasService = historicoCriptomoedasService;
         this.transacoesRepository = transacoesRepository;
     }
 
+    // ===================== OBTER E CALCULAR PORTFÓLIO COMPLETO DO CLIENTE =====================
     public PortfolioResponseDTO obterPortfolioCliente(Integer userId) {
         List<AtivosCarteira> listaAtivos = ativosCarteiraRepository.findByCarteira_Usuarios_Id(userId);
 
@@ -93,7 +94,7 @@ public class CarteiraService {
         );
     }
 
-    // ✅ NOVO METODO: lista apenas as criptomoedas que o usuário possui
+    // lista apenas as criptomoedas que o usuário possui
     public List<AtivoVenderResponseDTO> listarCriptomoedasUsuario(Integer userId) {
         return ativosCarteiraRepository.findByCarteira_Usuarios_Id(userId)
                 .stream()
@@ -103,7 +104,7 @@ public class CarteiraService {
                 ))
                 .toList();
     }
-
+    // ===================== OBTER HISTÓRICO DE TRANSAÇÕES DO CLIENTE E CONVERTER PARA DTO =====================
     public List<HistoricoResponseDTO> obterHistoricoTransacoes(Integer userId) {
 
        return transacoesRepository.findByUsuariosId(userId).stream().map(transacao -> {
@@ -114,6 +115,5 @@ public class CarteiraService {
            return new HistoricoResponseDTO(transacao.getTipo(), nomeCripto, siglaCripto, transacao.getValor().setScale(CURRENCY_SCALE, RoundingMode.HALF_UP), transacao.getQuantidade_cripto().setScale(QUANTIDADE_SCALE, RoundingMode.HALF_UP), transacao.getMomento());
 
        }).toList();
-
     }
 }

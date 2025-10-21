@@ -28,11 +28,9 @@ public class AtivosCarteiraService {
     private final AtivosCarteiraRepository ativoRepository;
     private final CarteiraRepository carteiraRepository;
     private final CriptomoedasRepository criptomoedaRepository;
-   // private final HistoricoCriptomoedasService historicoCriptomoedasService;
     private final TransacoesRepository transacoesRepository;
 
-
-    // Injeção de dependência via construtor
+    // ===================== CONSTRUTOR DA CLASSE (INJEÇÃO DE DEPENDÊNCIA) =====================
     @Autowired
     public AtivosCarteiraService(AtivosCarteiraRepository ativoRepository, CarteiraRepository carteiraRepository,
                                  CriptomoedasRepository criptomoedaRepository, HistoricoCriptomoedasService historicoCriptomoedasService, TransacoesRepository transacoesRepository) {
@@ -43,21 +41,20 @@ public class AtivosCarteiraService {
         this.transacoesRepository = transacoesRepository;
     }
 
-    // Mapeamento Entity -> ResponseDTO usando referência de metodo para o construtor
+    // ===================== LISTAR TODOS OS ATIVOS E CONVERTER PARA DTO =====================
     public List<AtivosCarteiraResponseDTO> listarTodos() {
         return ativoRepository.findAll().stream()
                 .map(AtivosCarteiraResponseDTO::new) // Referência ao construtor
                 .collect(Collectors.toList());
     }
 
-    // Mapeamento Entity -> ResponseDTO
+    // ===================== BUSCAR ATIVO PELO ID E CONVERTER PARA DTO =====================
     public AtivosCarteiraResponseDTO buscarPorId(Integer id) {
         AtivosCarteira ativo = ativoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ativo não encontrado."));
         return new AtivosCarteiraResponseDTO(ativo);
     }
-
-    // Mapeamento RequestDTO -> Entity e salvamento
+    // ===================== FUNÇÃO: CRIAR NOVO ATIVO NA CARTEIRA E CONVERTER PARA DTO =====================
     public AtivosCarteiraResponseDTO criar(AtivosCarteiraRequestDTO dto) {
 
         // Mapeamento DTO para Entity
@@ -80,7 +77,7 @@ public class AtivosCarteiraService {
         return new AtivosCarteiraResponseDTO(ativoSalvo);
     }
 
-    //METODO PARA ATUALIZAR ATIVOS
+    // =====================  ATUALIZAR ATIVO NA CARTEIRA (COMPRA/VENDA) =====================
     public AtivosCarteira atualizar(
             Carteira carteira,
             Criptomoedas criptomoeda,
@@ -127,33 +124,18 @@ public class AtivosCarteiraService {
         return ativoRepository.save(ativo);
     }
 
-    /*public Map<String, BigDecimal> calcularFlutuacaoAtivos(Integer userId) {
-
-        List<AtivosCarteira> listaAtivos = ativoRepository.findByCarteira_Usuarios_Id(userId);
-
-
-        Map<String, BigDecimal> flutuacaoAtivos = new HashMap<>();
-
-        for (AtivosCarteira ativo : listaAtivos) {
-
-            BigDecimal cotacaoAtual = historicoCriptomoedasService.obterCotacaoAtual(ativo.getCriptomoedas().getId());
-
-
-            BigDecimal cotacaoDiaAnterior = historicoCriptomoedasService.obterCotacaoDiaAnterior(ativo.getCriptomoedas().getId());
-
-     */
-
-    // ✅ Lista os ativos do usuário
+    // ===================== LISTAR ATIVOS POR ID DO USUÁRIO E CONVERTER PARA DTO =====================
     public List<AtivosCarteiraResponseDTO> listarAtivosPorUsuario(Integer idUsuario) {
         List<AtivosCarteira> ativos = ativoRepository.findByCarteira_Usuarios_Id(idUsuario);
         return ativos.stream().map(AtivosCarteiraResponseDTO::new).toList();
     }
 
-    // ✅ Lista as transações do usuário
+    // ===================== LISTAR TRANSAÇÕES POR ID DO USUÁRIO E CONVERTER PARA DTO =====================
     public List<TransacoesResponseDTO> listarTransacoesPorUsuario(Integer idUsuario) {
         List<Transacoes> transacoes = transacoesRepository.findByUsuariosId(idUsuario);
         return transacoes.stream().map(TransacoesResponseDTO::new).toList();
     }
+    // ===================== DELETAR ATIVO DA CARTEIRA PELO ID =====================
     public void deletar(Integer id) {
         ativoRepository.deleteById(id);
     }

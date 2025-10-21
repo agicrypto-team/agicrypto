@@ -27,8 +27,11 @@ import java.util.List;
 @RequestMapping("/api/ativos-carteira")
 public class AtivosCarteiraController {
 
+    @Autowired
     private final AtivosCarteiraService service;
+    @Autowired
     private final CarteiraService carteiraService;
+    @Autowired
     private final UsuariosService usuariosService;
     @Autowired
     private final CarteiraRepository carteiraRepository;
@@ -36,9 +39,17 @@ public class AtivosCarteiraController {
     private final CriptomoedasRepository criptomoedasRepository;
     @Autowired
     private final AtivosCarteiraRepository ativosCarteiraRepository;
+    @Autowired
     private final CriptomoedasService  criptomoedaService;
 
-    public AtivosCarteiraController(AtivosCarteiraService service, CarteiraService carteiraService, UsuariosService usuariosService, CarteiraRepository carteiraRepository, CriptomoedasRepository criptomoedasRepository, AtivosCarteiraRepository ativosCarteiraRepository, CriptomoedasService criptomoedaService) {
+    // ===================== CONSTRUTOR DA CLASSE (INJEÇÃO DE DEPENDÊNCIA) =====================
+    public AtivosCarteiraController(AtivosCarteiraService service,
+                                    CarteiraService carteiraService,
+                                    UsuariosService usuariosService,
+                                    CarteiraRepository carteiraRepository,
+                                    CriptomoedasRepository criptomoedasRepository,
+                                    AtivosCarteiraRepository ativosCarteiraRepository,
+                                    CriptomoedasService criptomoedaService) {
         this.service = service;
         this.carteiraService = carteiraService;
         this.usuariosService = usuariosService;
@@ -48,24 +59,28 @@ public class AtivosCarteiraController {
         this.criptomoedaService = criptomoedaService;
     }
 
+    // ===================== LISTAR TODOS OS ATIVOS DA CARTEIRA =====================
     @GetMapping
     public ResponseEntity<List<AtivosCarteiraResponseDTO>> listar() {
         List<AtivosCarteiraResponseDTO> ativos = service.listarTodos();
         return ResponseEntity.ok(ativos);
     }
 
+    // ===================== BUSCAR UM ATIVO ESPECÍFICO PELO ID =====================
     @GetMapping("/{id}")
     public ResponseEntity<AtivosCarteiraResponseDTO> buscarPorId(@PathVariable Integer id) {
         AtivosCarteiraResponseDTO ativo = service.buscarPorId(id);
         return ResponseEntity.ok(ativo);
     }
 
+    // ===================== CADASTRAR NOVO ATIVO NA CARTEIRA =====================
     @PostMapping
     public ResponseEntity<AtivosCarteiraResponseDTO> criar(@RequestBody AtivosCarteiraRequestDTO requestDTO) {
         AtivosCarteiraResponseDTO novoAtivo = service.criar(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoAtivo);
     }
 
+    // ===================== ATUALIZAR UM ATIVO EXISTENTE NA CARTEIRA =====================
     @PutMapping("/{idCarteira}/{idCriptomoeda}")
     public ResponseEntity<AtivosCarteiraResponseDTO> atualizar(
             @PathVariable Integer idCarteira,
@@ -90,38 +105,26 @@ public class AtivosCarteiraController {
         return ResponseEntity.ok(new AtivosCarteiraResponseDTO(ativo));
     }
 
-
-  //  @DeleteMapping("/{id}")
-  //  @ResponseStatus(HttpStatus.NO_CONTENT)
-   // public void deletar(@PathVariable Integer id) {
-      //  service.deletar(id);
-//    }
-
-     /* // ✅ NOVO ENDPOINT: lista apenas as criptomoedas que o usuário possui (para o botão "Vender")
-    @GetMapping("/do-usuario/{idUsario}")
-    public ResponseEntity<List<AtivoVenderResponseDTO>> listarCriptomoedasDoUsuario(HttpSession session) {
-        Integer userId = usuariosService.checarSessaoEObterIdUsuario(session);
-        List<AtivoVenderResponseDTO> ativos = carteiraService.listarCriptomoedasUsuario(userId);
-        return ResponseEntity.ok(ativos);
-    }*/
-
-
+    // ===================== LISTAR ATIVOS POR ID DO USUÁRIO =====================
     @GetMapping("/do-usuario/{idUsuario}")
     public ResponseEntity<List<AtivosCarteiraResponseDTO>> listarAtivosDoUsuario(@PathVariable Integer idUsuario) {
         List<AtivosCarteiraResponseDTO> ativos = service.listarAtivosPorUsuario(idUsuario);
         return ResponseEntity.ok(ativos);
     }
+    // ===================== LISTAR TRANSAÇÕES POR ID DO USUÁRIO =====================
     @GetMapping("/transacoes/{idUsuario}")
     public ResponseEntity<List<TransacoesResponseDTO>> listarTransacoesUsuario(@PathVariable Integer idUsuario) {
         List<TransacoesResponseDTO> transacoes = service.listarTransacoesPorUsuario(idUsuario);
         return ResponseEntity.ok(transacoes);
     }
+    // ===================== VERIFICAR SE CRIPTOMOEDA EXISTE EM ALGUMA CARTEIRA =====================
     @GetMapping("/existe/{idCriptomoeda}")
     public ResponseEntity<Boolean> verificarExistencia(@PathVariable Integer idCriptomoeda) {
         boolean existe = ativosCarteiraRepository.existsByCriptomoedas_Id(idCriptomoeda);
         return ResponseEntity.ok(existe);
     }
 
+    // ===================== EXCLUIR UMA CRIPTOMOEDA (COM VERIFICAÇÃO DE VÍNCULOS) =====================
     @DeleteMapping("/{id}")
     public ResponseEntity<String> excluirCriptomoeda(@PathVariable Integer id) {
         // Verifica se há investimentos (ativos) usando essa cripto

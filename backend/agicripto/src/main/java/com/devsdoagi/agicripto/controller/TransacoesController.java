@@ -19,26 +19,24 @@ public class TransacoesController {
         this.transacoesService = transacoesService;
     }
 
+    // ===================== LISTAR TODAS AS TRANSAÇÕES =====================
     @GetMapping("/listar")
     public List<TransacoesResponseDTO> listar() {
         return transacoesService.listarTodas();
     }
 
+    // ===================== LISTAR TRANSAÇÕES POR ID DO USUÁRIO =====================
     @GetMapping("/usuario/{idUsuario}")
     public List<TransacoesResponseDTO> listarPorUsuario(@PathVariable Integer idUsuario) {
         return transacoesService.listarPorUsuario(idUsuario);
     }
-
+    // ===================== DETALHAR UMA TRANSAÇÃO PELO ID =====================
     @GetMapping("/{id}")
     public TransacoesResponseDTO detalhar(@PathVariable Integer id) {
         return transacoesService.buscarPorId(id);
     }
 
-   // @PostMapping("/cadastrar")
-   // public TransacoesResponseDTO cadastrar(@RequestBody TransacoesRequestDTO dto) {
-   //     return transacoesService.salvar(dto);
- //   }
-
+    // ===================== CRIAR (CADASTRAR) UMA NOVA TRANSAÇÃO =====================
     @PostMapping
     public ResponseEntity<TransacoesResponseDTO> criarTransacao(@RequestBody TransacoesRequestDTO dto) {
         TransacoesResponseDTO transacao = transacoesService.salvar(dto);

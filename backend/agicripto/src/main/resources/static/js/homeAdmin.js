@@ -3,12 +3,12 @@ const API_BASE_URL = "http://localhost:8080/api/usuarios";
 const API_HISTORICOS_URL = "http://localhost:8080/api/historicos";
 const API_URL = "http://localhost:8080/api/criptomoedas";
 
-// ===================== FUNÇÃO: PEGAR TOKEN JWT =====================
+// ===================== PEGAR TOKEN JWT =====================
 function getToken() {
     return localStorage.getItem('jwtToken') || sessionStorage.getItem('jwtToken');
 }
 
-// ===================== FUNÇÃO: PEGAR ID DO ADMIN =====================
+// ===================== PEGAR ID DO ADMIN =====================
 function getAdminId() {
     const adminId = localStorage.getItem('usuarioId');
     if (!adminId) {
@@ -20,7 +20,7 @@ function getAdminId() {
         return parseInt(adminId); // ou Number(id)
 }
 
-// ===================== FUNÇÃO: CARREGAR DADOS DO ADMIN =====================
+// ===================== CARREGAR DADOS DO ADMIN =====================
 async function carregarUsuarioAdmin() {
     const usernameEl = document.querySelector(".username");
     if (!usernameEl) return;
@@ -59,7 +59,7 @@ async function carregarUsuarioAdmin() {
     }
 }
 
-// ===================== FUNÇÃO: LOGOUT =====================
+// ===================== LOGOUT =====================
 async function realizarLogout() {
     try {
         await fetch(`${API_BASE_URL}/logout`, {
@@ -75,7 +75,7 @@ async function realizarLogout() {
     }
 }
 
-// ===================== FUNÇÃO: CADASTRAR CRIPTOMOEDA =====================
+// ===================== CADASTRAR CRIPTOMOEDA =====================
 async function cadastrarCriptomoeda(event) {
     event.preventDefault(); // Evita recarregar a página
 
@@ -363,11 +363,6 @@ async function carregarGrafico(idCripto) {
 // ===================== INICIALIZAÇÃO DA PÁGINA =====================
 window.addEventListener("DOMContentLoaded", () => {
     carregarUsuarioAdmin();
-
-    /*
-    carregarGrafico(17);
-    carregarGrafico(19);
-    */
 
   const logoutBtn = document.querySelector(".btn-logout");
  if (logoutBtn) logoutBtn.addEventListener("click", realizarLogout);

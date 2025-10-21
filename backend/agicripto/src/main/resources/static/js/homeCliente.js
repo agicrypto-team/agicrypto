@@ -1,3 +1,4 @@
+// ===================== CONFIGURAÇÕES GERAIS =====================
 const API_BASE_URL = "http://localhost:8080/api/usuarios";
 const API_TRANSACOES = "http://localhost:8080/transacoes";
 const API_CRYPTOS = "http://localhost:8080/api/criptomoedas";
@@ -8,14 +9,10 @@ const API_PORTFOLIO = "http://localhost:8080/carteira/portfolio";
 let todasCriptos = []; // Criptos para COMPRA
 let ativosUsuario = []; // Criptos que o usuário possui (para VENDA)
 
-// Variável global para o ID do usuário (necessária para algumas chamadas)
+// ===================== ID DO USUÁRIO OBTIDO DA SESSÃO (USO GLOBAL EM CHAMADAS DE API) =====================
 const usuarioId = sessionStorage.getItem("usuarioId");
 
-
-/**
- * 🔹 UTILS
- */
-
+// ===================== ESCAPAR CARACTERES ESPECIAIS PARA PREVENIR INJEÇÃO HTML (XSS) =====================
 function escapeHtml(unsafe) {
     if (unsafe === null || unsafe === undefined) return "";
     return String(unsafe)
@@ -25,17 +22,12 @@ function escapeHtml(unsafe) {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
 }
-
-
-/**
- * 🔹 FORMATADORES
- */
-
+// ===================== FORMATAR VALOR NUMÉRICO COMO MOEDA BRL (R$) =====================
 const formatarReais = (valor, semSimbolo = false) => {
     const numeroFormatado = Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return semSimbolo ? numeroFormatado : `R$ ${numeroFormatado}`;
 };
-
+// ===================== FORMATAR VALOR DE RENDIMENTO EM BRL (COM SINAIS +/-) =====================
 const formatarRendimentoReais = (valor) => {
     // Usado para rendimento em R$ (melhor tratamento de prefixo da primeira versão)
     const numero = Number(valor);
@@ -43,26 +35,20 @@ const formatarRendimentoReais = (valor) => {
     const valorAbs = Math.abs(numero).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return `${prefixo}R$ ${valorAbs}`;
 };
-
+// ===================== FORMATAR VALOR DE RENDIMENTO EM PERCENTUAL (COM SINAL +/-) =====================
 const formatarRendimentoPercentual = (valor) => {
     const numero = Number(valor);
     const prefixo = numero > 0 ? '+' : '';
     return `${prefixo}${numero.toFixed(2).replace('.', ',')}%`;
 };
-
+// ===================== OBTER CLASSE CSS BASEADA NO VALOR DO RENDIMENTO (POS/NEG/NEUTRO) =====================
 const obterClasseRendimento = (valor) => {
     const numero = Number(valor);
     if (numero > 0) return 'positivo';
     if (numero < 0) return 'negativo';
     return 'neutro';
 };
-
-
-/**
- * 🔹 CARREGAMENTO DE DADOS
- */
-
-// 🔹 Carregar dados do usuário (Otimizado com Promise.all da primeira versão)
+// ===================== CARREGAR DADOS INICIAIS DO USUÁRIO, LISTAS E PORTFÓLIO =====================
 async function carregarUsuarioCliente() {
     const usernameEl = document.querySelector(".username");
     if (!usernameEl) return;
@@ -109,7 +95,7 @@ async function carregarUsuarioCliente() {
 }
 
 
-// 🔹 Carrega listas de criptomoedas (Lógica de ativos do usuário da versão que funcionava)
+// ===================== CARREGAR LISTA DE CRIPTOS DISPONÍVEIS E ATIVOS DO USUÁRIO =====================
 async function carregarListasCriptomoedas(usuarioId) {
     try {
         // --- 1️⃣ Busca todas criptomoedas ---
@@ -163,7 +149,7 @@ async function carregarListasCriptomoedas(usuarioId) {
 }
 
 
-// 🔹 Carregar dados do Portfólio (Incluindo tooltips e formatação correta)
+// ===================== BUSCAR, CALCULAR E RENDERIZAR O PORTFÓLIO E ATIVOS DO USUÁRIO =====================
 async function carregarPortfolio() {
     try {
         const res = await fetch(API_PORTFOLIO, { method: "GET", credentials: "same-origin" });
@@ -237,8 +223,7 @@ async function carregarPortfolio() {
     }
 }
 
-
-// 🔹 Histórico de transações
+// ===================== HISTORICO DE TRANSAÇÕES =====================
 async function carregarHistoricoTransacoes() {
     const container = document.querySelector("#transacoes-lista");
     if (!container) return;
@@ -287,11 +272,7 @@ async function carregarHistoricoTransacoes() {
 }
 
 
-/**
- * 🔹 TRANSAÇÕES E EQUIVALÊNCIA (CÓDIGO FUNCIONAL RECUPERADO)
- */
-
-// 🔹 Inicializa dropdown de criptomoedas e envio de transações
+// ===================== INICIALIZA DROPDOWN DE CRIPTOMOEDAS E ENVIO DE TRANSAÇÕES=====================
 function inicializarDropdown() {
     const cryptoInput = document.querySelector("#crypto");
     const dropdown = document.querySelector(".crypto-dropdown");
@@ -305,9 +286,7 @@ function inicializarDropdown() {
     // Reintroduzindo a variável para guardar a cripto selecionada (essencial para a equivalência)
     let criptomoedaSelecionada = null;
 
-    // ================================
-    // 🔸 1. Atualiza lista do dropdown
-    // ================================
+    // Atualiza lista do dropdown
     function atualizarDropdown() {
         const tipoSelecionado = document.querySelector("input[name='tipo']:checked").value;
         const lista = tipoSelecionado === "compra" ? todasCriptos : ativosUsuario;
@@ -323,13 +302,13 @@ function inicializarDropdown() {
             `;
             item.addEventListener("mousedown", e => e.preventDefault());
             item.addEventListener("click", () => {
-                // 🔹 Guarda a cripto selecionada globalmente
+                //  Guarda a cripto selecionada globalmente
                 criptomoedaSelecionada = c;
                 cryptoInput.value = `${c.nome} (${c.sigla})`;
                 cryptoInput.dataset.id = c.id;
                 dropdown.style.display = "none";
 
-                // 🔹 Recalcula equivalência se já houver valor digitado
+                //  Recalcula equivalência se já houver valor digitado
                 calcularEquivalencia();
             });
             dropdown.appendChild(item);
@@ -346,17 +325,12 @@ function inicializarDropdown() {
     }));
     atualizarDropdown();
 
-    // ================================
-    // 🔸 2. Exibir/ocultar dropdown
-    // ================================
+    //  Exibir/ocultar dropdown
     cryptoInput.addEventListener("focus", () => dropdown.style.display = "block");
     cryptoInput.addEventListener("blur", () => {
         setTimeout(() => dropdown.style.display = "none", 150);
     });
-
-    // ================================
-    // 🔸 3. Cálculo de equivalência (CÓDIGO FUNCIONAL RECUPERADO)
-    // ================================
+    // Cálculo de equivalência (CÓDIGO FUNCIONAL RECUPERADO)
     async function calcularEquivalencia() {
         const valorReais = parseFloat((valorInput.value || "").replace(",", "."));
         if (!criptomoedaSelecionada || isNaN(valorReais) || valorReais <= 0) {
@@ -365,7 +339,7 @@ function inicializarDropdown() {
         }
 
         try {
-            // 🔹 Busca cotação atual da cripto no backend
+            // Busca cotação atual da cripto no backend
             const res = await fetch(`http://localhost:8080/api/historicos/${criptomoedaSelecionada.id}/cotacao-atual`);
             if (!res.ok) throw new Error("Erro ao buscar cotação.");
 
@@ -375,7 +349,7 @@ function inicializarDropdown() {
                 return;
             }
 
-            // 🔹 Calcula a equivalência (quantidade de cripto que o valor em R$ compra/vende)
+            //  Calcula a equivalência (quantidade de cripto que o valor em R$ compra/vende)
             const quantidadeCripto = valorReais / cotacao;
             equivalenciaEl.textContent = quantidadeCripto.toFixed(8);
         } catch (err) {
@@ -383,13 +357,10 @@ function inicializarDropdown() {
             equivalenciaEl.textContent = "0";
         }
     }
-
-    // 🔹 Atualiza automaticamente quando digitar valor
+    // Atualiza automaticamente quando digitar valor
     valorInput.addEventListener("input", calcularEquivalencia);
 
-    // ================================
-    // 🔸 4. Envio da transação (CÓDIGO FUNCIONAL RECUPERADO com quantidadeCripto)
-    // ================================
+    //  Envio da transação
     form.addEventListener("submit", async e => {
         e.preventDefault();
 
@@ -427,7 +398,7 @@ function inicializarDropdown() {
                 cryptoInput.dataset.id = "";
                 criptomoedaSelecionada = null;
 
-                // 🔹 Atualiza dados de tela
+                // Atualiza dados de tela
                 await carregarListasCriptomoedas(usuarioId);
                 await carregarPortfolio();
                 await carregarHistoricoTransacoes();
@@ -445,12 +416,8 @@ function inicializarDropdown() {
     });
 }
 
+// ===================== LOGOUT =====================
 
-/**
- * 🔹 INICIALIZAÇÃO E EVENTOS DE TELA
- */
-
-// 🔹 Logout
 async function realizarLogout() {
     try {
         await fetch(`${API_BASE_URL}/logout`, { method: "POST", credentials: "same-origin" });
@@ -461,10 +428,8 @@ async function realizarLogout() {
         window.location.replace("/pages/auth/login.html");
     }
 }
-
-
 window.addEventListener("DOMContentLoaded", () => {
-    // Carrega o cliente e, em cascata, todos os dados
+   // ===================== CARREGA O CLIENTE =====================
     carregarUsuarioCliente();
 
     const logoutBtn = document.querySelector(".btn-logout");
@@ -475,22 +440,20 @@ window.addEventListener("DOMContentLoaded", () => {
     const btnFecharDetalhes = document.querySelector('.fechar-detalhes');
     const btnVisibilidade = document.getElementById('btn-visibilidade');
     const patrimonioNumericoEl = document.getElementById('patrimonio-valor-numerico');
-
-    // Evento para expandir para a visão detalhada
+    // ===================== EXPANDIR PARA A VISÃO DETALHADA =====================
     btnVerDetalhes.addEventListener('click', (e) => {
         e.preventDefault();
         secaoPatrimonio.classList.add('expandido');
     });
 
-    // Evento para voltar para a visão resumida
+    // ===================== VOLTAR PARA A VISÃO RESUMIDA =====================
     btnFecharDetalhes.addEventListener('click', (e) => {
         e.preventDefault();
         secaoPatrimonio.classList.remove('expandido');
         secaoPatrimonio.classList.remove('valor-visivel');
         patrimonioNumericoEl.textContent = '••••••••';
     });
-
-    // Evento para alternar a visibilidade
+    // ===================== ALTERA A VISIBILIDADE =====================
     btnVisibilidade.addEventListener('click', () => {
         const estaVisivel = secaoPatrimonio.classList.toggle('valor-visivel');
         if (estaVisivel) {
